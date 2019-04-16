@@ -1,0 +1,20 @@
+security:
+  basic:
+    enabled: false
+
+fint:
+  adapter:
+    organizations: ra.no
+    sse-endpoint: http://localhost:8081/provider/sse/%s
+    status-endpoint: http://localhost:8081/provider/status
+    response-endpoint: http://localhost:8081/provider/response
+
+  oauth:
+    enabled: false
+
+  kulturminne:
+    tilskudd-fartoy:
+      arkivdel: 100072
+      sub-archive: 100007
+      keywords:
+

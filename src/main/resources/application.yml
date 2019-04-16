@@ -1,0 +1,27 @@
+server:
+  port: 8091
+
+springfox:
+  title: 'FINT SSE Adapter Skeleton'
+  version: '@version@'
+
+base-url: https://beta.felleskomponent.no/kultur/kulturminnevern/provider
+fint:
+  adapter:
+    organizations: ra.no
+    sse-endpoint: ${base-url}/sse/%s
+    status-endpoint: ${base-url}/status
+    response-endpoint: ${base-url}/response
+
+  oauth:
+#    enabled: false
+#    username:
+#    password:
+#    client-id:
+#    client-secret:
+#    access-token-uri:
+#    scope:
+
+security:
+  basic:
+    enabled: false
