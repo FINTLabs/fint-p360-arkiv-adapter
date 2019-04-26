@@ -1,9 +1,8 @@
-package no.fint.ra.data.service;
+package no.fint.ra.data.p360;
 
 import no.fint.arkiv.p360.caze.*;
 import no.fint.model.resource.kultur.kulturminnevern.TilskuddFartoyResource;
-import no.fint.ra.data.FintService;
-import no.fint.ra.data.P360CaseFactory;
+import no.fint.ra.data.fint.TilskuddFartoyFactory;
 import no.fint.ra.data.exception.CreateTilskuddFartoyException;
 import no.fint.ra.data.exception.GetTilskuddFartoyException;
 import no.fint.ra.data.exception.GetTilskuddFartoyNotFoundException;
@@ -17,20 +16,20 @@ import javax.xml.ws.WebServiceException;
 import java.util.List;
 
 @Service
-public class P360CaseServiceP360 extends P360AbstractService {
+public class P360CaseService extends P360AbstractService {
 
     @Autowired
     private P360CaseFactory caseFactory;
 
     @Autowired
-    private FintService fintService;
+    private TilskuddFartoyFactory tilskuddFartoyFactory;
 
     private ICaseService caseServicePort;
 
     private ObjectFactory objectFactory;
 
 
-    public P360CaseServiceP360() {
+    public P360CaseService() {
         super("http://software-innovation.com/SI.Data", "CaseService");
     }
 
@@ -101,7 +100,7 @@ public class P360CaseServiceP360 extends P360AbstractService {
         GetCasesResult cases = caseServicePort.getCases(casesQuery);
 
         if (cases.isSuccessful() && cases.getTotalPageCount().getValue() > 0) {
-            return fintService.p360ToFintTilskuddFartoys(cases.getCases().getValue().getCaseResult());
+            return tilskuddFartoyFactory.p360ToFintTilskuddFartoys(cases.getCases().getValue().getCaseResult());
         }
         if (cases.getTotalPageCount().getValue() != 1) {
             throw new GetTilskuddFartoyNotFoundException("Case could not be found");
@@ -114,7 +113,7 @@ public class P360CaseServiceP360 extends P360AbstractService {
         GetCasesResult cases = caseServicePort.getCases(casesQuery);
 
         if (cases.isSuccessful() && cases.getTotalPageCount().getValue() == 1) {
-            return fintService.p360ToFintTilskuddFartoy(cases.getCases().getValue().getCaseResult().get(0));
+            return tilskuddFartoyFactory.toFint(cases.getCases().getValue().getCaseResult().get(0));
         }
         if (cases.getTotalPageCount().getValue() != 1) {
             throw new GetTilskuddFartoyNotFoundException("Case could not be found");

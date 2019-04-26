@@ -1,4 +1,4 @@
-package no.fint.ra.data.service;
+package no.fint.ra.data.p360;
 
 import no.fint.arkiv.p360.file.FileService;
 import no.fint.arkiv.p360.file.IFileService;

@@ -4,23 +4,26 @@ import no.fint.adapter.event.EventResponseService
 import no.fint.adapter.event.EventStatusService
 import no.fint.event.model.DefaultActions
 import no.fint.event.model.Event
-
+import no.fint.ra.data.p360.P360CaseService
+import no.fint.ra.data.p360.P360DocumentService
 import spock.lang.Specification
 
 class EventHandlerServiceSpec extends Specification {
     private EventHandlerService eventHandlerService
     private EventStatusService eventStatusService
     private EventResponseService eventResponseService
+    private P360DocumentService documentService
+    private P360CaseService caseService
 
     void setup() {
         eventStatusService = Mock(EventStatusService)
         eventResponseService = Mock(EventResponseService)
-        p360UserService = Mock(P360UserService)
-        p360ContactServiceP360 = Mock(P360ContactServiceP360)
+        caseService = Mock(P360CaseService)
+        documentService = Mock(P360DocumentService)
         eventHandlerService = new EventHandlerService(eventStatusService: eventStatusService,
                 eventResponseService: eventResponseService,
-                p360ContactService: p360ContactServiceP360,
-                p360UserService: p360UserService
+                p360CaseService: caseService,
+                p360DocumentService: documentService
         )
     }
 

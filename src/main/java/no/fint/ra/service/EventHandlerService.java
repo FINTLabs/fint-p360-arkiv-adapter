@@ -12,13 +12,13 @@ import no.fint.event.model.health.HealthStatus;
 import no.fint.model.kultur.kulturminnevern.KulturminnevernActions;
 import no.fint.model.resource.FintLinks;
 import no.fint.model.resource.kultur.kulturminnevern.TilskuddFartoyResource;
-import no.fint.ra.data.P360CaseFactory;
+import no.fint.ra.data.p360.P360CaseFactory;
 import no.fint.ra.data.exception.CreateTilskuddFartoyException;
 import no.fint.ra.data.exception.GetTilskuddFartoyException;
 import no.fint.ra.data.exception.GetTilskuddFartoyNotFoundException;
-import no.fint.ra.data.service.P360CaseServiceP360;
-import no.fint.ra.data.service.P360DocumentService;
-import no.fint.ra.data.service.P360FileService;
+import no.fint.ra.data.p360.P360CaseService;
+import no.fint.ra.data.p360.P360DocumentService;
+import no.fint.ra.data.p360.P360FileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -44,7 +44,7 @@ public class EventHandlerService {
     private P360FileService p360FileService;
 
     @Autowired
-    private P360CaseServiceP360 p360CaseServiceP360;
+    private P360CaseService p360CaseService;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -110,19 +110,19 @@ public class EventHandlerService {
             if (query.startsWith("mappeid")) {
                 response.setData(
                         Collections.singletonList(
-                                p360CaseServiceP360.getTilskuddFartoyCaseByCaseNumber(query.replaceFirst("mappeid/", ""))
+                                p360CaseService.getTilskuddFartoyCaseByCaseNumber(query.replaceFirst("mappeid/", ""))
                         )
                 );
             }
             if (query.startsWith("systemid")) {
                 response.setData(
                         Collections.singletonList(
-                                p360CaseServiceP360.getTilskuddFartoyCaseBySystemId(query.replaceFirst("systemid/", ""))
+                                p360CaseService.getTilskuddFartoyCaseBySystemId(query.replaceFirst("systemid/", ""))
                         )
                 );
             }
             if (query.startsWith("?")) {
-                List<TilskuddFartoyResource> tilskuddFartoyResources = p360CaseServiceP360.searchTilskuddFartoyCaseByTitle(query);
+                List<TilskuddFartoyResource> tilskuddFartoyResources = p360CaseService.searchTilskuddFartoyCaseByTitle(query);
                 tilskuddFartoyResources.forEach(response::addData);
             }
             response.setStatus(Status.TEMP_UPSTREAM_QUEUE);
@@ -150,7 +150,7 @@ public class EventHandlerService {
             TilskuddFartoyResource tilskuddFartoyResource = objectMapper.convertValue(response.getData().get(0), TilskuddFartoyResource.class);
 
             try {
-                TilskuddFartoyResource tilskuddFartoy = p360CaseServiceP360.createTilskuddFartoyCase(tilskuddFartoyResource);
+                TilskuddFartoyResource tilskuddFartoy = p360CaseService.createTilskuddFartoyCase(tilskuddFartoyResource);
                 response.setResponseStatus(ResponseStatus.ACCEPTED);
                 response.setData(Collections.singletonList(tilskuddFartoy));
             } catch (CreateTilskuddFartoyException e) {
@@ -181,7 +181,7 @@ public class EventHandlerService {
 
     private boolean healthCheck() {
 
-        return p360CaseServiceP360.ping() && p360DocumentService.ping() && p360FileService.ping();
+        return p360CaseService.ping() && p360DocumentService.ping() && p360FileService.ping();
 
     }
 

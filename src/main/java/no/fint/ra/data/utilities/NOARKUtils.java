@@ -1,4 +1,4 @@
-package no.fint.ra.data;
+package no.fint.ra.data.utilities;
 
 import no.fint.ra.data.exception.IllegalCaseNumberFormat;
 import no.fint.ra.data.exception.IllegalDocumentNumberFormat;

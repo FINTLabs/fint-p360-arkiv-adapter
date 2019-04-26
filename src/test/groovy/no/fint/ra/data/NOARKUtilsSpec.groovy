@@ -2,6 +2,7 @@ package no.fint.ra.data
 
 import no.fint.ra.data.exception.IllegalCaseNumberFormat
 import no.fint.ra.data.exception.IllegalDocumentNumberFormat
+import no.fint.ra.data.utilities.NOARKUtils
 import spock.lang.Specification
 
 class NOARKUtilsSpec extends Specification {

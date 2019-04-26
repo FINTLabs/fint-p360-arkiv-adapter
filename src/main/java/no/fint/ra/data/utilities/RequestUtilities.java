@@ -1,5 +1,6 @@
-package no.fint.ra.data;
+package no.fint.ra.data.utilities;
 
+import no.fint.ra.data.AppProps;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

@@ -8,7 +8,7 @@ import org.glassfish.jersey.media.sse.InboundEvent;
 
 /**
  * Event listener for the for the SSE client. When an inbound event is received the {@link #onEvent(InboundEvent)} method
- * calls {@link EventHandlerService} service.
+ * calls {@link EventHandlerService} p360.
  */
 @Slf4j
 public class FintEventListener extends AbstractEventListener {

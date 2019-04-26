@@ -1,6 +1,6 @@
 package no.fint.ra.data
 
-
+import no.fint.ra.data.utilities.FintUtils
 import spock.lang.Specification
 
 class FintUtilsSpec extends Specification {
