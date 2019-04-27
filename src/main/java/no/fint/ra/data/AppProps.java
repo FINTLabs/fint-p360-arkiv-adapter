@@ -4,6 +4,8 @@ import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.nio.file.Path;
+
 @Getter
 @Component
 public class AppProps {
@@ -15,6 +17,6 @@ public class AppProps {
     private String p360Password;
 
     @Value("${fint.file-cache-directory:data}")
-    private String fileCacheDirectory;
+    private Path fileCacheDirectory;
 
 }
