@@ -7,3 +7,5 @@ out
 *.iml
 javadocs/
 generated-sources
+.DS_Store
+data/

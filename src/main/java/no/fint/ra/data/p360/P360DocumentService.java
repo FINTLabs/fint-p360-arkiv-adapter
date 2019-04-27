@@ -1,6 +1,7 @@
 package no.fint.ra.data.p360;
 
 import no.fint.arkiv.p360.document.*;
+import no.fint.model.administrasjon.arkiv.Dokumentfil;
 import no.fint.model.resource.Link;
 import no.fint.model.resource.administrasjon.arkiv.*;
 import org.springframework.stereotype.Service;
@@ -62,7 +63,9 @@ public class P360DocumentService extends P360AbstractService {
 
                 DokumentobjektResource dokumentobjektResource = new DokumentobjektResource();
                 dokumentobjektResource.setFormat(file.getFormat().getValue());
-                dokumentobjektResource.setReferanseDokumentfil(file.getRecno().toString());
+                //dokumentobjektResource.setReferanseDokumentfil(file.getRecno().toString());
+                dokumentobjektResource.addReferanseDokumentfil(Link.with(Dokumentfil.class, "systemid", file.getRecno().toString()));
+
                 dokumentbeskrivelseResource.addDokumentstatus(Link.with(DokumentStatusResources.class, "systemid", file.getStatusCode().getValue()));
 
                 dokumentbeskrivelseResource.setForfatter(Collections.singletonList(file.getModifiedBy().getValue()));

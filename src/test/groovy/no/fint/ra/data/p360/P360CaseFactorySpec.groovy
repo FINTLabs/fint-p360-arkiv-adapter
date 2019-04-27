@@ -1,8 +1,7 @@
 package no.fint.ra.data.p360
 
-import no.fint.arkiv.p360.caze.CreateCaseParameter
+
 import no.fint.arkiv.p360.caze.ObjectFactory
-import no.fint.model.kultur.kulturminnevern.TilskuddFartoy
 import no.fint.model.resource.kultur.kulturminnevern.TilskuddFartoyResource
 import no.fint.ra.Props
 import spock.lang.Specification
