@@ -16,7 +16,10 @@ public class AdapterProps {
     @Value("${fint.ra.p360.password}")
     private String p360Password;
 
-    @Value("${fint.file-cache-directory:file-cache}")
+    @Value("${fint.file-repository.cache-directory:file-cache}")
     private Path fileCacheDirectory;
+
+    @Value("${fint.file-repository.cache-spec:expireAfterAccess=5m,expireAfterWrite=7m}")
+    private String cacheSpec;
 
 }

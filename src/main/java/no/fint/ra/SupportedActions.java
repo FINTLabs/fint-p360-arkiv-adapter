@@ -2,8 +2,6 @@ package no.fint.ra;
 
 import no.fint.adapter.AbstractSupportedActions;
 import no.fint.model.administrasjon.arkiv.ArkivActions;
-import no.fint.model.administrasjon.personal.PersonalActions;
-import no.fint.model.felles.FellesActions;
 import no.fint.model.kultur.kulturminnevern.KulturminnevernActions;
 import org.springframework.stereotype.Component;
 
@@ -14,10 +12,10 @@ public class SupportedActions extends AbstractSupportedActions {
 
     @PostConstruct
     public void addSupportedActions() {
-
         add(KulturminnevernActions.UPDATE_TILSKUDDFARTOY);
         add(KulturminnevernActions.GET_TILSKUDDFARTOY);
         add(ArkivActions.GET_DOKUMENTFIL);
+        add(ArkivActions.UPDATE_DOKUMENTFIL);
         add(ArkivActions.GET_ALL_SAKSSTATUS);
         add(ArkivActions.GET_ALL_DOKUMENTSTATUS);
         add(ArkivActions.GET_ALL_TILKNYTTETREGISTRERINGSOM);

@@ -5,7 +5,6 @@ pipeline {
             steps {
                 script {
                     props=readProperties file: 'gradle.properties'
-                    VERSION="${props.version}-${props.apiVersion}"
                 }
                 sh "docker build --tag ${GIT_COMMIT} --build-arg apiVersion=${props.apiVersion} ."
             }
@@ -15,27 +14,32 @@ pipeline {
                 branch 'master'
             }
             steps {
-                sh "docker tag ${GIT_COMMIT} fintlabs.azurecr.io/fint-ra-personal-adapter:${VERSION}"
+                sh "docker tag ${GIT_COMMIT} fintlabs.azurecr.io/ra-arkiv-adapter:build.${BUILD_NUMBER}"
                 withDockerRegistry([credentialsId: 'fintlabs.azurecr.io', url: 'https://fintlabs.azurecr.io']) {
-                    sh "docker push 'fintlabs.azurecr.io/fint-ra-personal-adapter:${VERSION}'"
-                }
-            }
-        }
-        stage('Publish Tag') {
-            when { buildingTag() }
-            steps {
-                sh "docker tag ${GIT_COMMIT} fintlabs.azurecr.io/fint-ra-personal-adapter:${TAG_NAME}"
-                withDockerRegistry([credentialsId: 'fintlabs.azurecr.io', url: 'https://fintlabs.azurecr.io']) {
-                    sh "docker push 'fintlabs.azurecr.io/fint-ra-personal-adapter:${TAG_NAME}'"
+                    sh "docker push fintlabs.azurecr.io/ra-arkiv-adapter:build.${BUILD_NUMBER}"
                 }
             }
         }
         stage('Publish PR') {
             when { changeRequest() }
             steps {
-                sh "docker tag ${GIT_COMMIT} fintlabs.azurecr.io/fint-ra-personal-adapter:${BRANCH_NAME}"
+                sh "docker tag ${GIT_COMMIT} fintlabs.azurecr.io/ra-arkiv-adapter:${BRANCH_NAME}.${BUILD_NUMBER}"
                 withDockerRegistry([credentialsId: 'fintlabs.azurecr.io', url: 'https://fintlabs.azurecr.io']) {
-                    sh "docker push 'fintlabs.azurecr.io/fint-ra-personal-adapter:${BRANCH_NAME}'"
+                    sh "docker push fintlabs.azurecr.io/ra-arkiv-adapter:${BRANCH_NAME}.${BUILD_NUMBER}"
+                }
+            }
+        }
+        stage('Publish Version') {
+            when {
+                tag pattern: "v\\d+\\.\\d+\\.\\d+(-\\w+-\\d+)?", comparator: "REGEXP"
+            }
+            steps {
+                script {
+                    VERSION = TAG_NAME[1..-1]
+                }
+                sh "docker tag ${GIT_COMMIT} fintlabs.azurecr.io/ra-arkiv-adapter:${VERSION}"
+                withDockerRegistry([credentialsId: 'fintlabs.azurecr.io', url: 'https://fintlabs.azurecr.io']) {
+                    sh "docker push fintlabs.azurecr.io/ra-arkiv-adapter:${VERSION}"
                 }
             }
         }

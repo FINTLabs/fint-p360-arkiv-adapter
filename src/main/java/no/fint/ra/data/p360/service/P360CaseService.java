@@ -1,11 +1,12 @@
 package no.fint.ra.data.p360.service;
 
+import lombok.extern.slf4j.Slf4j;
 import no.fint.arkiv.p360.caze.*;
 import no.fint.model.resource.kultur.kulturminnevern.TilskuddFartoyResource;
-import no.fint.ra.data.fint.TilskuddFartoyFactory;
 import no.fint.ra.data.exception.CreateTilskuddFartoyException;
 import no.fint.ra.data.exception.GetTilskuddFartoyException;
 import no.fint.ra.data.exception.GetTilskuddFartoyNotFoundException;
+import no.fint.ra.data.fint.TilskuddFartoyFactory;
 import no.fint.ra.data.p360.P360CaseFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,7 @@ import javax.xml.ws.WebServiceException;
 import java.util.List;
 
 @Service
+@Slf4j
 public class P360CaseService extends P360AbstractService {
 
     @Autowired
@@ -74,7 +76,7 @@ public class P360CaseService extends P360AbstractService {
     public TilskuddFartoyResource getTilskuddFartoyCaseByCaseNumber(String caseNumber) {
         GetCasesQuery getCasesQuery = new GetCasesQuery();
         getCasesQuery.setCaseNumber(objectFactory.createGetCasesQueryCaseNumber(caseNumber));
-
+        log.info("Query: {}", getCasesQuery);
         return getCase(getCasesQuery);
 
     }
@@ -82,7 +84,7 @@ public class P360CaseService extends P360AbstractService {
     public TilskuddFartoyResource getTilskuddFartoyCaseBySystemId(String systemId) {
         GetCasesQuery getCasesQuery = new GetCasesQuery();
         getCasesQuery.setRecno(objectFactory.createGetCasesQueryRecno(Integer.valueOf(systemId)));
-
+        log.info("Query: {}", getCasesQuery);
         return getCase(getCasesQuery);
     }
 
@@ -110,8 +112,8 @@ public class P360CaseService extends P360AbstractService {
     }
 
     private TilskuddFartoyResource getCase(GetCasesQuery casesQuery) {
-
         GetCasesResult cases = caseServicePort.getCases(casesQuery);
+        log.info("Cases: {}", cases);
 
         if (cases.isSuccessful() && cases.getTotalPageCount().getValue() == 1) {
             return tilskuddFartoyFactory.toFint(cases.getCases().getValue().getCaseResult().get(0));

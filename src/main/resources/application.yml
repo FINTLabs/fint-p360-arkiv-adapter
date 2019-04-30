@@ -5,22 +5,31 @@ springfox:
   title: 'FINT SSE Adapter Skeleton'
   version: '@version@'
 
-base-url: https://beta.felleskomponent.no/kultur/kulturminnevern/provider
 fint:
   adapter:
+    endpoints:
+      sse: /sse/%s
+      status: /status
+      response: /response
+      providers:
+        arkiv: https://beta.felleskomponent.no/administrasjon/arkiv/provider
+        kulturminne: https://beta.felleskomponent.no/kultur/kulturminnevern/provider
     organizations: ra.no
-    sse-endpoint: ${base-url}/sse/%s
-    status-endpoint: ${base-url}/status
-    response-endpoint: ${base-url}/response
 
   oauth:
-#    enabled: false
+    enabled: true
 #    username:
 #    password:
 #    client-id:
 #    client-secret:
 #    access-token-uri:
 #    scope:
+
+  kulturminne:
+    tilskudd-fartoy:
+      arkivdel: 100072
+      sub-archive: 100007
+      keywords:
 
 security:
   basic:

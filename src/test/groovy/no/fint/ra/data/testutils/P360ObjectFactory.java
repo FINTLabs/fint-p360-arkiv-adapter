@@ -27,7 +27,7 @@ public class P360ObjectFactory {
         caseResult.setTitle(objectFactory.createString("title"));
         caseResult.setUnofficialTitle(objectFactory.createString("title"));
         caseResult.setNotes(objectFactory.createString("notes"));
-
+        caseResult.setArchiveCodes(objectFactory.createArrayOfArchiveCodeResult(objectFactory.createArrayOfArchiveCodeResult()));
 
 
         caseResult.setDocuments(objectFactory.createArrayOfCaseDocumentResult(newP360ArrayOfCaseDocument()));
