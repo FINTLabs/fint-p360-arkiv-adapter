@@ -1,6 +1,6 @@
 package no.fint.adapter.sse
 
-import no.fint.adapter.sse.FintEventListener
+
 import no.fint.ra.service.EventHandlerService
 import no.fint.event.model.DefaultActions
 import no.fint.event.model.Event
@@ -15,17 +15,17 @@ class FintEventListenerSpec extends Specification {
     void setup() {
         inboundEvent = Mock(InboundEvent)
         eventHandlerService = Mock(EventHandlerService)
-        fintEventListener = new FintEventListener(eventHandlerService)
+        fintEventListener = new FintEventListener('test', eventHandlerService)
     }
 
     def "Handle incoming SSE event"() {
         given:
-        def event = new Event(corrId: 'c978c986-8d50-496f-8afd-8d27bd68049b', action: DefaultActions.HEALTH.name(), orgId: 'rogfk.no', client: 'client')
+        def event = new Event(corrId: 'c978c986-8d50-496f-8afd-8d27bd68049b', action: DefaultActions.HEALTH, orgId: 'rogfk.no', client: 'client')
 
         when:
         fintEventListener.onEvent(event)
 
         then:
-        1 * eventHandlerService.handleEvent(event)
+        1 * eventHandlerService.handleEvent(_, event)
     }
 }

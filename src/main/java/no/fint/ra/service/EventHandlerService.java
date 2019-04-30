@@ -52,16 +52,16 @@ public class EventHandlerService {
     @Autowired
     private P360CaseFactory caseFactory;
 
-    public void handleEvent(Event event) {
+    public void handleEvent(String component, Event event) {
         if (event.isHealthCheck()) {
-            postHealthCheckResponse(event);
+            postHealthCheckResponse(component, event);
         } else {
-            if (eventStatusService.verifyEvent(event).getStatus() == Status.ADAPTER_ACCEPTED) {
+            if (eventStatusService.verifyEvent(component, event).getStatus() == Status.ADAPTER_ACCEPTED) {
                 log.info("{}", event.getData());
                 Event<FintLinks> responseEvent = new Event<>(event);
                 try {
 
-                    createEventResponse(event, responseEvent);
+                    createEventResponse(component, event, responseEvent);
 
                 } catch (Exception e) {
                     log.error("Error handling event {}", event, e);
@@ -76,16 +76,16 @@ public class EventHandlerService {
     }
 
 
-    private void createEventResponse(Event event, Event<FintLinks> response) {
+    private void createEventResponse(String component, Event event, Event<FintLinks> response) {
 
         if (KulturminnevernActions.getActions().contains(event.getAction())) {
             switch (KulturminnevernActions.valueOf(event.getAction())) {
                 case UPDATE_TILSKUDDFARTOY:
-                    onCreateTilskuddFartoy(response);
+                    onCreateTilskuddFartoy(component, response);
                     break;
 
                 case GET_TILSKUDDFARTOY:
-                    onGetTilskuddFartoy(event, response);
+                    onGetTilskuddFartoy(component, event, response);
                     break;
             }
         }
@@ -102,7 +102,7 @@ public class EventHandlerService {
          */
     }
 
-    private void onGetTilskuddFartoy(Event event, Event<FintLinks> response) {
+    private void onGetTilskuddFartoy(String component, Event event, Event<FintLinks> response) {
         String query = event.getQuery();
 
         TilskuddFartoyResource tilskuddFartoyResource = null;
@@ -139,11 +139,11 @@ public class EventHandlerService {
             response.setMessage(String.format("Error from adapter: %s", e.getMessage()));
         }
 
-        eventResponseService.postResponse(response);
+        eventResponseService.postResponse(component, response);
 
     }
 
-    private void onCreateTilskuddFartoy(Event<FintLinks> response) {
+    private void onCreateTilskuddFartoy(String component, Event<FintLinks> response) {
 
         if (response.getData().size() == 1) {
 
@@ -159,12 +159,12 @@ public class EventHandlerService {
 
             }
         }
-        eventResponseService.postResponse(response);
+        eventResponseService.postResponse(component, response);
 
     }
 
 
-    public void postHealthCheckResponse(Event event) {
+    public void postHealthCheckResponse(String component, Event event) {
         Event<Health> healthCheckEvent = new Event<>(event);
         healthCheckEvent.setStatus(Status.TEMP_UPSTREAM_QUEUE);
 
@@ -175,7 +175,7 @@ public class EventHandlerService {
             healthCheckEvent.setMessage("The adapter is unable to communicate with the application.");
         }
 
-        eventResponseService.postResponse(healthCheckEvent);
+        eventResponseService.postResponse(component, healthCheckEvent);
     }
 
 

@@ -29,12 +29,13 @@ class EventHandlerServiceSpec extends Specification {
 
     def "Post response on health check"() {
         given:
+        def component = 'test'
         def event = new Event('rogfk.no', 'test', DefaultActions.HEALTH, 'test')
 
         when:
-        eventHandlerService.handleEvent(event)
+        eventHandlerService.handleEvent(component, event)
 
         then:
-        1 * eventResponseService.postResponse(_ as Event)
+        1 * eventResponseService.postResponse(component, _ as Event)
     }
 }
