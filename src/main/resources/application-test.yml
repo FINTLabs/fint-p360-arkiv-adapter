@@ -1,20 +1,31 @@
-security:
-  basic:
-    enabled: false
+server:
+  port: 8091
+
+springfox:
+  title: 'FINT SSE Adapter Skeleton'
+  version: '@version@'
 
 fint:
   adapter:
+    endpoints:
+      sse: /sse/%s
+      status: /status
+      response: /response
+      providers:
+        arkiv: https://beta.felleskomponent.no/administrasjon/arkiv/provider
+        kulturminne: https://beta.felleskomponent.no/kultur/kulturminnevern/provider
     organizations: ra.no
-    sse-endpoint: http://localhost:8081/provider/sse/%s
-    status-endpoint: http://localhost:8081/provider/status
-    response-endpoint: http://localhost:8081/provider/response
 
   oauth:
-    enabled: false
+    enabled: true
 
   kulturminne:
     tilskudd-fartoy:
       arkivdel: 100072
       sub-archive: 100007
       keywords:
+
+security:
+  basic:
+    enabled: false
 

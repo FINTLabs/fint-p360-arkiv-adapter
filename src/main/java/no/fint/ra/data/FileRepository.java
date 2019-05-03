@@ -2,17 +2,21 @@ package no.fint.ra.data;
 
 import lombok.extern.slf4j.Slf4j;
 import no.fint.arkiv.p360.file.FileResult;
-import no.fint.model.administrasjon.arkiv.Dokumentfil;
 import no.fint.model.resource.administrasjon.arkiv.DokumentfilResource;
 import no.fint.ra.data.p360.P360FileService;
 import no.fint.ra.data.utilities.FintUtils;
-import org.apache.commons.codec.binary.Base64;
+import org.apache.tika.mime.MimeType;
+import org.apache.tika.mime.MimeTypeException;
+import org.apache.tika.mime.MimeTypes;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.PostConstruct;
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -29,12 +33,18 @@ public class FileRepository {
     @Autowired
     private P360FileService fileService;
 
+    private ObjectMapper objectMapper;
+
     private ConcurrentMap<String, String> filenames = new ConcurrentSkipListMap<>();
 
     @PostConstruct
     public void init() {
-        if (!Files.isDirectory(props.getFileCacheDirectory()))
+        if (!Files.isDirectory(props.getFileCacheDirectory())) {
             throw new IllegalArgumentException("Not a directory: " + props.getFileCacheDirectory());
+        }
+
+        objectMapper = new ObjectMapper();
+
 
     }
 
@@ -77,11 +87,28 @@ public class FileRepository {
 
             if (fileResult != null) {
 
-                String dataUri = getDataUri(fileResult.getBase64Data().getValue());
-                File file = saveFile(dataUri, recNo, fileResult.getFormat().getValue());
+                //String dataUri = getDataUri(fileResult.getBase64Data().getValue());
+
+                dokumentfilResource.setData(fileResult.getBase64Data().getValue());
+                dokumentfilResource.setData(fileResult.getBase64Data().getValue());
+                /*
+                MimeTypes defaultMimeTypes = MimeTypes.getDefaultMimeTypes();
+                MimeType mimeType = null;
+                try {
+                    mimeType = defaultMimeTypes.forName(fileResult.getFormat().getValue());
+                } catch (MimeTypeException e) {
+                    log.error("Unable to get mime type", e);
+                }
+                dokumentfilResource.setFormat(mimeType.getType().toString());
+                 */
+                if ("PDF".equalsIgnoreCase(fileResult.getFormat().getValue())) {
+                    dokumentfilResource.setFormat(MediaType.APPLICATION_PDF_VALUE);
+                } else {
+                    dokumentfilResource.setFormat(MediaType.APPLICATION_OCTET_STREAM_VALUE);
+                }
+                File file = saveFile(dokumentfilResource);
                 if (file != null) {
                     addFile(file.toPath());
-                    dokumentfilResource.setData(dataUri);
                     return dokumentfilResource;
                 }
 
@@ -90,13 +117,13 @@ public class FileRepository {
                 return null;
             }
         }
-        dokumentfilResource.setData(readFile(recNo));
-        return dokumentfilResource;
+
+        return readFile(recNo);
     }
 
-    private String readFile(String recNo) {
+    private DokumentfilResource readFile(String recNo) {
         try {
-            return new String(Files.readAllBytes(Paths.get(filenames.get(recNo))));
+            return objectMapper.readValue(new File(filenames.get(recNo)), DokumentfilResource.class);
         } catch (IOException e) {
             log.error("Unable to read file from cache", e);
         }
@@ -104,12 +131,12 @@ public class FileRepository {
         return null;
     }
 
-    private File saveFile(String data, String recNo, String format) {
-        File fileDestination = new File(String.format("%s/%s", props.getFileCacheDirectory().toAbsolutePath(), recNo));
+    private File saveFile(DokumentfilResource dokumentfilResource) {
+        File fileDestination = new File(
+                String.format("%s/%s.json", props.getFileCacheDirectory().toAbsolutePath(), dokumentfilResource.getSystemId().getIdentifikatorverdi())
+        );
         try {
-            PrintWriter printWriter = new PrintWriter(fileDestination);
-            printWriter.print(data);
-            printWriter.close();
+            objectMapper.writeValue(fileDestination, dokumentfilResource);
         } catch (IOException e) {
             log.error("Failed to save file", e);
             return null;
@@ -119,10 +146,12 @@ public class FileRepository {
 
     }
 
+    /*
     private byte[] getBytesFromBase64(String s) {
         Base64 base64 = new Base64();
         return base64.decode(s);
     }
+     */
 
 
 }

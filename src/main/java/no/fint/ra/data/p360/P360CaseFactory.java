@@ -1,23 +1,19 @@
 package no.fint.ra.data.p360;
 
 import no.fint.arkiv.p360.caze.*;
-import no.fint.model.felles.kompleksedatatyper.Identifikator;
 import no.fint.model.resource.kultur.kulturminnevern.TilskuddFartoyResource;
-import no.fint.ra.Props;
+import no.fint.ra.KulturminneProps;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import javax.xml.bind.JAXBElement;
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
 import java.util.*;
 
 @Component
 public class P360CaseFactory {
 
     @Autowired
-    private Props props;
+    private KulturminneProps kulturminneProps;
 
     private ObjectFactory objectFactory;
 
@@ -40,8 +36,8 @@ public class P360CaseFactory {
         createCaseParameter.setCaseType(objectFactory.createCreateCaseParameterCaseType("recno:2"));
 
         // TODO: 2019-04-30 Denne bør vel egentlig komme fra journalEnhet
-        createCaseParameter.setResponsibleEnterpriseRecno(objectFactory.createCaseParameterBaseResponsibleEnterpriseRecno(Integer.valueOf(props.getResponsibleUnit())));
-        createCaseParameter.setSubArchive(objectFactory.createCaseParameterBaseSubArchive(props.getSubArchive()));
+        createCaseParameter.setResponsibleEnterpriseRecno(objectFactory.createCaseParameterBaseResponsibleEnterpriseRecno(Integer.valueOf(kulturminneProps.getResponsibleUnit())));
+        createCaseParameter.setSubArchive(objectFactory.createCaseParameterBaseSubArchive(kulturminneProps.getSubArchive()));
 
         ArrayOfClassCodeParameter arrayOfClassCodeParameter = objectFactory.createArrayOfClassCodeParameter();
         ClassCodeParameter classCodeParameter = objectFactory.createClassCodeParameter();
@@ -71,7 +67,7 @@ public class P360CaseFactory {
     private ArrayOfstring getKeywords() {
 
         ArrayOfstring keywordArray = objectFactory.createArrayOfstring();
-        List<String> keywords = Arrays.asList(props.getKeywords());
+        List<String> keywords = Arrays.asList(kulturminneProps.getKeywords());
 
         keywords.forEach(keywordArray.getString()::add);
 

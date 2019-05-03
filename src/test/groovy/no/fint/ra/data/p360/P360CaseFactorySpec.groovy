@@ -3,7 +3,7 @@ package no.fint.ra.data.p360
 
 import no.fint.arkiv.p360.caze.ObjectFactory
 import no.fint.model.resource.kultur.kulturminnevern.TilskuddFartoyResource
-import no.fint.ra.Props
+import no.fint.ra.KulturminneProps
 import spock.lang.Specification
 
 class P360CaseFactorySpec extends Specification {
@@ -13,8 +13,8 @@ class P360CaseFactorySpec extends Specification {
         given:
         def tilskuddFartoyResource = new TilskuddFartoyResource()
         def objectFactory = new ObjectFactory()
-        def props = new Props(responsibleUnit: "123", subArchive: "456", keywords: ["test1", "test2"])
-        def factory = new P360CaseFactory(objectFactory: objectFactory, props: props)
+        def props = new KulturminneProps(responsibleUnit: "123", subArchive: "456", keywords: ["test1", "test2"])
+        def factory = new P360CaseFactory(objectFactory: objectFactory, kulturminneProps: props)
 
         tilskuddFartoyResource.setTittel("Test")
 

@@ -60,7 +60,7 @@ public class P360DocumentService extends P360AbstractService {
             journalpost.addJournalPostType(Link.with(JournalpostTypeResource.class, "systemid", documentResult.getCategory().getValue().getRecno().toString()));
             journalpost.addJournalStatus(Link.with(JournalStatusResource.class, "systemid", documentResult.getStatusCode().getValue()));
             documentResult.getContacts().getValue().getDocumentContactResult().forEach(contact -> {
-                journalpost.addKorrespondansepart(Link.with(KorrespondansepartResource.class, "systemid", contact.getContactRecno().getValue()));
+                //journalpost.addKorrespondansepart(Link.with(KorrespondansepartResource.class, "systemid", contact.getContactRecno().getValue()));
             });
 
             List<DocumentFileResult> documentFileResult = documentResult.getFiles().getValue().getDocumentFileResult();
@@ -112,11 +112,13 @@ public class P360DocumentService extends P360AbstractService {
 
             ArrayOfDocumentContactParameter arrayOfDocumentContactParameter = objectFactory.createArrayOfDocumentContactParameter();
             journalpostResource.getKorrespondansepart().forEach(korrespodansepart -> {
+                /*
                 String[] split2 = korrespodansepart.getHref().split("/");
                 DocumentContactParameter documentContactParameter = objectFactory.createDocumentContactParameter();
                 documentContactParameter.setExternalId(objectFactory.createContactInfoExternalId(String.format("recno:%s", split2[split2.length - 1])));
                 documentContactParameter.setRole(objectFactory.createDocumentContactParameterRole("Mottaker"));
                 arrayOfDocumentContactParameter.getDocumentContactParameter().add(documentContactParameter);
+                 */
 
             });
             createDocumentParameter.setContacts(objectFactory.createArrayOfDocumentContactParameter(arrayOfDocumentContactParameter));
