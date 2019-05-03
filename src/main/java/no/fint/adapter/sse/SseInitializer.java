@@ -4,9 +4,10 @@ import com.google.common.collect.ImmutableMap;
 import lombok.Getter;
 import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
+import no.fint.event.model.HeaderConstants;
+import no.fint.adapter.FintAdapterEndpoints;
 import no.fint.adapter.FintAdapterProps;
 import no.fint.ra.service.EventHandlerService;
-import no.fint.event.model.HeaderConstants;
 import no.fint.sse.FintSse;
 import no.fint.sse.FintSseConfig;
 import no.fint.sse.oauth.TokenService;
@@ -20,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 /**
@@ -37,6 +37,9 @@ public class SseInitializer {
     private FintAdapterProps props;
 
     @Autowired
+    private FintAdapterEndpoints endpoints;
+
+    @Autowired
     private EventHandlerService eventHandlerService;
 
     @Autowired(required = false)
@@ -46,12 +49,14 @@ public class SseInitializer {
     @Synchronized
     public void init() {
         FintSseConfig config = FintSseConfig.withOrgIds(props.getOrganizations());
-        Arrays.asList(props.getOrganizations()).forEach(orgId -> {
-            FintSse fintSse = new FintSse(props.getSseEndpoint(), tokenService, config);
-            FintEventListener fintEventListener = new FintEventListener(eventHandlerService);
-            fintSse.connect(fintEventListener, ImmutableMap.of(HeaderConstants.ORG_ID, orgId));
-            sseClients.add(fintSse);
-        });
+        Arrays.asList(props.getOrganizations())
+                .forEach(orgId -> endpoints.getProviders()
+                        .forEach((component, provider) -> {
+                            FintSse fintSse = new FintSse(provider + endpoints.getSse(), tokenService, config);
+                            FintEventListener fintEventListener = new FintEventListener(component, eventHandlerService);
+                            fintSse.connect(fintEventListener, ImmutableMap.of(HeaderConstants.ORG_ID, orgId, HeaderConstants.CLIENT, "adapter"));
+                            sseClients.add(fintSse);
+                        }));
     }
 
     @Scheduled(initialDelay = 20000L, fixedDelay = 5000L)
@@ -63,7 +68,7 @@ public class SseInitializer {
                     .entrySet()
                     .stream()
                     .filter(e -> e.getValue() > props.getExpiration())
-                    .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
+                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
             if (!expired.isEmpty()) {
                 log.warn("Stale connections detected: {}", expired);
                 cleanup();

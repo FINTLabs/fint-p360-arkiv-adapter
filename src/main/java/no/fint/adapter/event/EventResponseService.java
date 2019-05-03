@@ -1,8 +1,7 @@
 package no.fint.adapter.event;
 
-import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
-import no.fint.adapter.FintAdapterProps;
+import no.fint.adapter.FintAdapterEndpoints;
 import no.fint.event.model.Event;
 import no.fint.event.model.HeaderConstants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +21,7 @@ import org.springframework.web.client.RestTemplate;
 public class EventResponseService {
 
     @Autowired
-    private FintAdapterProps props;
+    private FintAdapterEndpoints endpoints;
 
     @Autowired
     private RestTemplate restTemplate;
@@ -30,16 +29,19 @@ public class EventResponseService {
     /**
      * Method for posting back the response to the provider.
      *
+     * @param component Name of component
      * @param event Event to post back
      */
-    public void postResponse(Event event) {
+    public void postResponse(String component, Event event) {
         try {
             HttpHeaders headers = new HttpHeaders();
-            headers.put(HeaderConstants.ORG_ID, Lists.newArrayList(event.getOrgId()));
-            ResponseEntity<Void> response = restTemplate.exchange(props.getResponseEndpoint(), HttpMethod.POST, new HttpEntity<>(event, headers), Void.class);
-            log.info("Provider POST response: {}", response.getStatusCode());
+            headers.add(HeaderConstants.ORG_ID, event.getOrgId());
+            String url = endpoints.getProviders().get(component) + endpoints.getResponse();
+            log.info("{}: Posting response for {} ...", component, event.getAction());
+            ResponseEntity<Void> response = restTemplate.exchange(url, HttpMethod.POST, new HttpEntity<>(event, headers), Void.class);
+            log.info("{}: Provider POST response: {}", component, response.getStatusCode());
         } catch (RestClientException e) {
-            log.warn("Provider POST response error: {}", e.getMessage());
+            log.warn("{}: Provider POST response error: {}", component, e.getMessage());
         }
     }
 }
