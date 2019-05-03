@@ -39,6 +39,7 @@ public class P360CaseFactory {
         // Set default to NOARK Sak
         createCaseParameter.setCaseType(objectFactory.createCreateCaseParameterCaseType("recno:2"));
 
+        // TODO: 2019-04-30 Denne bør vel egentlig komme fra journalEnhet
         createCaseParameter.setResponsibleEnterpriseRecno(objectFactory.createCaseParameterBaseResponsibleEnterpriseRecno(Integer.valueOf(props.getResponsibleUnit())));
         createCaseParameter.setSubArchive(objectFactory.createCaseParameterBaseSubArchive(props.getSubArchive()));
 
@@ -49,7 +50,7 @@ public class P360CaseFactory {
         classCodeParameter.setArchiveType(objectFactory.createString("Fartøy"));
         arrayOfClassCodeParameter.getClassCodeParameter().add(classCodeParameter);
 
-        createCaseParameter.setArchiveCodes(objectFactory.createCaseParameterBaseArchiveCodes(arrayOfClassCodeParameter));
+        //createCaseParameter.setArchiveCodes(objectFactory.createCaseParameterBaseArchiveCodes(arrayOfClassCodeParameter));
 
 
         /*

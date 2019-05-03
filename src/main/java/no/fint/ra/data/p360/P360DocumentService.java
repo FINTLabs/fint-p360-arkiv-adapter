@@ -1,5 +1,6 @@
 package no.fint.ra.data.p360;
 
+import lombok.extern.slf4j.Slf4j;
 import no.fint.arkiv.p360.document.*;
 import no.fint.model.administrasjon.arkiv.Dokumentfil;
 import no.fint.model.resource.Link;
@@ -12,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+@Slf4j
 @Service
 public class P360DocumentService extends P360AbstractService {
 
@@ -55,6 +57,12 @@ public class P360DocumentService extends P360AbstractService {
                 journalpost.setJournalSekvensnummer(Long.parseLong(split[1]));
             }
 
+            journalpost.addJournalPostType(Link.with(JournalpostTypeResource.class, "systemid", documentResult.getCategory().getValue().getRecno().toString()));
+            journalpost.addJournalStatus(Link.with(JournalStatusResource.class, "systemid", documentResult.getStatusCode().getValue()));
+            documentResult.getContacts().getValue().getDocumentContactResult().forEach(contact -> {
+                journalpost.addKorrespondansepart(Link.with(KorrespondansepartResource.class, "systemid", contact.getContactRecno().getValue()));
+            });
+
             List<DocumentFileResult> documentFileResult = documentResult.getFiles().getValue().getDocumentFileResult();
             List<DokumentbeskrivelseResource> dokumentbeskrivelseResourcesList = new ArrayList<>();
             documentFileResult.forEach(file -> {
@@ -81,6 +89,56 @@ public class P360DocumentService extends P360AbstractService {
         }
 
         return journalpost;
+    }
+
+    public void createJournalPost(SaksmappeResource sak) {
+
+        List<JournalpostResource> journalpostResources = sak.getJournalpost();
+
+        journalpostResources.forEach(journalpostResource -> {
+            CreateDocumentParameter createDocumentParameter = new CreateDocumentParameter();
+
+            createDocumentParameter.setTitle(objectFactory.createDocumentParameterBaseTitle(journalpostResource.getOffentligTittel()));
+            createDocumentParameter.setUnofficialTitle(objectFactory.createDocumentParameterBaseTitle(journalpostResource.getTittel()));
+            createDocumentParameter.setCaseNumber(objectFactory.createCreateDocumentParameterCaseNumber(sak.getMappeId().getIdentifikatorverdi()));
+
+            List<Link> journalPostType = journalpostResource.getJournalPostType();
+            String[] split = journalPostType.get(0).getHref().split("/");
+            createDocumentParameter.setCategory(objectFactory.createDocumentParameterBaseCategory(split[split.length -1]));
+
+            List<Link> journalStatus = journalpostResource.getJournalStatus();
+            String[] split1 = journalStatus.get(0).getHref().split("/");
+            createDocumentParameter.setStatus(objectFactory.createDocumentParameterBaseStatus(split1[split1.length - 1]));
+
+            ArrayOfDocumentContactParameter arrayOfDocumentContactParameter = objectFactory.createArrayOfDocumentContactParameter();
+            journalpostResource.getKorrespondansepart().forEach(korrespodansepart -> {
+                String[] split2 = korrespodansepart.getHref().split("/");
+                DocumentContactParameter documentContactParameter = objectFactory.createDocumentContactParameter();
+                documentContactParameter.setExternalId(objectFactory.createContactInfoExternalId(String.format("recno:%s", split2[split2.length - 1])));
+                documentContactParameter.setRole(objectFactory.createDocumentContactParameterRole("Mottaker"));
+                arrayOfDocumentContactParameter.getDocumentContactParameter().add(documentContactParameter);
+
+            });
+            createDocumentParameter.setContacts(objectFactory.createArrayOfDocumentContactParameter(arrayOfDocumentContactParameter));
+
+            /*
+            CreateFileParameter createFileParameter = new CreateFileParameter();
+            createDocumentParameter.setFiles();
+            journalpostResource.getDokumentbeskrivelse().forEach(dokumentbeskrivelseResource -> {
+                dokumentbeskrivelseResource.getDokumentobjekt().forEach(dokumentobjektResource -> {
+
+                });
+            });
+             */
+
+            DocumentOperationResult documentOperationResult = documentService.createDocument(createDocumentParameter);
+            if (documentOperationResult.isSuccessful()) {
+                log.info("Documents successfully created");
+            } else {
+                log.info("Documents unsuccessfully created");
+
+            }
+        });
     }
 
     public boolean ping() {

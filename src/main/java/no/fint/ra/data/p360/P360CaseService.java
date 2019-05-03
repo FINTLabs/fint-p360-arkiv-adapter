@@ -24,6 +24,9 @@ public class P360CaseService extends P360AbstractService {
     @Autowired
     private TilskuddFartoyFactory tilskuddFartoyFactory;
 
+    @Autowired
+    private P360DocumentService documentService;
+
     private ICaseService caseServicePort;
 
     private ObjectFactory objectFactory;
@@ -54,15 +57,12 @@ public class P360CaseService extends P360AbstractService {
     public TilskuddFartoyResource createTilskuddFartoyCase(TilskuddFartoyResource tilskuddFartoy) {
         CaseOperationResult caseOperationResult = caseServicePort.createCase(caseFactory.createTilskuddFartoy(tilskuddFartoy));
 
-        /*
-        tilskuddFartoy.setNoekkelord(Collections.emptyList());
-        tilskuddFartoy.setSystemId(FintFactory.createIdentifikator(caseOperationResult.getRecno().toString()));
-        tilskuddFartoy.setMappeId(FintFactory.createIdentifikator(caseOperationResult.getCaseNumber().getValue()));
-         */
-
-
         if (caseOperationResult.isSuccessful()) {
-            return getTilskuddFartoyCaseByCaseNumber(caseOperationResult.getCaseNumber().getValue());
+            TilskuddFartoyResource tilskuddFartoyNew = getTilskuddFartoyCaseByCaseNumber(caseOperationResult.getCaseNumber().getValue());
+            tilskuddFartoyNew.setJournalpost(tilskuddFartoy.getJournalpost());
+            documentService.createJournalPost(tilskuddFartoyNew);
+            return tilskuddFartoyNew;
+
 
         } else {
             throw new CreateTilskuddFartoyException(caseOperationResult.getErrorDetails().getValue());
