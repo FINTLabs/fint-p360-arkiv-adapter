@@ -59,8 +59,10 @@ dependencies {
     compile('no.fint:fint-sse:1.4.0-rc-1')
     compile('no.fint:fint-event-model:3.0.0')
     compile('no.fint:fint-relation-model:1.1.5')
-    compile('no.fint:fint-arkiv-model-java:3.3.0-alpha-10')
+    compile('no.fint:fint-arkiv-model-java:3.3.0-alpha-13')
     /* --> Models <-- */
+
+    compile('org.apache.tika:tika-core:1.20')
 
     compile('org.springframework.boot:spring-boot-starter-web')
     runtime('org.springframework.boot:spring-boot-actuator')

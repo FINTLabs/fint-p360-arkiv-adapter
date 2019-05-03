@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 
 @Getter
 @Component
-public class Props {
+public class KulturminneProps {
 
     @Value("${fint.kulturminne.tilskudd-fartoy.arkivdel}")
     private String responsibleUnit;

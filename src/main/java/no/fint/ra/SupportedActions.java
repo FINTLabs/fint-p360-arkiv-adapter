@@ -17,7 +17,7 @@ public class SupportedActions extends AbstractSupportedActions {
 
         add(KulturminnevernActions.UPDATE_TILSKUDDFARTOY);
         add(KulturminnevernActions.GET_TILSKUDDFARTOY);
-        //add(ArkivActions.GET_JOURNALPOST);
+        add(ArkivActions.GET_DOKUMENTFIL);
     }
 
 }

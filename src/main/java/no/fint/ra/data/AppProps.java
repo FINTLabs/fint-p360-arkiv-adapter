@@ -16,7 +16,7 @@ public class AppProps {
     @Value("${fint.ra.p360.password}")
     private String p360Password;
 
-    @Value("${fint.file-cache-directory:data}")
+    @Value("${fint.file-cache-directory:file-cache}")
     private Path fileCacheDirectory;
 
 }

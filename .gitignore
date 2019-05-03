@@ -9,3 +9,5 @@ javadocs/
 generated-sources
 .DS_Store
 /data/
+/file-cache/
+/adapter.log*

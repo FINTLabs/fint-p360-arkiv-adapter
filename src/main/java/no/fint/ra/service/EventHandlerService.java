@@ -9,9 +9,12 @@ import no.fint.event.model.ResponseStatus;
 import no.fint.event.model.Status;
 import no.fint.event.model.health.Health;
 import no.fint.event.model.health.HealthStatus;
+import no.fint.model.administrasjon.arkiv.ArkivActions;
 import no.fint.model.kultur.kulturminnevern.KulturminnevernActions;
 import no.fint.model.resource.FintLinks;
+import no.fint.model.resource.administrasjon.arkiv.DokumentfilResource;
 import no.fint.model.resource.kultur.kulturminnevern.TilskuddFartoyResource;
+import no.fint.ra.data.FileRepository;
 import no.fint.ra.data.p360.P360CaseFactory;
 import no.fint.ra.data.exception.CreateTilskuddFartoyException;
 import no.fint.ra.data.exception.GetTilskuddFartoyException;
@@ -52,6 +55,9 @@ public class EventHandlerService {
     @Autowired
     private P360CaseFactory caseFactory;
 
+    @Autowired
+    private FileRepository fileRepository;
+
     public void handleEvent(String component, Event event) {
         if (event.isHealthCheck()) {
             postHealthCheckResponse(component, event);
@@ -89,17 +95,29 @@ public class EventHandlerService {
                     break;
             }
         }
-        /*
-        if (ArkivActions.getActions().contains(event.getAction())) {
-            String query = event.getQuery();
-            JournalpostResource journalPost = p360DocumentService.getJournalPost(query.replaceFirst("mappeid/", ""));
-            response.setData(Collections.singletonList(journalPost));
-            response.setStatus(Status.TEMP_UPSTREAM_QUEUE);
-            response.setResponseStatus(ResponseStatus.ACCEPTED);
-            eventResponseService.postResponse(response);
 
+        if (ArkivActions.getActions().contains(event.getAction())) {
+            switch (ArkivActions.valueOf(event.getAction())) {
+                case GET_DOKUMENTFIL:
+                    onGetDokumentfil(event, response);
+            }
         }
-         */
+
+    }
+
+    private void onGetDokumentfil(Event event, Event<FintLinks> response) {
+
+        DokumentfilResource file = fileRepository.getFile(event.getQuery().replaceFirst("systemid/", ""));
+        if (file != null) {
+            response.setData(Collections.singletonList(file));
+            //response.setStatus(Status.TEMP_UPSTREAM_QUEUE);
+            response.setResponseStatus(ResponseStatus.ACCEPTED);
+        }
+        else {
+            //response.setStatus(Status.TEMP_UPSTREAM_QUEUE);
+            response.setResponseStatus(ResponseStatus.REJECTED);
+            response.setStatusCode("NOT_FOUND");
+        }
     }
 
     private void onGetTilskuddFartoy(String component, Event event, Event<FintLinks> response) {
