@@ -18,6 +18,10 @@ public class SupportedActions extends AbstractSupportedActions {
         add(KulturminnevernActions.UPDATE_TILSKUDDFARTOY);
         add(KulturminnevernActions.GET_TILSKUDDFARTOY);
         add(ArkivActions.GET_DOKUMENTFIL);
+        add(ArkivActions.GET_ALL_SAKSSTATUS);
+        add(ArkivActions.GET_ALL_DOKUMENTSTATUS);
+        add(ArkivActions.GET_ALL_TILKNYTTETREGISTRERINGSOM);
+        add(ArkivActions.GET_ALL_KORRESPONDANSEPARTTYPE);
     }
 
 }

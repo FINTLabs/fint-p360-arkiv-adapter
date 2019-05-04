@@ -1,2 +1,644 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<wsdl:definitions name="SupportService" targetNamespace="http://software-innovation.com/SI.Data" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:wsx="http://schemas.xmlsoap.org/ws/2004/09/mex" xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy" xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tns="http://software-innovation.com/SI.Data" xmlns:wsa10="http://www.w3.org/2005/08/addressing" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing"><wsp:Policy wsu:Id="BasicHttpBinding_ISupportService_policy"><wsp:ExactlyOne><wsp:All><http:BasicAuthentication xmlns:http="http://schemas.microsoft.com/ws/06/2004/policy/http"/></wsp:All></wsp:ExactlyOne></wsp:Policy><wsp:Policy wsu:Id="BasicHttpBinding_ISupportService1_policy"><wsp:ExactlyOne><wsp:All><http:NtlmAuthentication xmlns:http="http://schemas.microsoft.com/ws/06/2004/policy/http"/></wsp:All></wsp:ExactlyOne></wsp:Policy><wsp:Policy wsu:Id="BasicHttpBinding_ISupportService2_policy"><wsp:ExactlyOne><wsp:All><wsoma:OptimizedMimeSerialization xmlns:wsoma="http://schemas.xmlsoap.org/ws/2004/09/policy/optimizedmimeserialization"/><http:BasicAuthentication xmlns:http="http://schemas.microsoft.com/ws/06/2004/policy/http"/></wsp:All></wsp:ExactlyOne></wsp:Policy><wsp:Policy wsu:Id="BasicHttpBinding_ISupportService3_policy"><wsp:ExactlyOne><wsp:All><wsoma:OptimizedMimeSerialization xmlns:wsoma="http://schemas.xmlsoap.org/ws/2004/09/policy/optimizedmimeserialization"/><http:NtlmAuthentication xmlns:http="http://schemas.microsoft.com/ws/06/2004/policy/http"/></wsp:All></wsp:ExactlyOne></wsp:Policy><wsp:Policy wsu:Id="WSHttpBinding_ISupportService_policy"><wsp:ExactlyOne><wsp:All><sp:SymmetricBinding xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy"><wsp:Policy><sp:ProtectionToken><wsp:Policy><sp:SecureConversationToken sp:IncludeToken="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy/IncludeToken/AlwaysToRecipient"><wsp:Policy><sp:RequireDerivedKeys/><sp:BootstrapPolicy><wsp:Policy><sp:SignedParts><sp:Body/><sp:Header Name="To" Namespace="http://www.w3.org/2005/08/addressing"/><sp:Header Name="From" Namespace="http://www.w3.org/2005/08/addressing"/><sp:Header Name="FaultTo" Namespace="http://www.w3.org/2005/08/addressing"/><sp:Header Name="ReplyTo" Namespace="http://www.w3.org/2005/08/addressing"/><sp:Header Name="MessageID" Namespace="http://www.w3.org/2005/08/addressing"/><sp:Header Name="RelatesTo" Namespace="http://www.w3.org/2005/08/addressing"/><sp:Header Name="Action" Namespace="http://www.w3.org/2005/08/addressing"/></sp:SignedParts><sp:EncryptedParts><sp:Body/></sp:EncryptedParts><sp:SymmetricBinding><wsp:Policy><sp:ProtectionToken><wsp:Policy><sp:SpnegoContextToken sp:IncludeToken="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy/IncludeToken/AlwaysToRecipient"><wsp:Policy><sp:RequireDerivedKeys/></wsp:Policy></sp:SpnegoContextToken></wsp:Policy></sp:ProtectionToken><sp:AlgorithmSuite><wsp:Policy><sp:Basic256/></wsp:Policy></sp:AlgorithmSuite><sp:Layout><wsp:Policy><sp:Strict/></wsp:Policy></sp:Layout><sp:IncludeTimestamp/><sp:EncryptSignature/><sp:OnlySignEntireHeadersAndBody/></wsp:Policy></sp:SymmetricBinding><sp:Wss11><wsp:Policy/></sp:Wss11><sp:Trust10><wsp:Policy><sp:MustSupportIssuedTokens/><sp:RequireClientEntropy/><sp:RequireServerEntropy/></wsp:Policy></sp:Trust10></wsp:Policy></sp:BootstrapPolicy></wsp:Policy></sp:SecureConversationToken></wsp:Policy></sp:ProtectionToken><sp:AlgorithmSuite><wsp:Policy><sp:Basic256/></wsp:Policy></sp:AlgorithmSuite><sp:Layout><wsp:Policy><sp:Strict/></wsp:Policy></sp:Layout><sp:IncludeTimestamp/><sp:EncryptSignature/><sp:OnlySignEntireHeadersAndBody/></wsp:Policy></sp:SymmetricBinding><sp:Wss11 xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy"><wsp:Policy/></sp:Wss11><sp:Trust10 xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy"><wsp:Policy><sp:MustSupportIssuedTokens/><sp:RequireClientEntropy/><sp:RequireServerEntropy/></wsp:Policy></sp:Trust10><wsaw:UsingAddressing/></wsp:All></wsp:ExactlyOne></wsp:Policy><wsp:Policy wsu:Id="WSHttpBinding_ISupportService_Ping_Input_policy"><wsp:ExactlyOne><wsp:All><sp:SignedParts xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy"><sp:Body/><sp:Header Name="To" Namespace="http://www.w3.org/2005/08/addressing"/><sp:Header Name="From" Namespace="http://www.w3.org/2005/08/addressing"/><sp:Header Name="FaultTo" Namespace="http://www.w3.org/2005/08/addressing"/><sp:Header Name="ReplyTo" Namespace="http://www.w3.org/2005/08/addressing"/><sp:Header Name="MessageID" Namespace="http://www.w3.org/2005/08/addressing"/><sp:Header Name="RelatesTo" Namespace="http://www.w3.org/2005/08/addressing"/><sp:Header Name="Action" Namespace="http://www.w3.org/2005/08/addressing"/></sp:SignedParts><sp:EncryptedParts xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy"><sp:Body/></sp:EncryptedParts></wsp:All></wsp:ExactlyOne></wsp:Policy><wsp:Policy wsu:Id="WSHttpBinding_ISupportService_Ping_output_policy"><wsp:ExactlyOne><wsp:All><sp:SignedParts xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy"><sp:Body/><sp:Header Name="To" Namespace="http://www.w3.org/2005/08/addressing"/><sp:Header Name="From" Namespace="http://www.w3.org/2005/08/addressing"/><sp:Header Name="FaultTo" Namespace="http://www.w3.org/2005/08/addressing"/><sp:Header Name="ReplyTo" Namespace="http://www.w3.org/2005/08/addressing"/><sp:Header Name="MessageID" Namespace="http://www.w3.org/2005/08/addressing"/><sp:Header Name="RelatesTo" Namespace="http://www.w3.org/2005/08/addressing"/><sp:Header Name="Action" Namespace="http://www.w3.org/2005/08/addressing"/></sp:SignedParts><sp:EncryptedParts xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy"><sp:Body/></sp:EncryptedParts></wsp:All></wsp:ExactlyOne></wsp:Policy><wsp:Policy wsu:Id="WSHttpBinding_ISupportService_GetCodeTableRows_Input_policy"><wsp:ExactlyOne><wsp:All><sp:SignedParts xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy"><sp:Body/><sp:Header Name="To" Namespace="http://www.w3.org/2005/08/addressing"/><sp:Header Name="From" Namespace="http://www.w3.org/2005/08/addressing"/><sp:Header Name="FaultTo" Namespace="http://www.w3.org/2005/08/addressing"/><sp:Header Name="ReplyTo" Namespace="http://www.w3.org/2005/08/addressing"/><sp:Header Name="MessageID" Namespace="http://www.w3.org/2005/08/addressing"/><sp:Header Name="RelatesTo" Namespace="http://www.w3.org/2005/08/addressing"/><sp:Header Name="Action" Namespace="http://www.w3.org/2005/08/addressing"/></sp:SignedParts><sp:EncryptedParts xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy"><sp:Body/></sp:EncryptedParts></wsp:All></wsp:ExactlyOne></wsp:Policy><wsp:Policy wsu:Id="WSHttpBinding_ISupportService_GetCodeTableRows_output_policy"><wsp:ExactlyOne><wsp:All><sp:SignedParts xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy"><sp:Body/><sp:Header Name="To" Namespace="http://www.w3.org/2005/08/addressing"/><sp:Header Name="From" Namespace="http://www.w3.org/2005/08/addressing"/><sp:Header Name="FaultTo" Namespace="http://www.w3.org/2005/08/addressing"/><sp:Header Name="ReplyTo" Namespace="http://www.w3.org/2005/08/addressing"/><sp:Header Name="MessageID" Namespace="http://www.w3.org/2005/08/addressing"/><sp:Header Name="RelatesTo" Namespace="http://www.w3.org/2005/08/addressing"/><sp:Header Name="Action" Namespace="http://www.w3.org/2005/08/addressing"/></sp:SignedParts><sp:EncryptedParts xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy"><sp:Body/></sp:EncryptedParts></wsp:All></wsp:ExactlyOne></wsp:Policy><wsp:Policy wsu:Id="WSHttpBinding_ISupportService_GetSIFVersion_Input_policy"><wsp:ExactlyOne><wsp:All><sp:SignedParts xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy"><sp:Body/><sp:Header Name="To" Namespace="http://www.w3.org/2005/08/addressing"/><sp:Header Name="From" Namespace="http://www.w3.org/2005/08/addressing"/><sp:Header Name="FaultTo" Namespace="http://www.w3.org/2005/08/addressing"/><sp:Header Name="ReplyTo" Namespace="http://www.w3.org/2005/08/addressing"/><sp:Header Name="MessageID" Namespace="http://www.w3.org/2005/08/addressing"/><sp:Header Name="RelatesTo" Namespace="http://www.w3.org/2005/08/addressing"/><sp:Header Name="Action" Namespace="http://www.w3.org/2005/08/addressing"/></sp:SignedParts><sp:EncryptedParts xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy"><sp:Body/></sp:EncryptedParts></wsp:All></wsp:ExactlyOne></wsp:Policy><wsp:Policy wsu:Id="WSHttpBinding_ISupportService_GetSIFVersion_output_policy"><wsp:ExactlyOne><wsp:All><sp:SignedParts xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy"><sp:Body/><sp:Header Name="To" Namespace="http://www.w3.org/2005/08/addressing"/><sp:Header Name="From" Namespace="http://www.w3.org/2005/08/addressing"/><sp:Header Name="FaultTo" Namespace="http://www.w3.org/2005/08/addressing"/><sp:Header Name="ReplyTo" Namespace="http://www.w3.org/2005/08/addressing"/><sp:Header Name="MessageID" Namespace="http://www.w3.org/2005/08/addressing"/><sp:Header Name="RelatesTo" Namespace="http://www.w3.org/2005/08/addressing"/><sp:Header Name="Action" Namespace="http://www.w3.org/2005/08/addressing"/></sp:SignedParts><sp:EncryptedParts xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy"><sp:Body/></sp:EncryptedParts></wsp:All></wsp:ExactlyOne></wsp:Policy><wsdl:types><xs:schema elementFormDefault="qualified" targetNamespace="http://software-innovation.com/SI.Data" xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:import namespace="http://schemas.datacontract.org/2004/07/SI.Data.Contracts.WS"/><xs:element name="Ping"><xs:complexType><xs:sequence/></xs:complexType></xs:element><xs:element name="PingResponse"><xs:complexType><xs:sequence/></xs:complexType></xs:element><xs:element name="GetCodeTableRows"><xs:complexType><xs:sequence><xs:element minOccurs="0" name="parameter" nillable="true" type="tns:GetCodeTableRowsQuery"/></xs:sequence></xs:complexType></xs:element><xs:complexType name="GetCodeTableRowsQuery"><xs:sequence><xs:element minOccurs="0" name="CodeTableName" nillable="true" type="xs:string"/><xs:element minOccurs="0" name="IncludeExpiredValues" nillable="true" type="xs:boolean"/><xs:element minOccurs="0" name="Language" nillable="true" type="xs:string"/></xs:sequence></xs:complexType><xs:element name="GetCodeTableRowsQuery" nillable="true" type="tns:GetCodeTableRowsQuery"/><xs:element name="GetCodeTableRowsResponse"><xs:complexType><xs:sequence><xs:element minOccurs="0" name="GetCodeTableRowsResult" nillable="true" type="tns:GetCodeTableRowsResult"/></xs:sequence></xs:complexType></xs:element><xs:complexType name="GetCodeTableRowsResult"><xs:complexContent mixed="false"><xs:extension base="tns:WSOperationResult"><xs:sequence><xs:element minOccurs="0" name="CodeTableRows" nillable="true" type="q1:ArrayOfCodeTableRowResult" xmlns:q1="http://schemas.datacontract.org/2004/07/SI.Data.Contracts.WS"/></xs:sequence></xs:extension></xs:complexContent></xs:complexType><xs:element name="GetCodeTableRowsResult" nillable="true" type="tns:GetCodeTableRowsResult"/><xs:complexType name="WSOperationResult"><xs:sequence><xs:element minOccurs="0" name="ErrorDetails" nillable="true" type="xs:string"/><xs:element minOccurs="0" name="ErrorMessage" nillable="true" type="xs:string"/><xs:element minOccurs="0" name="Successful" type="xs:boolean"/></xs:sequence></xs:complexType><xs:element name="WSOperationResult" nillable="true" type="tns:WSOperationResult"/><xs:complexType name="CodeTableResult"><xs:sequence><xs:element minOccurs="0" name="Code" nillable="true" type="xs:string"/><xs:element minOccurs="0" name="Description" nillable="true" type="xs:string"/><xs:element minOccurs="0" name="Recno" type="xs:int"/></xs:sequence></xs:complexType><xs:element name="CodeTableResult" nillable="true" type="tns:CodeTableResult"/><xs:element name="GetSIFVersion"><xs:complexType><xs:sequence/></xs:complexType></xs:element><xs:element name="GetSIFVersionResponse"><xs:complexType><xs:sequence><xs:element minOccurs="0" name="GetSIFVersionResult" nillable="true" type="xs:string"/></xs:sequence></xs:complexType></xs:element></xs:schema><xs:schema attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://schemas.microsoft.com/2003/10/Serialization/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://schemas.microsoft.com/2003/10/Serialization/"><xs:element name="anyType" nillable="true" type="xs:anyType"/><xs:element name="anyURI" nillable="true" type="xs:anyURI"/><xs:element name="base64Binary" nillable="true" type="xs:base64Binary"/><xs:element name="boolean" nillable="true" type="xs:boolean"/><xs:element name="byte" nillable="true" type="xs:byte"/><xs:element name="dateTime" nillable="true" type="xs:dateTime"/><xs:element name="decimal" nillable="true" type="xs:decimal"/><xs:element name="double" nillable="true" type="xs:double"/><xs:element name="float" nillable="true" type="xs:float"/><xs:element name="int" nillable="true" type="xs:int"/><xs:element name="long" nillable="true" type="xs:long"/><xs:element name="QName" nillable="true" type="xs:QName"/><xs:element name="short" nillable="true" type="xs:short"/><xs:element name="string" nillable="true" type="xs:string"/><xs:element name="unsignedByte" nillable="true" type="xs:unsignedByte"/><xs:element name="unsignedInt" nillable="true" type="xs:unsignedInt"/><xs:element name="unsignedLong" nillable="true" type="xs:unsignedLong"/><xs:element name="unsignedShort" nillable="true" type="xs:unsignedShort"/><xs:element name="char" nillable="true" type="tns:char"/><xs:simpleType name="char"><xs:restriction base="xs:int"/></xs:simpleType><xs:element name="duration" nillable="true" type="tns:duration"/><xs:simpleType name="duration"><xs:restriction base="xs:duration"><xs:pattern value="\-?P(\d*D)?(T(\d*H)?(\d*M)?(\d*(\.\d*)?S)?)?"/><xs:minInclusive value="-P10675199DT2H48M5.4775808S"/><xs:maxInclusive value="P10675199DT2H48M5.4775807S"/></xs:restriction></xs:simpleType><xs:element name="guid" nillable="true" type="tns:guid"/><xs:simpleType name="guid"><xs:restriction base="xs:string"><xs:pattern value="[\da-fA-F]{8}-[\da-fA-F]{4}-[\da-fA-F]{4}-[\da-fA-F]{4}-[\da-fA-F]{12}"/></xs:restriction></xs:simpleType><xs:attribute name="FactoryType" type="xs:QName"/><xs:attribute name="Id" type="xs:ID"/><xs:attribute name="Ref" type="xs:IDREF"/></xs:schema><xs:schema elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/SI.Data.Contracts.WS" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://schemas.datacontract.org/2004/07/SI.Data.Contracts.WS"><xs:import namespace="http://software-innovation.com/SI.Data"/><xs:complexType name="ArrayOfCodeTableRowResult"><xs:sequence><xs:element minOccurs="0" maxOccurs="unbounded" name="CodeTableRowResult" nillable="true" type="tns:CodeTableRowResult"/></xs:sequence></xs:complexType><xs:element name="ArrayOfCodeTableRowResult" nillable="true" type="tns:ArrayOfCodeTableRowResult"/><xs:complexType name="CodeTableRowResult"><xs:complexContent mixed="false"><xs:extension base="q1:CodeTableResult" xmlns:q1="http://software-innovation.com/SI.Data"><xs:sequence><xs:element minOccurs="0" name="IsExpired" type="xs:boolean"/><xs:element minOccurs="0" name="Language" nillable="true" type="xs:string"/></xs:sequence></xs:extension></xs:complexContent></xs:complexType><xs:element name="CodeTableRowResult" nillable="true" type="tns:CodeTableRowResult"/></xs:schema></wsdl:types><wsdl:message name="ISupportService_Ping_InputMessage"><wsdl:part name="parameters" element="tns:Ping"/></wsdl:message><wsdl:message name="ISupportService_Ping_OutputMessage"><wsdl:part name="parameters" element="tns:PingResponse"/></wsdl:message><wsdl:message name="ISupportService_GetCodeTableRows_InputMessage"><wsdl:part name="parameters" element="tns:GetCodeTableRows"/></wsdl:message><wsdl:message name="ISupportService_GetCodeTableRows_OutputMessage"><wsdl:part name="parameters" element="tns:GetCodeTableRowsResponse"/></wsdl:message><wsdl:message name="ISupportService_GetSIFVersion_InputMessage"><wsdl:part name="parameters" element="tns:GetSIFVersion"/></wsdl:message><wsdl:message name="ISupportService_GetSIFVersion_OutputMessage"><wsdl:part name="parameters" element="tns:GetSIFVersionResponse"/></wsdl:message><wsdl:portType name="ISupportService"><wsdl:operation name="Ping"><wsdl:input wsaw:Action="http://software-innovation.com/SI.Data/ISupportService/Ping" message="tns:ISupportService_Ping_InputMessage"/><wsdl:output wsaw:Action="http://software-innovation.com/SI.Data/ISupportService/PingResponse" message="tns:ISupportService_Ping_OutputMessage"/></wsdl:operation><wsdl:operation name="GetCodeTableRows"><wsdl:input wsaw:Action="http://software-innovation.com/SI.Data/ISupportService/GetCodeTableRows" message="tns:ISupportService_GetCodeTableRows_InputMessage"/><wsdl:output wsaw:Action="http://software-innovation.com/SI.Data/ISupportService/GetCodeTableRowsResponse" message="tns:ISupportService_GetCodeTableRows_OutputMessage"/></wsdl:operation><wsdl:operation name="GetSIFVersion"><wsdl:input wsaw:Action="http://software-innovation.com/SI.Data/ISupportService/GetSIFVersion" message="tns:ISupportService_GetSIFVersion_InputMessage"/><wsdl:output wsaw:Action="http://software-innovation.com/SI.Data/ISupportService/GetSIFVersionResponse" message="tns:ISupportService_GetSIFVersion_OutputMessage"/></wsdl:operation></wsdl:portType><wsdl:binding name="BasicHttpBinding_ISupportService" type="tns:ISupportService"><wsp:PolicyReference URI="#BasicHttpBinding_ISupportService_policy"/><soap:binding transport="http://schemas.xmlsoap.org/soap/http"/><wsdl:operation name="Ping"><soap:operation soapAction="http://software-innovation.com/SI.Data/ISupportService/Ping" style="document"/><wsdl:input><soap:body use="literal"/></wsdl:input><wsdl:output><soap:body use="literal"/></wsdl:output></wsdl:operation><wsdl:operation name="GetCodeTableRows"><soap:operation soapAction="http://software-innovation.com/SI.Data/ISupportService/GetCodeTableRows" style="document"/><wsdl:input><soap:body use="literal"/></wsdl:input><wsdl:output><soap:body use="literal"/></wsdl:output></wsdl:operation><wsdl:operation name="GetSIFVersion"><soap:operation soapAction="http://software-innovation.com/SI.Data/ISupportService/GetSIFVersion" style="document"/><wsdl:input><soap:body use="literal"/></wsdl:input><wsdl:output><soap:body use="literal"/></wsdl:output></wsdl:operation></wsdl:binding><wsdl:binding name="BasicHttpBinding_ISupportService1" type="tns:ISupportService"><wsp:PolicyReference URI="#BasicHttpBinding_ISupportService1_policy"/><soap:binding transport="http://schemas.xmlsoap.org/soap/http"/><wsdl:operation name="Ping"><soap:operation soapAction="http://software-innovation.com/SI.Data/ISupportService/Ping" style="document"/><wsdl:input><soap:body use="literal"/></wsdl:input><wsdl:output><soap:body use="literal"/></wsdl:output></wsdl:operation><wsdl:operation name="GetCodeTableRows"><soap:operation soapAction="http://software-innovation.com/SI.Data/ISupportService/GetCodeTableRows" style="document"/><wsdl:input><soap:body use="literal"/></wsdl:input><wsdl:output><soap:body use="literal"/></wsdl:output></wsdl:operation><wsdl:operation name="GetSIFVersion"><soap:operation soapAction="http://software-innovation.com/SI.Data/ISupportService/GetSIFVersion" style="document"/><wsdl:input><soap:body use="literal"/></wsdl:input><wsdl:output><soap:body use="literal"/></wsdl:output></wsdl:operation></wsdl:binding><wsdl:binding name="BasicHttpBinding_ISupportService2" type="tns:ISupportService"><wsp:PolicyReference URI="#BasicHttpBinding_ISupportService2_policy"/><soap:binding transport="http://schemas.xmlsoap.org/soap/http"/><wsdl:operation name="Ping"><soap:operation soapAction="http://software-innovation.com/SI.Data/ISupportService/Ping" style="document"/><wsdl:input><soap:body use="literal"/></wsdl:input><wsdl:output><soap:body use="literal"/></wsdl:output></wsdl:operation><wsdl:operation name="GetCodeTableRows"><soap:operation soapAction="http://software-innovation.com/SI.Data/ISupportService/GetCodeTableRows" style="document"/><wsdl:input><soap:body use="literal"/></wsdl:input><wsdl:output><soap:body use="literal"/></wsdl:output></wsdl:operation><wsdl:operation name="GetSIFVersion"><soap:operation soapAction="http://software-innovation.com/SI.Data/ISupportService/GetSIFVersion" style="document"/><wsdl:input><soap:body use="literal"/></wsdl:input><wsdl:output><soap:body use="literal"/></wsdl:output></wsdl:operation></wsdl:binding><wsdl:binding name="BasicHttpBinding_ISupportService3" type="tns:ISupportService"><wsp:PolicyReference URI="#BasicHttpBinding_ISupportService3_policy"/><soap:binding transport="http://schemas.xmlsoap.org/soap/http"/><wsdl:operation name="Ping"><soap:operation soapAction="http://software-innovation.com/SI.Data/ISupportService/Ping" style="document"/><wsdl:input><soap:body use="literal"/></wsdl:input><wsdl:output><soap:body use="literal"/></wsdl:output></wsdl:operation><wsdl:operation name="GetCodeTableRows"><soap:operation soapAction="http://software-innovation.com/SI.Data/ISupportService/GetCodeTableRows" style="document"/><wsdl:input><soap:body use="literal"/></wsdl:input><wsdl:output><soap:body use="literal"/></wsdl:output></wsdl:operation><wsdl:operation name="GetSIFVersion"><soap:operation soapAction="http://software-innovation.com/SI.Data/ISupportService/GetSIFVersion" style="document"/><wsdl:input><soap:body use="literal"/></wsdl:input><wsdl:output><soap:body use="literal"/></wsdl:output></wsdl:operation></wsdl:binding><wsdl:binding name="WSHttpBinding_ISupportService" type="tns:ISupportService"><wsp:PolicyReference URI="#WSHttpBinding_ISupportService_policy"/><soap12:binding transport="http://schemas.xmlsoap.org/soap/http"/><wsdl:operation name="Ping"><soap12:operation soapAction="http://software-innovation.com/SI.Data/ISupportService/Ping" style="document"/><wsdl:input><wsp:PolicyReference URI="#WSHttpBinding_ISupportService_Ping_Input_policy"/><soap12:body use="literal"/></wsdl:input><wsdl:output><wsp:PolicyReference URI="#WSHttpBinding_ISupportService_Ping_output_policy"/><soap12:body use="literal"/></wsdl:output></wsdl:operation><wsdl:operation name="GetCodeTableRows"><soap12:operation soapAction="http://software-innovation.com/SI.Data/ISupportService/GetCodeTableRows" style="document"/><wsdl:input><wsp:PolicyReference URI="#WSHttpBinding_ISupportService_GetCodeTableRows_Input_policy"/><soap12:body use="literal"/></wsdl:input><wsdl:output><wsp:PolicyReference URI="#WSHttpBinding_ISupportService_GetCodeTableRows_output_policy"/><soap12:body use="literal"/></wsdl:output></wsdl:operation><wsdl:operation name="GetSIFVersion"><soap12:operation soapAction="http://software-innovation.com/SI.Data/ISupportService/GetSIFVersion" style="document"/><wsdl:input><wsp:PolicyReference URI="#WSHttpBinding_ISupportService_GetSIFVersion_Input_policy"/><soap12:body use="literal"/></wsdl:input><wsdl:output><wsp:PolicyReference URI="#WSHttpBinding_ISupportService_GetSIFVersion_output_policy"/><soap12:body use="literal"/></wsdl:output></wsdl:operation></wsdl:binding><wsdl:service name="SupportService"><wsdl:port name="BasicHttpBinding_ISupportService" binding="tns:BasicHttpBinding_ISupportService"><soap:address location="http://api360test.ra.no/SI.WS.Core/SIF/SupportService.svc"/></wsdl:port><wsdl:port name="BasicHttpBinding_ISupportService1" binding="tns:BasicHttpBinding_ISupportService"><soap:address location="http://api360test.ra.no/SI.WS.Core/SIF/SupportService.svc/Basic"/></wsdl:port><wsdl:port name="BasicHttpBinding_ISupportService2" binding="tns:BasicHttpBinding_ISupportService1"><soap:address location="http://api360test.ra.no/SI.WS.Core/SIF/SupportService.svc/Ntlm"/></wsdl:port><wsdl:port name="BasicHttpBinding_ISupportService3" binding="tns:BasicHttpBinding_ISupportService2"><soap:address location="http://api360test.ra.no/SI.WS.Core/SIF/SupportService.svc/BasicMtom"/></wsdl:port><wsdl:port name="BasicHttpBinding_ISupportService4" binding="tns:BasicHttpBinding_ISupportService3"><soap:address location="http://api360test.ra.no/SI.WS.Core/SIF/SupportService.svc/NtlmMtom"/></wsdl:port><wsdl:port name="WSHttpBinding_ISupportService" binding="tns:WSHttpBinding_ISupportService"><soap12:address location="http://api360test.ra.no/SI.WS.Core/SIF/SupportService.svc/WSWindows"/><wsa10:EndpointReference><wsa10:Address>http://api360test.ra.no/SI.WS.Core/SIF/SupportService.svc/WSWindows</wsa10:Address><Identity xmlns="http://schemas.xmlsoap.org/ws/2006/02/addressingidentity"><Upn>p360sys@ra.local</Upn></Identity></wsa10:EndpointReference></wsdl:port></wsdl:service></wsdl:definitions>
+<wsdl:definitions name="SupportService" targetNamespace="http://software-innovation.com/SI.Data"
+                  xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+                  xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy"
+                  xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+                  xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"
+                  xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/"
+                  xmlns:tns="http://software-innovation.com/SI.Data" xmlns:wsa10="http://www.w3.org/2005/08/addressing"
+                  xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl">
+    <wsp:Policy wsu:Id="BasicHttpBinding_ISupportService_policy">
+        <wsp:ExactlyOne>
+            <wsp:All>
+                <http:BasicAuthentication xmlns:http="http://schemas.microsoft.com/ws/06/2004/policy/http"/>
+            </wsp:All>
+        </wsp:ExactlyOne>
+    </wsp:Policy>
+    <wsp:Policy wsu:Id="BasicHttpBinding_ISupportService1_policy">
+        <wsp:ExactlyOne>
+            <wsp:All>
+                <http:NtlmAuthentication xmlns:http="http://schemas.microsoft.com/ws/06/2004/policy/http"/>
+            </wsp:All>
+        </wsp:ExactlyOne>
+    </wsp:Policy>
+    <wsp:Policy wsu:Id="BasicHttpBinding_ISupportService2_policy">
+        <wsp:ExactlyOne>
+            <wsp:All>
+                <wsoma:OptimizedMimeSerialization
+                        xmlns:wsoma="http://schemas.xmlsoap.org/ws/2004/09/policy/optimizedmimeserialization"/>
+                <http:BasicAuthentication xmlns:http="http://schemas.microsoft.com/ws/06/2004/policy/http"/>
+            </wsp:All>
+        </wsp:ExactlyOne>
+    </wsp:Policy>
+    <wsp:Policy wsu:Id="BasicHttpBinding_ISupportService3_policy">
+        <wsp:ExactlyOne>
+            <wsp:All>
+                <wsoma:OptimizedMimeSerialization
+                        xmlns:wsoma="http://schemas.xmlsoap.org/ws/2004/09/policy/optimizedmimeserialization"/>
+                <http:NtlmAuthentication xmlns:http="http://schemas.microsoft.com/ws/06/2004/policy/http"/>
+            </wsp:All>
+        </wsp:ExactlyOne>
+    </wsp:Policy>
+    <wsp:Policy wsu:Id="WSHttpBinding_ISupportService_policy">
+        <wsp:ExactlyOne>
+            <wsp:All>
+                <sp:SymmetricBinding xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
+                    <wsp:Policy>
+                        <sp:ProtectionToken>
+                            <wsp:Policy>
+                                <sp:SecureConversationToken
+                                        sp:IncludeToken="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy/IncludeToken/AlwaysToRecipient">
+                                    <wsp:Policy>
+                                        <sp:RequireDerivedKeys/>
+                                        <sp:BootstrapPolicy>
+                                            <wsp:Policy>
+                                                <sp:SignedParts>
+                                                    <sp:Body/>
+                                                    <sp:Header Name="To"
+                                                               Namespace="http://www.w3.org/2005/08/addressing"/>
+                                                    <sp:Header Name="From"
+                                                               Namespace="http://www.w3.org/2005/08/addressing"/>
+                                                    <sp:Header Name="FaultTo"
+                                                               Namespace="http://www.w3.org/2005/08/addressing"/>
+                                                    <sp:Header Name="ReplyTo"
+                                                               Namespace="http://www.w3.org/2005/08/addressing"/>
+                                                    <sp:Header Name="MessageID"
+                                                               Namespace="http://www.w3.org/2005/08/addressing"/>
+                                                    <sp:Header Name="RelatesTo"
+                                                               Namespace="http://www.w3.org/2005/08/addressing"/>
+                                                    <sp:Header Name="Action"
+                                                               Namespace="http://www.w3.org/2005/08/addressing"/>
+                                                </sp:SignedParts>
+                                                <sp:EncryptedParts>
+                                                    <sp:Body/>
+                                                </sp:EncryptedParts>
+                                                <sp:SymmetricBinding>
+                                                    <wsp:Policy>
+                                                        <sp:ProtectionToken>
+                                                            <wsp:Policy>
+                                                                <sp:SpnegoContextToken
+                                                                        sp:IncludeToken="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy/IncludeToken/AlwaysToRecipient">
+                                                                    <wsp:Policy>
+                                                                        <sp:RequireDerivedKeys/>
+                                                                    </wsp:Policy>
+                                                                </sp:SpnegoContextToken>
+                                                            </wsp:Policy>
+                                                        </sp:ProtectionToken>
+                                                        <sp:AlgorithmSuite>
+                                                            <wsp:Policy>
+                                                                <sp:Basic256/>
+                                                            </wsp:Policy>
+                                                        </sp:AlgorithmSuite>
+                                                        <sp:Layout>
+                                                            <wsp:Policy>
+                                                                <sp:Strict/>
+                                                            </wsp:Policy>
+                                                        </sp:Layout>
+                                                        <sp:IncludeTimestamp/>
+                                                        <sp:EncryptSignature/>
+                                                        <sp:OnlySignEntireHeadersAndBody/>
+                                                    </wsp:Policy>
+                                                </sp:SymmetricBinding>
+                                                <sp:Wss11>
+                                                    <wsp:Policy/>
+                                                </sp:Wss11>
+                                                <sp:Trust10>
+                                                    <wsp:Policy>
+                                                        <sp:MustSupportIssuedTokens/>
+                                                        <sp:RequireClientEntropy/>
+                                                        <sp:RequireServerEntropy/>
+                                                    </wsp:Policy>
+                                                </sp:Trust10>
+                                            </wsp:Policy>
+                                        </sp:BootstrapPolicy>
+                                    </wsp:Policy>
+                                </sp:SecureConversationToken>
+                            </wsp:Policy>
+                        </sp:ProtectionToken>
+                        <sp:AlgorithmSuite>
+                            <wsp:Policy>
+                                <sp:Basic256/>
+                            </wsp:Policy>
+                        </sp:AlgorithmSuite>
+                        <sp:Layout>
+                            <wsp:Policy>
+                                <sp:Strict/>
+                            </wsp:Policy>
+                        </sp:Layout>
+                        <sp:IncludeTimestamp/>
+                        <sp:EncryptSignature/>
+                        <sp:OnlySignEntireHeadersAndBody/>
+                    </wsp:Policy>
+                </sp:SymmetricBinding>
+                <sp:Wss11 xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
+                    <wsp:Policy/>
+                </sp:Wss11>
+                <sp:Trust10 xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
+                    <wsp:Policy>
+                        <sp:MustSupportIssuedTokens/>
+                        <sp:RequireClientEntropy/>
+                        <sp:RequireServerEntropy/>
+                    </wsp:Policy>
+                </sp:Trust10>
+                <wsaw:UsingAddressing/>
+            </wsp:All>
+        </wsp:ExactlyOne>
+    </wsp:Policy>
+    <wsp:Policy wsu:Id="WSHttpBinding_ISupportService_Ping_Input_policy">
+        <wsp:ExactlyOne>
+            <wsp:All>
+                <sp:SignedParts xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
+                    <sp:Body/>
+                    <sp:Header Name="To" Namespace="http://www.w3.org/2005/08/addressing"/>
+                    <sp:Header Name="From" Namespace="http://www.w3.org/2005/08/addressing"/>
+                    <sp:Header Name="FaultTo" Namespace="http://www.w3.org/2005/08/addressing"/>
+                    <sp:Header Name="ReplyTo" Namespace="http://www.w3.org/2005/08/addressing"/>
+                    <sp:Header Name="MessageID" Namespace="http://www.w3.org/2005/08/addressing"/>
+                    <sp:Header Name="RelatesTo" Namespace="http://www.w3.org/2005/08/addressing"/>
+                    <sp:Header Name="Action" Namespace="http://www.w3.org/2005/08/addressing"/>
+                </sp:SignedParts>
+                <sp:EncryptedParts xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
+                    <sp:Body/>
+                </sp:EncryptedParts>
+            </wsp:All>
+        </wsp:ExactlyOne>
+    </wsp:Policy>
+    <wsp:Policy wsu:Id="WSHttpBinding_ISupportService_Ping_output_policy">
+        <wsp:ExactlyOne>
+            <wsp:All>
+                <sp:SignedParts xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
+                    <sp:Body/>
+                    <sp:Header Name="To" Namespace="http://www.w3.org/2005/08/addressing"/>
+                    <sp:Header Name="From" Namespace="http://www.w3.org/2005/08/addressing"/>
+                    <sp:Header Name="FaultTo" Namespace="http://www.w3.org/2005/08/addressing"/>
+                    <sp:Header Name="ReplyTo" Namespace="http://www.w3.org/2005/08/addressing"/>
+                    <sp:Header Name="MessageID" Namespace="http://www.w3.org/2005/08/addressing"/>
+                    <sp:Header Name="RelatesTo" Namespace="http://www.w3.org/2005/08/addressing"/>
+                    <sp:Header Name="Action" Namespace="http://www.w3.org/2005/08/addressing"/>
+                </sp:SignedParts>
+                <sp:EncryptedParts xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
+                    <sp:Body/>
+                </sp:EncryptedParts>
+            </wsp:All>
+        </wsp:ExactlyOne>
+    </wsp:Policy>
+    <wsp:Policy wsu:Id="WSHttpBinding_ISupportService_GetCodeTableRows_Input_policy">
+        <wsp:ExactlyOne>
+            <wsp:All>
+                <sp:SignedParts xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
+                    <sp:Body/>
+                    <sp:Header Name="To" Namespace="http://www.w3.org/2005/08/addressing"/>
+                    <sp:Header Name="From" Namespace="http://www.w3.org/2005/08/addressing"/>
+                    <sp:Header Name="FaultTo" Namespace="http://www.w3.org/2005/08/addressing"/>
+                    <sp:Header Name="ReplyTo" Namespace="http://www.w3.org/2005/08/addressing"/>
+                    <sp:Header Name="MessageID" Namespace="http://www.w3.org/2005/08/addressing"/>
+                    <sp:Header Name="RelatesTo" Namespace="http://www.w3.org/2005/08/addressing"/>
+                    <sp:Header Name="Action" Namespace="http://www.w3.org/2005/08/addressing"/>
+                </sp:SignedParts>
+                <sp:EncryptedParts xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
+                    <sp:Body/>
+                </sp:EncryptedParts>
+            </wsp:All>
+        </wsp:ExactlyOne>
+    </wsp:Policy>
+    <wsp:Policy wsu:Id="WSHttpBinding_ISupportService_GetCodeTableRows_output_policy">
+        <wsp:ExactlyOne>
+            <wsp:All>
+                <sp:SignedParts xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
+                    <sp:Body/>
+                    <sp:Header Name="To" Namespace="http://www.w3.org/2005/08/addressing"/>
+                    <sp:Header Name="From" Namespace="http://www.w3.org/2005/08/addressing"/>
+                    <sp:Header Name="FaultTo" Namespace="http://www.w3.org/2005/08/addressing"/>
+                    <sp:Header Name="ReplyTo" Namespace="http://www.w3.org/2005/08/addressing"/>
+                    <sp:Header Name="MessageID" Namespace="http://www.w3.org/2005/08/addressing"/>
+                    <sp:Header Name="RelatesTo" Namespace="http://www.w3.org/2005/08/addressing"/>
+                    <sp:Header Name="Action" Namespace="http://www.w3.org/2005/08/addressing"/>
+                </sp:SignedParts>
+                <sp:EncryptedParts xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
+                    <sp:Body/>
+                </sp:EncryptedParts>
+            </wsp:All>
+        </wsp:ExactlyOne>
+    </wsp:Policy>
+    <wsp:Policy wsu:Id="WSHttpBinding_ISupportService_GetSIFVersion_Input_policy">
+        <wsp:ExactlyOne>
+            <wsp:All>
+                <sp:SignedParts xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
+                    <sp:Body/>
+                    <sp:Header Name="To" Namespace="http://www.w3.org/2005/08/addressing"/>
+                    <sp:Header Name="From" Namespace="http://www.w3.org/2005/08/addressing"/>
+                    <sp:Header Name="FaultTo" Namespace="http://www.w3.org/2005/08/addressing"/>
+                    <sp:Header Name="ReplyTo" Namespace="http://www.w3.org/2005/08/addressing"/>
+                    <sp:Header Name="MessageID" Namespace="http://www.w3.org/2005/08/addressing"/>
+                    <sp:Header Name="RelatesTo" Namespace="http://www.w3.org/2005/08/addressing"/>
+                    <sp:Header Name="Action" Namespace="http://www.w3.org/2005/08/addressing"/>
+                </sp:SignedParts>
+                <sp:EncryptedParts xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
+                    <sp:Body/>
+                </sp:EncryptedParts>
+            </wsp:All>
+        </wsp:ExactlyOne>
+    </wsp:Policy>
+    <wsp:Policy wsu:Id="WSHttpBinding_ISupportService_GetSIFVersion_output_policy">
+        <wsp:ExactlyOne>
+            <wsp:All>
+                <sp:SignedParts xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
+                    <sp:Body/>
+                    <sp:Header Name="To" Namespace="http://www.w3.org/2005/08/addressing"/>
+                    <sp:Header Name="From" Namespace="http://www.w3.org/2005/08/addressing"/>
+                    <sp:Header Name="FaultTo" Namespace="http://www.w3.org/2005/08/addressing"/>
+                    <sp:Header Name="ReplyTo" Namespace="http://www.w3.org/2005/08/addressing"/>
+                    <sp:Header Name="MessageID" Namespace="http://www.w3.org/2005/08/addressing"/>
+                    <sp:Header Name="RelatesTo" Namespace="http://www.w3.org/2005/08/addressing"/>
+                    <sp:Header Name="Action" Namespace="http://www.w3.org/2005/08/addressing"/>
+                </sp:SignedParts>
+                <sp:EncryptedParts xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
+                    <sp:Body/>
+                </sp:EncryptedParts>
+            </wsp:All>
+        </wsp:ExactlyOne>
+    </wsp:Policy>
+    <wsdl:types>
+        <xs:schema elementFormDefault="qualified" targetNamespace="http://software-innovation.com/SI.Data"
+                   xmlns:xs="http://www.w3.org/2001/XMLSchema">
+            <xs:import namespace="http://schemas.datacontract.org/2004/07/SI.Data.Contracts.WS"/>
+            <xs:element name="Ping">
+                <xs:complexType>
+                    <xs:sequence/>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="PingResponse">
+                <xs:complexType>
+                    <xs:sequence/>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="GetCodeTableRows">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="parameter" nillable="true" type="tns:GetCodeTableRowsQuery"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:complexType name="GetCodeTableRowsQuery">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="CodeTableName" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="IncludeExpiredValues" nillable="true" type="xs:boolean"/>
+                    <xs:element minOccurs="0" name="Language" nillable="true" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element name="GetCodeTableRowsQuery" nillable="true" type="tns:GetCodeTableRowsQuery"/>
+            <xs:element name="GetCodeTableRowsResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="GetCodeTableRowsResult" nillable="true"
+                                    type="tns:GetCodeTableRowsResult"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:complexType name="GetCodeTableRowsResult">
+                <xs:complexContent mixed="false">
+                    <xs:extension base="tns:WSOperationResult">
+                        <xs:sequence>
+                            <xs:element minOccurs="0" name="CodeTableRows" nillable="true"
+                                        type="q1:ArrayOfCodeTableRowResult"
+                                        xmlns:q1="http://schemas.datacontract.org/2004/07/SI.Data.Contracts.WS"/>
+                        </xs:sequence>
+                    </xs:extension>
+                </xs:complexContent>
+            </xs:complexType>
+            <xs:element name="GetCodeTableRowsResult" nillable="true" type="tns:GetCodeTableRowsResult"/>
+            <xs:complexType name="WSOperationResult">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="ErrorDetails" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="ErrorMessage" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="Successful" type="xs:boolean"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element name="WSOperationResult" nillable="true" type="tns:WSOperationResult"/>
+            <xs:complexType name="CodeTableResult">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="Code" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="Description" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="Recno" type="xs:int"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element name="CodeTableResult" nillable="true" type="tns:CodeTableResult"/>
+            <xs:element name="GetSIFVersion">
+                <xs:complexType>
+                    <xs:sequence/>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="GetSIFVersionResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="GetSIFVersionResult" nillable="true" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:schema>
+        <xs:schema attributeFormDefault="qualified" elementFormDefault="qualified"
+                   targetNamespace="http://schemas.microsoft.com/2003/10/Serialization/"
+                   xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                   xmlns:tns="http://schemas.microsoft.com/2003/10/Serialization/">
+            <xs:element name="anyType" nillable="true" type="xs:anyType"/>
+            <xs:element name="anyURI" nillable="true" type="xs:anyURI"/>
+            <xs:element name="base64Binary" nillable="true" type="xs:base64Binary"/>
+            <xs:element name="boolean" nillable="true" type="xs:boolean"/>
+            <xs:element name="byte" nillable="true" type="xs:byte"/>
+            <xs:element name="dateTime" nillable="true" type="xs:dateTime"/>
+            <xs:element name="decimal" nillable="true" type="xs:decimal"/>
+            <xs:element name="double" nillable="true" type="xs:double"/>
+            <xs:element name="float" nillable="true" type="xs:float"/>
+            <xs:element name="int" nillable="true" type="xs:int"/>
+            <xs:element name="long" nillable="true" type="xs:long"/>
+            <xs:element name="QName" nillable="true" type="xs:QName"/>
+            <xs:element name="short" nillable="true" type="xs:short"/>
+            <xs:element name="string" nillable="true" type="xs:string"/>
+            <xs:element name="unsignedByte" nillable="true" type="xs:unsignedByte"/>
+            <xs:element name="unsignedInt" nillable="true" type="xs:unsignedInt"/>
+            <xs:element name="unsignedLong" nillable="true" type="xs:unsignedLong"/>
+            <xs:element name="unsignedShort" nillable="true" type="xs:unsignedShort"/>
+            <xs:element name="char" nillable="true" type="tns:char"/>
+            <xs:simpleType name="char">
+                <xs:restriction base="xs:int"/>
+            </xs:simpleType>
+            <xs:element name="duration" nillable="true" type="tns:duration"/>
+            <xs:simpleType name="duration">
+                <xs:restriction base="xs:duration">
+                    <xs:pattern value="\-?P(\d*D)?(T(\d*H)?(\d*M)?(\d*(\.\d*)?S)?)?"/>
+                    <xs:minInclusive value="-P10675199DT2H48M5.4775808S"/>
+                    <xs:maxInclusive value="P10675199DT2H48M5.4775807S"/>
+                </xs:restriction>
+            </xs:simpleType>
+            <xs:element name="guid" nillable="true" type="tns:guid"/>
+            <xs:simpleType name="guid">
+                <xs:restriction base="xs:string">
+                    <xs:pattern value="[\da-fA-F]{8}-[\da-fA-F]{4}-[\da-fA-F]{4}-[\da-fA-F]{4}-[\da-fA-F]{12}"/>
+                </xs:restriction>
+            </xs:simpleType>
+            <xs:attribute name="FactoryType" type="xs:QName"/>
+            <xs:attribute name="Id" type="xs:ID"/>
+            <xs:attribute name="Ref" type="xs:IDREF"/>
+        </xs:schema>
+        <xs:schema elementFormDefault="qualified"
+                   targetNamespace="http://schemas.datacontract.org/2004/07/SI.Data.Contracts.WS"
+                   xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                   xmlns:tns="http://schemas.datacontract.org/2004/07/SI.Data.Contracts.WS">
+            <xs:import namespace="http://software-innovation.com/SI.Data"/>
+            <xs:complexType name="ArrayOfCodeTableRowResult">
+                <xs:sequence>
+                    <xs:element minOccurs="0" maxOccurs="unbounded" name="CodeTableRowResult" nillable="true"
+                                type="tns:CodeTableRowResult"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element name="ArrayOfCodeTableRowResult" nillable="true" type="tns:ArrayOfCodeTableRowResult"/>
+            <xs:complexType name="CodeTableRowResult">
+                <xs:complexContent mixed="false">
+                    <xs:extension base="q1:CodeTableResult" xmlns:q1="http://software-innovation.com/SI.Data">
+                        <xs:sequence>
+                            <xs:element minOccurs="0" name="IsExpired" type="xs:boolean"/>
+                            <xs:element minOccurs="0" name="Language" nillable="true" type="xs:string"/>
+                        </xs:sequence>
+                    </xs:extension>
+                </xs:complexContent>
+            </xs:complexType>
+            <xs:element name="CodeTableRowResult" nillable="true" type="tns:CodeTableRowResult"/>
+        </xs:schema>
+    </wsdl:types>
+    <wsdl:message name="ISupportService_Ping_InputMessage">
+        <wsdl:part name="parameters" element="tns:Ping"/>
+    </wsdl:message>
+    <wsdl:message name="ISupportService_Ping_OutputMessage">
+        <wsdl:part name="parameters" element="tns:PingResponse"/>
+    </wsdl:message>
+    <wsdl:message name="ISupportService_GetCodeTableRows_InputMessage">
+        <wsdl:part name="parameters" element="tns:GetCodeTableRows"/>
+    </wsdl:message>
+    <wsdl:message name="ISupportService_GetCodeTableRows_OutputMessage">
+        <wsdl:part name="parameters" element="tns:GetCodeTableRowsResponse"/>
+    </wsdl:message>
+    <wsdl:message name="ISupportService_GetSIFVersion_InputMessage">
+        <wsdl:part name="parameters" element="tns:GetSIFVersion"/>
+    </wsdl:message>
+    <wsdl:message name="ISupportService_GetSIFVersion_OutputMessage">
+        <wsdl:part name="parameters" element="tns:GetSIFVersionResponse"/>
+    </wsdl:message>
+    <wsdl:portType name="ISupportService">
+        <wsdl:operation name="Ping">
+            <wsdl:input wsaw:Action="http://software-innovation.com/SI.Data/ISupportService/Ping"
+                        message="tns:ISupportService_Ping_InputMessage"/>
+            <wsdl:output wsaw:Action="http://software-innovation.com/SI.Data/ISupportService/PingResponse"
+                         message="tns:ISupportService_Ping_OutputMessage"/>
+        </wsdl:operation>
+        <wsdl:operation name="GetCodeTableRows">
+            <wsdl:input wsaw:Action="http://software-innovation.com/SI.Data/ISupportService/GetCodeTableRows"
+                        message="tns:ISupportService_GetCodeTableRows_InputMessage"/>
+            <wsdl:output wsaw:Action="http://software-innovation.com/SI.Data/ISupportService/GetCodeTableRowsResponse"
+                         message="tns:ISupportService_GetCodeTableRows_OutputMessage"/>
+        </wsdl:operation>
+        <wsdl:operation name="GetSIFVersion">
+            <wsdl:input wsaw:Action="http://software-innovation.com/SI.Data/ISupportService/GetSIFVersion"
+                        message="tns:ISupportService_GetSIFVersion_InputMessage"/>
+            <wsdl:output wsaw:Action="http://software-innovation.com/SI.Data/ISupportService/GetSIFVersionResponse"
+                         message="tns:ISupportService_GetSIFVersion_OutputMessage"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="BasicHttpBinding_ISupportService" type="tns:ISupportService">
+        <wsp:PolicyReference URI="#BasicHttpBinding_ISupportService_policy"/>
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="Ping">
+            <soap:operation soapAction="http://software-innovation.com/SI.Data/ISupportService/Ping" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="GetCodeTableRows">
+            <soap:operation soapAction="http://software-innovation.com/SI.Data/ISupportService/GetCodeTableRows"
+                            style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="GetSIFVersion">
+            <soap:operation soapAction="http://software-innovation.com/SI.Data/ISupportService/GetSIFVersion"
+                            style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:binding name="BasicHttpBinding_ISupportService1" type="tns:ISupportService">
+        <wsp:PolicyReference URI="#BasicHttpBinding_ISupportService1_policy"/>
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="Ping">
+            <soap:operation soapAction="http://software-innovation.com/SI.Data/ISupportService/Ping" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="GetCodeTableRows">
+            <soap:operation soapAction="http://software-innovation.com/SI.Data/ISupportService/GetCodeTableRows"
+                            style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="GetSIFVersion">
+            <soap:operation soapAction="http://software-innovation.com/SI.Data/ISupportService/GetSIFVersion"
+                            style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:binding name="BasicHttpBinding_ISupportService2" type="tns:ISupportService">
+        <wsp:PolicyReference URI="#BasicHttpBinding_ISupportService2_policy"/>
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="Ping">
+            <soap:operation soapAction="http://software-innovation.com/SI.Data/ISupportService/Ping" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="GetCodeTableRows">
+            <soap:operation soapAction="http://software-innovation.com/SI.Data/ISupportService/GetCodeTableRows"
+                            style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="GetSIFVersion">
+            <soap:operation soapAction="http://software-innovation.com/SI.Data/ISupportService/GetSIFVersion"
+                            style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:binding name="BasicHttpBinding_ISupportService3" type="tns:ISupportService">
+        <wsp:PolicyReference URI="#BasicHttpBinding_ISupportService3_policy"/>
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="Ping">
+            <soap:operation soapAction="http://software-innovation.com/SI.Data/ISupportService/Ping" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="GetCodeTableRows">
+            <soap:operation soapAction="http://software-innovation.com/SI.Data/ISupportService/GetCodeTableRows"
+                            style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="GetSIFVersion">
+            <soap:operation soapAction="http://software-innovation.com/SI.Data/ISupportService/GetSIFVersion"
+                            style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:binding name="WSHttpBinding_ISupportService" type="tns:ISupportService">
+        <wsp:PolicyReference URI="#WSHttpBinding_ISupportService_policy"/>
+        <soap12:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="Ping">
+            <soap12:operation soapAction="http://software-innovation.com/SI.Data/ISupportService/Ping"
+                              style="document"/>
+            <wsdl:input>
+                <wsp:PolicyReference URI="#WSHttpBinding_ISupportService_Ping_Input_policy"/>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <wsp:PolicyReference URI="#WSHttpBinding_ISupportService_Ping_output_policy"/>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="GetCodeTableRows">
+            <soap12:operation soapAction="http://software-innovation.com/SI.Data/ISupportService/GetCodeTableRows"
+                              style="document"/>
+            <wsdl:input>
+                <wsp:PolicyReference URI="#WSHttpBinding_ISupportService_GetCodeTableRows_Input_policy"/>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <wsp:PolicyReference URI="#WSHttpBinding_ISupportService_GetCodeTableRows_output_policy"/>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="GetSIFVersion">
+            <soap12:operation soapAction="http://software-innovation.com/SI.Data/ISupportService/GetSIFVersion"
+                              style="document"/>
+            <wsdl:input>
+                <wsp:PolicyReference URI="#WSHttpBinding_ISupportService_GetSIFVersion_Input_policy"/>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <wsp:PolicyReference URI="#WSHttpBinding_ISupportService_GetSIFVersion_output_policy"/>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="SupportService">
+        <wsdl:port name="BasicHttpBinding_ISupportService" binding="tns:BasicHttpBinding_ISupportService">
+            <soap:address location="https://api360test.ra.no/SI.WS.Core/SIF/SupportService.svc"/>
+        </wsdl:port>
+        <wsdl:port name="BasicHttpBinding_ISupportService1" binding="tns:BasicHttpBinding_ISupportService">
+            <soap:address location="https://api360test.ra.no/SI.WS.Core/SIF/SupportService.svc/Basic"/>
+        </wsdl:port>
+        <wsdl:port name="BasicHttpBinding_ISupportService2" binding="tns:BasicHttpBinding_ISupportService1">
+            <soap:address location="https://api360test.ra.no/SI.WS.Core/SIF/SupportService.svc/Ntlm"/>
+        </wsdl:port>
+        <wsdl:port name="BasicHttpBinding_ISupportService3" binding="tns:BasicHttpBinding_ISupportService2">
+            <soap:address location="https://api360test.ra.no/SI.WS.Core/SIF/SupportService.svc/BasicMtom"/>
+        </wsdl:port>
+        <wsdl:port name="BasicHttpBinding_ISupportService4" binding="tns:BasicHttpBinding_ISupportService3">
+            <soap:address location="https://api360test.ra.no/SI.WS.Core/SIF/SupportService.svc/NtlmMtom"/>
+        </wsdl:port>
+        <wsdl:port name="WSHttpBinding_ISupportService" binding="tns:WSHttpBinding_ISupportService">
+            <soap12:address location="https://api360test.ra.no/SI.WS.Core/SIF/SupportService.svc/WSWindows"/>
+            <wsa10:EndpointReference>
+                <wsa10:Address>https://api360test.ra.no/SI.WS.Core/SIF/SupportService.svc/WSWindows</wsa10:Address>
+                <Identity xmlns="http://schemas.xmlsoap.org/ws/2006/02/addressingidentity">
+                    <Upn>p360sys@ra.local</Upn>
+                </Identity>
+            </wsa10:EndpointReference>
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>

@@ -13,6 +13,9 @@ import no.fint.model.administrasjon.arkiv.ArkivActions;
 import no.fint.model.kultur.kulturminnevern.KulturminnevernActions;
 import no.fint.model.resource.FintLinks;
 import no.fint.model.resource.administrasjon.arkiv.DokumentfilResource;
+import no.fint.model.resource.administrasjon.arkiv.SaksstatusResource;
+import no.fint.model.resource.administrasjon.arkiv.SaksstatusResources;
+import no.fint.model.resource.administrasjon.arkiv.TilknyttetRegistreringSomResource;
 import no.fint.model.resource.kultur.kulturminnevern.TilskuddFartoyResource;
 import no.fint.ra.data.FileRepository;
 import no.fint.ra.data.exception.CreateTilskuddFartoyException;
@@ -21,6 +24,7 @@ import no.fint.ra.data.exception.GetTilskuddFartoyNotFoundException;
 import no.fint.ra.data.p360.service.P360CaseService;
 import no.fint.ra.data.p360.service.P360DocumentService;
 import no.fint.ra.data.p360.service.P360FileService;
+import no.fint.ra.data.p360.service.P360SupportService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -48,6 +52,9 @@ public class EventHandlerService {
 
     @Autowired
     private P360CaseService p360CaseService;
+
+    @Autowired
+    private P360SupportService supportService;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -94,9 +101,46 @@ public class EventHandlerService {
             switch (ArkivActions.valueOf(event.getAction())) {
                 case GET_DOKUMENTFIL:
                     onGetDokumentfil(event, response, component);
+                    break;
+                case GET_ALL_SAKSSTATUS:
+                    onGetSaksstatus(component, response);
+                    break;
+                case GET_ALL_DOKUMENTSTATUS:
+                    onGetAllDokumentstatus(component, response);
+                    break;
+                case GET_ALL_KORRESPONDANSEPARTTYPE:
+                    onGetAllKorrespondansepartType(component, response);
+                    break;
+                case GET_ALL_TILKNYTTETREGISTRERINGSOM:
+                    onGetAllTilknyttetRegistreringSom(component, response);
+                    break;
             }
         }
 
+    }
+
+    private void onGetAllTilknyttetRegistreringSom(String component, Event<FintLinks> response) {
+        supportService.getDocumentCategoryTable().forEach(response::addData);
+        response.setResponseStatus(ResponseStatus.ACCEPTED);
+        eventResponseService.postResponse(component, response);
+    }
+
+    private void onGetAllKorrespondansepartType(String component, Event<FintLinks> response) {
+        supportService.getDocumentContactRole().forEach(response::addData);
+        response.setResponseStatus(ResponseStatus.ACCEPTED);
+        eventResponseService.postResponse(component, response);
+    }
+
+    private void onGetAllDokumentstatus(String component, Event<FintLinks> response) {
+        supportService.getDocumentStatusTable().forEach(response::addData);
+        response.setResponseStatus(ResponseStatus.ACCEPTED);
+        eventResponseService.postResponse(component, response);
+    }
+
+    private void onGetSaksstatus(String component, Event<FintLinks> response) {
+        supportService.getCaseStatusTable().forEach(response::addData);
+        response.setResponseStatus(ResponseStatus.ACCEPTED);
+        eventResponseService.postResponse(component, response);
     }
 
     private void onGetDokumentfil(Event event, Event<FintLinks> response, String component) {
@@ -189,8 +233,7 @@ public class EventHandlerService {
 
 
     private boolean healthCheck() {
-
-        return p360CaseService.ping() && p360DocumentService.ping() && p360FileService.ping();
+        return p360CaseService.ping() && p360DocumentService.ping() && p360FileService.ping() && supportService.ping();
 
     }
 
