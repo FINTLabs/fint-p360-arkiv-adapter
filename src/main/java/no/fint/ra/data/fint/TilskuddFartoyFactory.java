@@ -9,7 +9,7 @@ import no.fint.model.resource.administrasjon.arkiv.JournalpostResource;
 import no.fint.model.resource.kultur.kulturminnevern.TilskuddFartoyResource;
 import no.fint.ra.data.utilities.FintUtils;
 import no.fint.ra.data.utilities.NOARKUtils;
-import no.fint.ra.data.p360.P360DocumentService;
+import no.fint.ra.data.p360.service.P360DocumentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

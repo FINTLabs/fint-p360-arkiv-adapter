@@ -3,8 +3,7 @@ package no.fint.ra.data.fint
 
 import no.fint.arkiv.p360.caze.ObjectFactory
 import no.fint.model.resource.administrasjon.arkiv.JournalpostResource
-import no.fint.model.resource.kultur.kulturminnevern.TilskuddFartoyResource
-import no.fint.ra.data.p360.P360DocumentService
+import no.fint.ra.data.p360.service.P360DocumentService
 import no.fint.ra.data.testutils.P360ObjectFactory
 import spock.lang.Specification
 

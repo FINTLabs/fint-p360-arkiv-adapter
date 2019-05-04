@@ -3,14 +3,12 @@ package no.fint.ra.data;
 import lombok.extern.slf4j.Slf4j;
 import no.fint.arkiv.p360.file.FileResult;
 import no.fint.model.resource.administrasjon.arkiv.DokumentfilResource;
-import no.fint.ra.data.p360.P360FileService;
+import no.fint.ra.AdapterProps;
+import no.fint.ra.data.p360.service.P360FileService;
 import no.fint.ra.data.utilities.FintUtils;
-import org.apache.tika.mime.MimeType;
-import org.apache.tika.mime.MimeTypeException;
-import org.apache.tika.mime.MimeTypes;
+import org.apache.tika.Tika;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Repository;
 
@@ -19,7 +17,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ConcurrentSkipListMap;
 
@@ -28,7 +25,7 @@ import java.util.concurrent.ConcurrentSkipListMap;
 public class FileRepository {
 
     @Autowired
-    private AppProps props;
+    private AdapterProps props;
 
     @Autowired
     private P360FileService fileService;
@@ -63,14 +60,9 @@ public class FileRepository {
     private void addFile(Path path) {
         String filnavn = path.toAbsolutePath().toString();
         String id = path.getFileName().toString();
-        //id = id.substring(0, id.lastIndexOf('.'));
+        id = id.substring(0, id.lastIndexOf('.'));
         filenames.put(id, filnavn);
 
-    }
-
-    public String getDataUri(String data) {
-        String format = "application/pdf";//"application/pdf";
-        return String.format("data:%s;base64,%s", format, data);
     }
 
     private boolean fileExists(String recNo) {
@@ -87,25 +79,11 @@ public class FileRepository {
 
             if (fileResult != null) {
 
-                //String dataUri = getDataUri(fileResult.getBase64Data().getValue());
 
                 dokumentfilResource.setData(fileResult.getBase64Data().getValue());
                 dokumentfilResource.setData(fileResult.getBase64Data().getValue());
-                /*
-                MimeTypes defaultMimeTypes = MimeTypes.getDefaultMimeTypes();
-                MimeType mimeType = null;
-                try {
-                    mimeType = defaultMimeTypes.forName(fileResult.getFormat().getValue());
-                } catch (MimeTypeException e) {
-                    log.error("Unable to get mime type", e);
-                }
-                dokumentfilResource.setFormat(mimeType.getType().toString());
-                 */
-                if ("PDF".equalsIgnoreCase(fileResult.getFormat().getValue())) {
-                    dokumentfilResource.setFormat(MediaType.APPLICATION_PDF_VALUE);
-                } else {
-                    dokumentfilResource.setFormat(MediaType.APPLICATION_OCTET_STREAM_VALUE);
-                }
+
+                dokumentfilResource.setFormat(getContentType(fileResult.getFormat().getValue()));
                 File file = saveFile(dokumentfilResource);
                 if (file != null) {
                     addFile(file.toPath());
@@ -119,6 +97,11 @@ public class FileRepository {
         }
 
         return readFile(recNo);
+    }
+
+    private String getContentType(String format) {
+        Tika tika = new Tika();
+        return tika.detect(String.format("fil.%s", format));
     }
 
     private DokumentfilResource readFile(String recNo) {
@@ -145,13 +128,5 @@ public class FileRepository {
         return fileDestination;
 
     }
-
-    /*
-    private byte[] getBytesFromBase64(String s) {
-        Base64 base64 = new Base64();
-        return base64.decode(s);
-    }
-     */
-
 
 }

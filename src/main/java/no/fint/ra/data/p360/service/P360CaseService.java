@@ -1,4 +1,4 @@
-package no.fint.ra.data.p360;
+package no.fint.ra.data.p360.service;
 
 import no.fint.arkiv.p360.caze.*;
 import no.fint.model.resource.kultur.kulturminnevern.TilskuddFartoyResource;
@@ -6,6 +6,7 @@ import no.fint.ra.data.fint.TilskuddFartoyFactory;
 import no.fint.ra.data.exception.CreateTilskuddFartoyException;
 import no.fint.ra.data.exception.GetTilskuddFartoyException;
 import no.fint.ra.data.exception.GetTilskuddFartoyNotFoundException;
+import no.fint.ra.data.p360.P360CaseFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MultiValueMap;

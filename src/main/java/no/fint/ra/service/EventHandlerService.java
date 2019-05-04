@@ -15,13 +15,13 @@ import no.fint.model.resource.FintLinks;
 import no.fint.model.resource.administrasjon.arkiv.DokumentfilResource;
 import no.fint.model.resource.kultur.kulturminnevern.TilskuddFartoyResource;
 import no.fint.ra.data.FileRepository;
-import no.fint.ra.data.p360.P360CaseFactory;
 import no.fint.ra.data.exception.CreateTilskuddFartoyException;
 import no.fint.ra.data.exception.GetTilskuddFartoyException;
 import no.fint.ra.data.exception.GetTilskuddFartoyNotFoundException;
-import no.fint.ra.data.p360.P360CaseService;
-import no.fint.ra.data.p360.P360DocumentService;
-import no.fint.ra.data.p360.P360FileService;
+import no.fint.ra.data.p360.service.P360CaseService;
+import no.fint.ra.data.p360.service.P360DocumentService;
+import no.fint.ra.data.p360.service.P360FileService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -53,9 +53,6 @@ public class EventHandlerService {
     private ObjectMapper objectMapper;
 
     @Autowired
-    private P360CaseFactory caseFactory;
-
-    @Autowired
     private FileRepository fileRepository;
 
     public void handleEvent(String component, Event event) {
@@ -73,9 +70,6 @@ public class EventHandlerService {
                     log.error("Error handling event {}", event, e);
                     responseEvent.setResponseStatus(ResponseStatus.ERROR);
                     responseEvent.setMessage(e.getMessage());
-                } finally {
-                    //responseEvent.setStatus(Status.ADAPTER_RESPONSE);
-                    //eventResponseService.postResponse(responseEvent);
                 }
             }
         }
@@ -99,43 +93,41 @@ public class EventHandlerService {
         if (ArkivActions.getActions().contains(event.getAction())) {
             switch (ArkivActions.valueOf(event.getAction())) {
                 case GET_DOKUMENTFIL:
-                    onGetDokumentfil(event, response);
+                    onGetDokumentfil(event, response, component);
             }
         }
 
     }
 
-    private void onGetDokumentfil(Event event, Event<FintLinks> response) {
+    private void onGetDokumentfil(Event event, Event<FintLinks> response, String component) {
 
-        DokumentfilResource file = fileRepository.getFile(event.getQuery().replaceFirst("systemid/", ""));
+        DokumentfilResource file = fileRepository.getFile(StringUtils.removeStartIgnoreCase(event.getQuery(), "systemid/"));
         if (file != null) {
             response.setData(Collections.singletonList(file));
-            //response.setStatus(Status.TEMP_UPSTREAM_QUEUE);
             response.setResponseStatus(ResponseStatus.ACCEPTED);
-        }
-        else {
-            //response.setStatus(Status.TEMP_UPSTREAM_QUEUE);
+        } else {
             response.setResponseStatus(ResponseStatus.REJECTED);
             response.setStatusCode("NOT_FOUND");
         }
+
+        eventResponseService.postResponse(component, response);
     }
 
     private void onGetTilskuddFartoy(String component, Event event, Event<FintLinks> response) {
         String query = event.getQuery();
 
-        TilskuddFartoyResource tilskuddFartoyResource = null;
         try {
             if (query.startsWith("mappeid")) {
                 response.setData(
                         Collections.singletonList(
-                                p360CaseService.getTilskuddFartoyCaseByCaseNumber(query.replaceFirst("mappeid/", ""))
+                                p360CaseService.getTilskuddFartoyCaseByCaseNumber(StringUtils.removeStartIgnoreCase(event.getQuery(), "systemid/"))
                         )
                 );
             }
             if (query.startsWith("systemid")) {
                 response.setData(
                         Collections.singletonList(
-                                p360CaseService.getTilskuddFartoyCaseBySystemId(query.replaceFirst("systemid/", ""))
+                                p360CaseService.getTilskuddFartoyCaseBySystemId(StringUtils.removeStartIgnoreCase(event.getQuery(), "systemid/"))
                         )
                 );
             }
@@ -145,7 +137,6 @@ public class EventHandlerService {
             }
             response.setStatus(Status.TEMP_UPSTREAM_QUEUE);
             response.setResponseStatus(ResponseStatus.ACCEPTED);
-            //response.setData(Collections.singletonList(tilskuddFartoyResource));
         } catch (GetTilskuddFartoyNotFoundException e) {
             response.setMessage(e.getMessage());
             response.setData(Collections.emptyList());

@@ -1,4 +1,4 @@
-package no.fint.ra.data.p360;
+package no.fint.ra.data.p360.service;
 
 import lombok.extern.slf4j.Slf4j;
 import no.fint.arkiv.p360.document.*;

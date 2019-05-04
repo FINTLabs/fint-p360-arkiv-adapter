@@ -1,4 +1,4 @@
-package no.fint.ra.data;
+package no.fint.ra;
 
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
@@ -8,7 +8,7 @@ import java.nio.file.Path;
 
 @Getter
 @Component
-public class AppProps {
+public class AdapterProps {
 
     @Value("${fint.ra.p360.user}")
     private String p360User;

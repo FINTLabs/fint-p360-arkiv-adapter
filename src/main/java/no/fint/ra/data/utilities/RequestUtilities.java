@@ -1,6 +1,6 @@
 package no.fint.ra.data.utilities;
 
-import no.fint.ra.data.AppProps;
+import no.fint.ra.AdapterProps;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -11,7 +11,7 @@ import java.util.Map;
 public class RequestUtilities {
 
     @Autowired
-    private AppProps appProps;
+    private AdapterProps appProps;
 
     public void addAuthentication(Map<String, Object> map) {
         map.put(BindingProvider.USERNAME_PROPERTY, appProps.getP360User());

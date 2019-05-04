@@ -80,7 +80,8 @@ wsdl2java {
     wsdlsToGenerate = [
             ['-client', '-p', 'no.fint.arkiv.p360.caze', "$projectDir/src/main/resources/wsdl/CaseService.wsdl"],
             ['-client', '-p', 'no.fint.arkiv.p360.document', "$projectDir/src/main/resources/wsdl/DocumentService.wsdl"],
-            ['-client', '-p', 'no.fint.arkiv.p360.file', "$projectDir/src/main/resources/wsdl/FileService.wsdl"]
+            ['-client', '-p', 'no.fint.arkiv.p360.file', "$projectDir/src/main/resources/wsdl/FileService.wsdl"],
+            ['-client', '-p', 'no.fint.arkiv.p360.support', "$projectDir/src/main/resources/wsdl/SupportService.wsdl"]
     ]
 }
 

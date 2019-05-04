@@ -1,8 +1,8 @@
-package no.fint.ra.data.p360;
+package no.fint.ra.data.p360.service;
 
 import lombok.extern.slf4j.Slf4j;
 import no.fint.arkiv.p360.file.*;
-import no.fint.ra.data.AppProps;
+import no.fint.ra.AdapterProps;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,7 +21,7 @@ public class P360FileService extends P360AbstractService {
     private ObjectFactory objectFactory;
 
     @Autowired
-    private AppProps props;
+    private AdapterProps props;
 
     public P360FileService() {
         super("http://software-innovation.com/SI.Data", "FileService");
