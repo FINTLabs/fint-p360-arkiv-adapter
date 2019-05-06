@@ -1,0 +1,16 @@
+[
+  {
+    "kode": "H",
+    "navn": "Hoveddokument",
+    "systemId": {
+      "identifikatorverdi": "1"
+    }
+  },
+  {
+    "kode": "V",
+    "navn": "Vedlegg",
+    "systemId": {
+      "identifikatorverdi": "2"
+    }
+  }
+]

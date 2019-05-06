@@ -1,10 +1,7 @@
 package no.fint.ra.data.fint;
 
 import no.fint.arkiv.p360.support.CodeTableRowResult;
-import no.fint.model.resource.administrasjon.arkiv.DokumentStatusResource;
-import no.fint.model.resource.administrasjon.arkiv.KorrespondansepartTypeResource;
-import no.fint.model.resource.administrasjon.arkiv.SaksstatusResource;
-import no.fint.model.resource.administrasjon.arkiv.TilknyttetRegistreringSomResource;
+import no.fint.model.resource.administrasjon.arkiv.*;
 import no.fint.ra.data.utilities.FintUtils;
 import org.springframework.stereotype.Service;
 
@@ -27,18 +24,17 @@ public class KodeverkFactory {
         dokumentStatusResource.setSystemId(FintUtils.createIdentifikator(codeTableRow.getRecno().toString()));
         dokumentStatusResource.setKode(codeTableRow.getCode().getValue());
         dokumentStatusResource.setNavn(codeTableRow.getDescription().getValue());
-
         return dokumentStatusResource;
     }
 
-    public TilknyttetRegistreringSomResource toTilknyttetRegistreringSom(CodeTableRowResult codeTableRow) {
-        TilknyttetRegistreringSomResource tilknyttetRegistreringSomResource = new TilknyttetRegistreringSomResource();
+    public JournalpostTypeResource toJournalpostType(CodeTableRowResult codeTableRow) {
+        JournalpostTypeResource journalpostTypeResource = new JournalpostTypeResource();
 
-        tilknyttetRegistreringSomResource.setSystemId(FintUtils.createIdentifikator(codeTableRow.getRecno().toString()));
-        tilknyttetRegistreringSomResource.setKode(codeTableRow.getCode().getValue());
-        tilknyttetRegistreringSomResource.setNavn(codeTableRow.getDescription().getValue());
+        journalpostTypeResource.setSystemId(FintUtils.createIdentifikator(codeTableRow.getRecno().toString()));
+        journalpostTypeResource.setKode(codeTableRow.getCode().getValue());
+        journalpostTypeResource.setNavn(codeTableRow.getDescription().getValue());
 
-        return tilknyttetRegistreringSomResource;
+        return journalpostTypeResource;
     }
 
     public KorrespondansepartTypeResource toKorrespondansepartType(CodeTableRowResult codeTableRow) {
@@ -50,5 +46,15 @@ public class KodeverkFactory {
 
         return korrespondansepartTypeResource;
 
+    }
+
+    public JournalStatusResource toJournalStatus(CodeTableRowResult codeTableRow) {
+        JournalStatusResource journalStatusResource = new JournalStatusResource();
+
+        journalStatusResource.setSystemId(FintUtils.createIdentifikator(codeTableRow.getRecno().toString()));
+        journalStatusResource.setKode(codeTableRow.getCode().getValue());
+        journalStatusResource.setNavn(codeTableRow.getDescription().getValue());
+
+        return journalStatusResource;
     }
 }

@@ -13,14 +13,12 @@ import no.fint.model.administrasjon.arkiv.ArkivActions;
 import no.fint.model.kultur.kulturminnevern.KulturminnevernActions;
 import no.fint.model.resource.FintLinks;
 import no.fint.model.resource.administrasjon.arkiv.DokumentfilResource;
-import no.fint.model.resource.administrasjon.arkiv.SaksstatusResource;
-import no.fint.model.resource.administrasjon.arkiv.SaksstatusResources;
-import no.fint.model.resource.administrasjon.arkiv.TilknyttetRegistreringSomResource;
 import no.fint.model.resource.kultur.kulturminnevern.TilskuddFartoyResource;
 import no.fint.ra.data.FileRepository;
 import no.fint.ra.data.exception.CreateTilskuddFartoyException;
 import no.fint.ra.data.exception.GetTilskuddFartoyException;
 import no.fint.ra.data.exception.GetTilskuddFartoyNotFoundException;
+import no.fint.ra.data.noark.NoarkCodeListService;
 import no.fint.ra.data.p360.service.P360CaseService;
 import no.fint.ra.data.p360.service.P360DocumentService;
 import no.fint.ra.data.p360.service.P360FileService;
@@ -61,6 +59,9 @@ public class EventHandlerService {
 
     @Autowired
     private FileRepository fileRepository;
+
+    @Autowired
+    private NoarkCodeListService noarkCodeListService;
 
     public void handleEvent(String component, Event event) {
         if (event.isHealthCheck()) {
@@ -114,12 +115,30 @@ public class EventHandlerService {
                 case GET_ALL_TILKNYTTETREGISTRERINGSOM:
                     onGetAllTilknyttetRegistreringSom(component, response);
                     break;
+                case GET_ALL_JOURNALSTATUS:
+                    onGetAllJournalStatus(component, response);
+                    break;
+                case GET_ALL_JOURNALPOSTTYPE:
+                    onGetAllJournalpostType(component, response);
+                    break;
             }
         }
 
     }
 
+    private void onGetAllJournalStatus(String component, Event<FintLinks> response) {
+        supportService.getJournalStatusTable().forEach(response::addData);
+        response.setResponseStatus(ResponseStatus.ACCEPTED);
+        eventResponseService.postResponse(component, response);
+    }
+
     private void onGetAllTilknyttetRegistreringSom(String component, Event<FintLinks> response) {
+        noarkCodeListService.getTilknyttetRegistreringSom().forEach(response::addData);
+        response.setResponseStatus(ResponseStatus.ACCEPTED);
+        eventResponseService.postResponse(component, response);
+    }
+
+    private void onGetAllJournalpostType(String component, Event<FintLinks> response) {
         supportService.getDocumentCategoryTable().forEach(response::addData);
         response.setResponseStatus(ResponseStatus.ACCEPTED);
         eventResponseService.postResponse(component, response);
