@@ -17,10 +17,8 @@ import no.fint.model.resource.administrasjon.arkiv.DokumentfilResource;
 import no.fint.model.resource.administrasjon.arkiv.SakResource;
 import no.fint.model.resource.kultur.kulturminnevern.TilskuddFartoyResource;
 import no.fint.ra.data.FileRepository;
-import no.fint.ra.data.exception.CreateTilskuddFartoyException;
-import no.fint.ra.data.exception.FileNotFound;
-import no.fint.ra.data.exception.GetTilskuddFartoyException;
-import no.fint.ra.data.exception.GetTilskuddFartoyNotFoundException;
+import no.fint.ra.data.exception.*;
+import no.fint.ra.data.fint.KorrespondansepartService;
 import no.fint.ra.data.noark.NoarkCodeListService;
 
 import no.fint.ra.data.p360.service.P360CaseService;
@@ -75,6 +73,9 @@ public class EventHandlerService {
 
     @Autowired
     private NoarkCodeListService noarkCodeListService;
+
+    @Autowired
+    private KorrespondansepartService korrespondansepartService;
 
 
     @Bean
@@ -151,8 +152,32 @@ public class EventHandlerService {
                 case GET_SAK:
                     onGetSak(event, response);
                     break;
+                case GET_KORRESPONDANSEPART:
+                    onGetKorrespondansepart(event, response);
+                    break;
             }
         }
+
+    }
+
+    private void onGetKorrespondansepart(Event event, Event<FintLinks> response) {
+        String query = event.getQuery();
+
+        try {
+            if (StringUtils.startsWithIgnoreCase(query, "systemid")) {
+                response.setData(
+                        Collections.singletonList(
+                                korrespondansepartService.getKorrespondansepartBySystemId(Integer.valueOf(StringUtils.removeStartIgnoreCase(event.getQuery(), "systemid/")))
+                        )
+                );
+            }
+            response.setResponseStatus(ResponseStatus.ACCEPTED);
+        } catch (KorrespondansepartNotFound e) {
+            response.setResponseStatus(ResponseStatus.REJECTED);
+            response.setStatusCode("NOT_FOUND");
+            response.setMessage(e.getMessage());
+        }
+
 
     }
 
