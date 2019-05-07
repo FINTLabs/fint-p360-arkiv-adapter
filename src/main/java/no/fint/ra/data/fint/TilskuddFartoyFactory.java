@@ -12,8 +12,8 @@ import no.fint.ra.data.utilities.NOARKUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 @Service
 public class TilskuddFartoyFactory {
@@ -32,10 +32,10 @@ public class TilskuddFartoyFactory {
         String caseYear = NOARKUtils.getCaseYear(caseNumber);
         String sequenceNumber = NOARKUtils.getCaseSequenceNumber(caseNumber);
 
+        // FIXME
         tilskuddFartoy.setKallesignal("AWQR");
         tilskuddFartoy.setKulturminneId("1234");
         tilskuddFartoy.setSoknadsnummer(FintUtils.createIdentifikator("1"));
-
 
         noarkFactory.getSaksmappe(caseResult, tilskuddFartoy);
 
@@ -44,19 +44,12 @@ public class TilskuddFartoyFactory {
         tilskuddFartoy.addSelf(Link.with(TilskuddFartoy.class, "systemid", caseResult.getRecno().toString()));
 
         return tilskuddFartoy;
-
-
     }
 
 
-    public List<TilskuddFartoyResource> toFintResourceList(List<CaseResult> caseResult) {
-        List<TilskuddFartoyResource> tilskuddFartoyList = new ArrayList<>();
-        caseResult.forEach(c -> {
-            TilskuddFartoyResource tilskuddFartoyResource = toFintResource(c);
-            if (tilskuddFartoyResource != null) {
-                tilskuddFartoyList.add(tilskuddFartoyResource);
-            }
-        });
-        return tilskuddFartoyList;
+    public Stream<TilskuddFartoyResource> toFintResourceList(List<CaseResult> caseResult) {
+        return caseResult
+                .stream()
+                .map(this::toFintResource);
     }
 }

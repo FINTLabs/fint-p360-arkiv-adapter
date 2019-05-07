@@ -22,8 +22,8 @@ class EventHandlerServiceSpec extends Specification {
         documentService = Mock(P360DocumentService)
         eventHandlerService = new EventHandlerService(eventStatusService: eventStatusService,
                 eventResponseService: eventResponseService,
-                p360CaseService: caseService,
-                p360DocumentService: documentService
+                caseService: caseService,
+                documentService: documentService
         )
     }
 

@@ -14,21 +14,13 @@ import no.fint.model.administrasjon.arkiv.ArkivActions;
 import no.fint.model.kultur.kulturminnevern.KulturminnevernActions;
 import no.fint.model.resource.FintLinks;
 import no.fint.model.resource.administrasjon.arkiv.DokumentfilResource;
-import no.fint.model.resource.administrasjon.arkiv.SakResource;
 import no.fint.model.resource.kultur.kulturminnevern.TilskuddFartoyResource;
 import no.fint.ra.data.FileRepository;
 import no.fint.ra.data.exception.*;
 import no.fint.ra.data.fint.KorrespondansepartService;
 import no.fint.ra.data.noark.NoarkCodeListService;
-
-import no.fint.ra.data.p360.service.P360CaseService;
-import no.fint.ra.data.p360.service.P360DocumentService;
-import no.fint.ra.data.p360.service.P360FileService;
-import no.fint.ra.data.p360.service.P360SupportService;
-import no.fint.ra.data.utilities.FintUtils;
-
 import no.fint.ra.data.p360.service.*;
-
+import no.fint.ra.data.utilities.FintUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +31,6 @@ import org.springframework.stereotype.Service;
 import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.util.Collections;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
 
@@ -54,13 +45,13 @@ public class EventHandlerService {
     private EventStatusService eventStatusService;
 
     @Autowired
-    private P360DocumentService p360DocumentService;
+    private P360DocumentService documentService;
 
     @Autowired
-    private P360FileService p360FileService;
+    private P360FileService fileService;
 
     @Autowired
-    private P360CaseService p360CaseService;
+    private P360CaseService caseService;
 
     @Autowired
     private P360SupportService supportService;
@@ -185,21 +176,13 @@ public class EventHandlerService {
         String query = event.getQuery();
 
         try {
+            response.getData().clear();
             if (StringUtils.startsWithIgnoreCase(query, "mappeid")) {
-                response.setData(
-                        Collections.singletonList(
-                                p360CaseService.getSakByCaseNumber(StringUtils.removeStartIgnoreCase(event.getQuery(), "mappeid/"))
-                        )
-                );
+                response.addData(caseService.getSakByCaseNumber(StringUtils.removeStartIgnoreCase(event.getQuery(), "mappeid/")));
             } else if (StringUtils.startsWithIgnoreCase(query, "systemid")) {
-                response.setData(
-                        Collections.singletonList(
-                                p360CaseService.getSakBySystemId(StringUtils.removeStartIgnoreCase(event.getQuery(), "systemid/"))
-                        )
-                );
+                response.addData(caseService.getSakBySystemId(StringUtils.removeStartIgnoreCase(event.getQuery(), "systemid/")));
             } else if (query.startsWith("?")) {
-                List<SakResource> tilssakResources = p360CaseService.searchSakByTitle(query);
-                tilssakResources.forEach(response::addData);
+                caseService.searchSakByTitle(query).forEach(response::addData);
             } else {
                 throw new IllegalArgumentException("Invalid query: " + query);
             }
@@ -288,21 +271,13 @@ public class EventHandlerService {
         String query = event.getQuery();
 
         try {
+            response.getData().clear();
             if (StringUtils.startsWithIgnoreCase(query, "mappeid")) {
-                response.setData(
-                        Collections.singletonList(
-                                p360CaseService.getTilskuddFartoyCaseByCaseNumber(StringUtils.removeStartIgnoreCase(event.getQuery(), "systemid/"))
-                        )
-                );
+                response.addData(caseService.getTilskuddFartoyCaseByCaseNumber(StringUtils.removeStartIgnoreCase(event.getQuery(), "systemid/")));
             } else if (StringUtils.startsWithIgnoreCase(query, "systemid")) {
-                response.setData(
-                        Collections.singletonList(
-                                p360CaseService.getTilskuddFartoyCaseBySystemId(StringUtils.removeStartIgnoreCase(event.getQuery(), "systemid/"))
-                        )
-                );
+                response.addData(caseService.getTilskuddFartoyCaseBySystemId(StringUtils.removeStartIgnoreCase(event.getQuery(), "systemid/")));
             } else if (query.startsWith("?")) {
-                List<TilskuddFartoyResource> tilskuddFartoyResources = p360CaseService.searchTilskuddFartoyCaseByTitle(query);
-                tilskuddFartoyResources.forEach(response::addData);
+                caseService.searchTilskuddFartoyCaseByTitle(query).forEach(response::addData);
             } else {
                 throw new IllegalArgumentException("Invalid query: " + query);
             }
@@ -323,19 +298,21 @@ public class EventHandlerService {
 
     private void onCreateTilskuddFartoy(Event<FintLinks> response) {
 
-        if (response.getData().size() == 1) {
+        if (response.getData().size() != 1) {
+            response.setResponseStatus(ResponseStatus.REJECTED);
+            response.setMessage("Invalid request");
+            return;
+        }
 
-            TilskuddFartoyResource tilskuddFartoyResource = objectMapper.convertValue(response.getData().get(0), TilskuddFartoyResource.class);
+        TilskuddFartoyResource tilskuddFartoyResource = objectMapper.convertValue(response.getData().get(0), TilskuddFartoyResource.class);
 
-            try {
-                TilskuddFartoyResource tilskuddFartoy = p360CaseService.createTilskuddFartoyCase(tilskuddFartoyResource);
-                response.setData(Collections.singletonList(tilskuddFartoy));
-                response.setResponseStatus(ResponseStatus.ACCEPTED);
-            } catch (CreateTilskuddFartoyException e) {
-                response.setResponseStatus(ResponseStatus.ERROR);
-                response.setMessage(e.getMessage());
-
-            }
+        try {
+            TilskuddFartoyResource tilskuddFartoy = caseService.createTilskuddFartoyCase(tilskuddFartoyResource);
+            response.setData(Collections.singletonList(tilskuddFartoy));
+            response.setResponseStatus(ResponseStatus.ACCEPTED);
+        } catch (CreateTilskuddFartoyException e) {
+            response.setResponseStatus(ResponseStatus.ERROR);
+            response.setMessage(e.getMessage());
         }
     }
 
@@ -357,12 +334,11 @@ public class EventHandlerService {
 
 
     private boolean healthCheck() {
-        return p360CaseService.ping()
-                && p360DocumentService.ping()
-                && p360FileService.ping()
+        return caseService.ping()
+                && documentService.ping()
+                && fileService.ping()
                 && supportService.ping()
                 && contactService.ping();
-
     }
 
 

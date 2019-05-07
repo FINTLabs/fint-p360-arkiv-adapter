@@ -18,6 +18,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import javax.annotation.PostConstruct;
 import javax.xml.ws.WebServiceException;
 import java.util.List;
+import java.util.stream.Stream;
 
 @Service
 @Slf4j
@@ -94,7 +95,7 @@ public class P360CaseService extends P360AbstractService {
 
     }
 
-    public List<TilskuddFartoyResource> searchTilskuddFartoyCaseByTitle(String query) {
+    public Stream<TilskuddFartoyResource> searchTilskuddFartoyCaseByTitle(String query) {
         return tilskuddFartoyFactory.toFintResourceList(getCases(getGetCasesQueryByTitle(query)));
     }
 
@@ -112,7 +113,7 @@ public class P360CaseService extends P360AbstractService {
         return sakFactory.toFintResource(getCase(getCasesQuery));
     }
 
-    public List<SakResource> searchSakByTitle(String query) {
+    public Stream<SakResource> searchSakByTitle(String query) {
         return sakFactory.toFintResourceList(getCases(getGetCasesQueryByTitle(query)));
     }
 

@@ -11,8 +11,8 @@ import no.fint.ra.data.utilities.NOARKUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 @Service
 public class SakFactory {
@@ -38,14 +38,9 @@ public class SakFactory {
         return sakResource;
     }
 
-    public List<SakResource> toFintResourceList(List<CaseResult> caseResult) {
-        List<SakResource> sakResourceList = new ArrayList<>();
-        caseResult.forEach(c -> {
-            SakResource sakResource = toFintResource(c);
-            if (sakResource != null) {
-                sakResourceList.add(sakResource);
-            }
-        });
-        return sakResourceList;
+    public Stream<SakResource> toFintResourceList(List<CaseResult> caseResult) {
+        return caseResult
+                .stream()
+                .map(this::toFintResource);
     }
 }
