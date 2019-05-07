@@ -4,17 +4,21 @@ import lombok.extern.slf4j.Slf4j;
 import no.fint.arkiv.p360.document.*;
 import no.fint.model.administrasjon.arkiv.*;
 import no.fint.model.administrasjon.organisasjon.Organisasjonselement;
-import no.fint.model.administrasjon.personal.Personalressurs;
+import no.fint.model.felles.Person;
 import no.fint.model.resource.Link;
 import no.fint.model.resource.administrasjon.arkiv.*;
+import no.fint.ra.data.utilities.SOAPUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import javax.xml.bind.JAXBElement;
 import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.ws.WebServiceException;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static no.fint.ra.data.utilities.SOAPUtils.getSafeValue;
 
 @Service
 @Slf4j
@@ -50,10 +54,13 @@ public class P360DocumentService extends P360AbstractService {
         if (documentsResult.isSuccessful() && documentsResult.getTotalPageCount().getValue() == 1) {
             DocumentResult documentResult = documentsResult.getDocuments().getValue().getDocumentResult().get(0);
 
-            journalpost.setAntallVedlegg((long) documentResult.getFiles().getValue().getDocumentFileResult().size());
-            journalpost.setTittel(documentResult.getTitle().getValue());
-            journalpost.setOffentligTittel(documentResult.getOfficialTitle().getValue());
-
+            getSafeValue(documentResult.getFiles())
+                    .map(ArrayOfDocumentFileResult::getDocumentFileResult)
+                    .map(List::size)
+                    .map(Integer::longValue)
+                    .ifPresent(journalpost::setAntallVedlegg);
+            getSafeValue(documentResult.getTitle()).ifPresent(journalpost::setTittel);
+            getSafeValue(documentResult.getOfficialTitle()).ifPresent(journalpost::setOffentligTittel);
             getSafeValue(documentResult.getDocumentDate())
                     .map(XMLGregorianCalendar::toGregorianCalendar)
                     .map(GregorianCalendar::getTime)
@@ -77,11 +84,10 @@ public class P360DocumentService extends P360AbstractService {
             journalpost.setForfatter(Collections.singletonList(documentResult.getResponsiblePersonName().getValue()));
 
             journalpost.setKorrespondansepart(
-                    documentResult
-                            .getContacts()
-                            .getValue()
-                            .getDocumentContactResult()
-                            .stream()
+                    getSafeValue(documentResult.getContacts())
+                            .map(ArrayOfDocumentContactResult::getDocumentContactResult)
+                            .map(Collection::stream)
+                            .orElse(Stream.empty())
                             .map(it -> {
                                 KorrespondanseResource result = new KorrespondanseResource();
                                 result.addKorrespondansepart(Link.with(Korrespondansepart.class, "systemid", it.getContactRecno().getValue()));
@@ -90,35 +96,53 @@ public class P360DocumentService extends P360AbstractService {
                             })
                             .collect(Collectors.toList()));
 
-            String[] split = documentResult.getDocumentNumber().getValue().split("-");
-            if (split.length == 2) {
+
+            String[] split = getSafeValue(documentResult.getDocumentNumber()).orElse("").split("-");
+            if (split.length == 2 && StringUtils.isNumeric(split[1])) {
                 journalpost.setJournalSekvensnummer(Long.parseLong(split[1]));
             }
 
-            journalpost.addSaksbehandler(Link.with(Personalressurs.class, "ansattnummer", String.valueOf(documentResult.getResponsiblePerson().getValue().getRecno())));
-            journalpost.addAdministrativEnhet(Link.with(Organisasjonselement.class, "organisasjonsummer", String.valueOf(documentResult.getResponsibleEnterprise().getValue().getRecno())));
-
-            journalpost.addJournalPostType(Link.with(JournalpostTypeResource.class, "systemid", documentResult.getCategory().getValue().getRecno().toString()));
-            journalpost.addJournalStatus(Link.with(JournalStatusResource.class, "systemid", documentResult.getStatusCode().getValue()));
+            getSafeValue(documentResult.getResponsiblePerson())
+                    .map(ResponsiblePerson::getExternalId)
+                    .flatMap(SOAPUtils::getSafeValue)
+                    .map(Link.apply(Person.class, "fodselsnummer"))
+                    .ifPresent(journalpost::addSaksbehandler);
+            getSafeValue(documentResult.getResponsibleEnterprise())
+                    .map(ResponsibleEnterprise::getExternalId)
+                    .flatMap(SOAPUtils::getSafeValue)
+                    .map(Link.apply(Organisasjonselement.class, "organisasjonsnummer"))
+                    .ifPresent(journalpost::addAdministrativEnhet);
+            getSafeValue(documentResult.getCategory())
+                    .map(DocumentCategoryResult::getRecno)
+                    .map(String::valueOf)
+                    .map(Link.apply(JournalpostType.class, "systemid"))
+                    .ifPresent(journalpost::addJournalPostType);
+            getSafeValue(documentResult.getStatusCode())
+                    .map(Link.apply(JournalStatus.class, "systemid"))
+                    .ifPresent(journalpost::addJournalStatus);
 
             List<DocumentFileResult> documentFileResult = documentResult.getFiles().getValue().getDocumentFileResult();
             List<DokumentbeskrivelseResource> dokumentbeskrivelseResourcesList = new ArrayList<>();
             documentFileResult.forEach(file -> {
                 DokumentbeskrivelseResource dokumentbeskrivelseResource = new DokumentbeskrivelseResource();
-                dokumentbeskrivelseResource.setTittel(file.getTitle().getValue());
+                getSafeValue(file.getTitle()).ifPresent(dokumentbeskrivelseResource::setTittel);
 
                 DokumentobjektResource dokumentobjektResource = new DokumentobjektResource();
-                dokumentobjektResource.setFormat(file.getFormat().getValue());
+                getSafeValue(file.getFormat()).ifPresent(dokumentobjektResource::setFormat);
                 //dokumentobjektResource.setReferanseDokumentfil(file.getRecno().toString());
                 dokumentobjektResource.addReferanseDokumentfil(Link.with(Dokumentfil.class, "systemid", file.getRecno().toString()));
 
-                dokumentbeskrivelseResource.addDokumentstatus(Link.with(DokumentStatus.class, "systemid", file.getStatusCode().getValue()));
+                getSafeValue(file.getStatusCode()).map(Link.apply(DokumentStatus.class, "systemid")).ifPresent(dokumentbeskrivelseResource::addDokumentstatus);
 
-                dokumentbeskrivelseResource.setForfatter(Collections.singletonList(file.getModifiedBy().getValue()));
+                getSafeValue(file.getModifiedBy())
+                        .map(Collections::singletonList)
+                        .ifPresent(dokumentbeskrivelseResource::setForfatter);
                 dokumentbeskrivelseResource.setBeskrivelse(String.format("%s - %s - %s - %s", file.getStatusDescription().getValue(), file.getRelationTypeDescription().getValue(), file.getAccessCodeDescription().getValue(), file.getVersionFormatDescription().getValue()));
                 dokumentbeskrivelseResource.setDokumentobjekt(Collections.singletonList(dokumentobjektResource));
-                dokumentbeskrivelseResource.addTilknyttetRegistreringSom(Link.with(TilknyttetRegistreringSom.class, "systemid", file.getRelationTypeCode().getValue()));
 
+                getSafeValue(file.getRelationTypeCode())
+                        .map(Link.apply(TilknyttetRegistreringSom.class, "systemid"))
+                        .ifPresent(dokumentbeskrivelseResource::addTilknyttetRegistreringSom);
 
                 dokumentbeskrivelseResourcesList.add(dokumentbeskrivelseResource);
 
@@ -130,12 +154,6 @@ public class P360DocumentService extends P360AbstractService {
         return journalpost;
     }
 
-    private <T> Optional<T> getSafeValue(JAXBElement<T> element) {
-        if (!element.isNil()) {
-            return Optional.of(element.getValue());
-        }
-        return Optional.empty();
-    }
 
     public void createJournalPost(SaksmappeResource sak) {
 

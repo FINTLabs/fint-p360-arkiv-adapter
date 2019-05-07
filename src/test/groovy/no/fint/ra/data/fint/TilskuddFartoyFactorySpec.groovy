@@ -3,6 +3,7 @@ package no.fint.ra.data.fint
 
 import no.fint.arkiv.p360.caze.ObjectFactory
 import no.fint.model.resource.administrasjon.arkiv.JournalpostResource
+import no.fint.ra.data.noark.NoarkFactory
 import no.fint.ra.data.p360.service.P360DocumentService
 import no.fint.ra.data.testutils.P360ObjectFactory
 import spock.lang.Specification
@@ -13,11 +14,13 @@ class TilskuddFartoyFactorySpec extends Specification {
     private TilskuddFartoyFactory tilskuddFartoyFactory
     private P360DocumentService documentService
     private P360ObjectFactory p360ObjectFactory
+    private NoarkFactory noarkFactory
 
     void setup() {
         objectFactory = new ObjectFactory()
         documentService = Mock(P360DocumentService)
-        tilskuddFartoyFactory = new TilskuddFartoyFactory(documentService: documentService)
+        noarkFactory = new NoarkFactory(documentService: documentService)
+        tilskuddFartoyFactory = new TilskuddFartoyFactory(documentService: documentService, noarkFactory: noarkFactory)
         p360ObjectFactory = new P360ObjectFactory()
     }
 

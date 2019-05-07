@@ -4,26 +4,29 @@ import no.fint.arkiv.p360.caze.ArrayOfCaseDocumentResult;
 import no.fint.arkiv.p360.caze.CaseDocumentResult;
 import no.fint.arkiv.p360.caze.CaseResult;
 import no.fint.arkiv.p360.caze.ObjectFactory;
-import no.fint.ra.data.utilities.SOAPUtils;
 
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 public class P360ObjectFactory {
 
     private ObjectFactory objectFactory;
+    private DatatypeFactory datatypeFactory;
 
-    public P360ObjectFactory() {
+    public P360ObjectFactory() throws DatatypeConfigurationException {
         objectFactory = new ObjectFactory();
+        datatypeFactory = DatatypeFactory.newInstance();
     }
 
     public CaseResult newP360Case() {
         CaseResult caseResult = new CaseResult();
         caseResult.setCaseNumber(objectFactory.createString("19/12345"));
         caseResult.setRecno(12345);
-        caseResult.setDate(SOAPUtils.getXMLGregorianCalendar(new Date()));
-        caseResult.setCreatedDate(objectFactory.createCaseResultCreatedDate(SOAPUtils.getXMLGregorianCalendar(new Date())));
+        caseResult.setDate(datatypeFactory.newXMLGregorianCalendar(new GregorianCalendar()));
+        caseResult.setCreatedDate(objectFactory.createCaseResultCreatedDate(datatypeFactory.newXMLGregorianCalendar(new GregorianCalendar())));
         caseResult.setTitle(objectFactory.createString("title"));
         caseResult.setUnofficialTitle(objectFactory.createString("title"));
         caseResult.setNotes(objectFactory.createString("notes"));
