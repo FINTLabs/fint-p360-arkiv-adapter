@@ -13,7 +13,7 @@ class P360CaseFactorySpec extends Specification {
         given:
         def tilskuddFartoyResource = new TilskuddFartoyResource()
         def objectFactory = new ObjectFactory()
-        def props = new KulturminneProps(responsibleUnit: "123", subArchive: "456", keywords: ["test1", "test2"])
+        def props = new KulturminneProps(responsibleUnit: 123, subArchive: "456", keywords: ["test1", "test2"])
         def factory = new P360CaseFactory(objectFactory: objectFactory, kulturminneProps: props)
 
         tilskuddFartoyResource.setTittel("Test")
@@ -24,7 +24,7 @@ class P360CaseFactorySpec extends Specification {
         then:
         p360Case
         p360Case.getTitle().getValue() == "Test"
-        p360Case.getResponsibleEnterpriseRecno().getValue().toString() == props.getResponsibleUnit()
+        p360Case.getResponsibleEnterpriseRecno().getValue() == props.getResponsibleUnit()
         p360Case.getSubArchive().getValue().toString() == props.getSubArchive()
         p360Case.getKeywords().getValue().getString().size() == 2
     }

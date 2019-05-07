@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 public class KulturminneProps {
 
     @Value("${fint.kulturminne.tilskudd-fartoy.arkivdel}")
-    private String responsibleUnit;
+    private Integer responsibleUnit;
 
     @Value("${fint.kulturminne.tilskudd-fartoy.sub-archive}")
     private String subArchive;

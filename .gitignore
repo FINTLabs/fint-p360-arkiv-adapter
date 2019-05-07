@@ -1,9 +1,9 @@
 .gradle
 .idea
-build
-classes
-schema
-out
+/build/
+/classes/
+/schema/
+/out/
 *.iml
 javadocs/
 generated-sources

@@ -1,11 +1,14 @@
 package no.fint.ra.data;
 
+import com.google.common.cache.*;
 import lombok.extern.slf4j.Slf4j;
 import no.fint.arkiv.p360.file.FileResult;
 import no.fint.model.resource.administrasjon.arkiv.DokumentfilResource;
 import no.fint.ra.AdapterProps;
+import no.fint.ra.data.exception.FileNotFound;
 import no.fint.ra.data.p360.service.P360FileService;
 import no.fint.ra.data.utilities.FintUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.tika.Tika;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,12 +20,11 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.ConcurrentSkipListMap;
+import java.util.concurrent.ExecutionException;
 
 @Slf4j
 @Repository
-public class FileRepository {
+public class FileRepository extends CacheLoader<String, Path> implements RemovalListener<String, Path> {
 
     @Autowired
     private AdapterProps props;
@@ -32,71 +34,60 @@ public class FileRepository {
 
     private ObjectMapper objectMapper;
 
-    private ConcurrentMap<String, String> filenames = new ConcurrentSkipListMap<>();
+    private LoadingCache<String, Path> files;
 
     @PostConstruct
-    public void init() {
+    public void init() throws IOException {
+        files = CacheBuilder.from(props.getCacheSpec()).removalListener(this).build(this);
+        if (!Files.exists(props.getFileCacheDirectory())) {
+            Files.createDirectories(props.getFileCacheDirectory());
+        }
         if (!Files.isDirectory(props.getFileCacheDirectory())) {
             throw new IllegalArgumentException("Not a directory: " + props.getFileCacheDirectory());
         }
 
         objectMapper = new ObjectMapper();
-
-
     }
 
-    @Scheduled(initialDelay = 10000, fixedDelayString = "${fint.adapter.avatar.scan-interval:150000}")
+    @Scheduled(initialDelay = 10000, fixedDelayString = "${fint.file-repository.scan-interval:1500000}")
     public void scan() {
         try {
             log.info("Start scanning cache directory for files.");
-            filenames.clear();
             Files.walk(props.getFileCacheDirectory()).filter(Files::isRegularFile).forEach(this::addFile); //.filter(Objects::nonNull).forEach(repository::add);
-            log.info("Finished scanning cache directory. {} file(s) in repository", filenames.size());
+            log.info("Finished scanning cache directory. {} file(s) in repository", files.size());
         } catch (IOException e) {
             log.error("During scan", e);
         }
     }
 
+    @Scheduled(initialDelay = 20000, fixedDelayString = "${fint.file-repository.clean-interval:150000}")
+    public void cleanUp() {
+        files.cleanUp();
+    }
+
     private void addFile(Path path) {
-        String filnavn = path.toAbsolutePath().toString();
-        String id = path.getFileName().toString();
-        id = id.substring(0, id.lastIndexOf('.'));
-        filenames.put(id, filnavn);
-
+        String id = getId(path);
+        files.put(id, path);
     }
 
-    private boolean fileExists(String recNo) {
-        return filenames.get(recNo) != null;
+    private String getId(Path path) {
+        return StringUtils.removeEndIgnoreCase(path.getFileName().toString(), ".json");
     }
 
-    public DokumentfilResource getFile(String recNo) {
-
-        DokumentfilResource dokumentfilResource = new DokumentfilResource();
-        dokumentfilResource.setSystemId(FintUtils.createIdentifikator(recNo));
-
-        if (!fileExists(recNo)) {
-            FileResult fileResult = fileService.getFileByRecNo(recNo);
-
-            if (fileResult != null) {
-
-
-                dokumentfilResource.setData(fileResult.getBase64Data().getValue());
-                dokumentfilResource.setData(fileResult.getBase64Data().getValue());
-
-                dokumentfilResource.setFormat(getContentType(fileResult.getFormat().getValue()));
-                File file = saveFile(dokumentfilResource);
-                if (file != null) {
-                    addFile(file.toPath());
-                    return dokumentfilResource;
-                }
-
-
-            } else {
-                return null;
-            }
+    public DokumentfilResource getFile(String recNo) throws FileNotFound {
+        try {
+            Path path = files.get(recNo);
+            return readFile(path);
+        } catch (ExecutionException | IOException e) {
+            throw new FileNotFound(e.getMessage());
         }
 
-        return readFile(recNo);
+    }
+
+    public void putFile(DokumentfilResource resource) throws IOException {
+        Path path = saveFile(resource);
+        files.put(getId(path), path);
+        log.info("File saved as {}", path);
     }
 
     private String getContentType(String format) {
@@ -104,29 +95,41 @@ public class FileRepository {
         return tika.detect(String.format("fil.%s", format));
     }
 
-    private DokumentfilResource readFile(String recNo) {
-        try {
-            return objectMapper.readValue(new File(filenames.get(recNo)), DokumentfilResource.class);
-        } catch (IOException e) {
-            log.error("Unable to read file from cache", e);
-        }
-
-        return null;
+    private DokumentfilResource readFile(Path path) throws IOException {
+        return objectMapper.readValue(Files.newInputStream(path), DokumentfilResource.class);
     }
 
-    private File saveFile(DokumentfilResource dokumentfilResource) {
+    private Path saveFile(DokumentfilResource dokumentfilResource) throws IOException {
         File fileDestination = new File(
                 String.format("%s/%s.json", props.getFileCacheDirectory().toAbsolutePath(), dokumentfilResource.getSystemId().getIdentifikatorverdi())
         );
-        try {
-            objectMapper.writeValue(fileDestination, dokumentfilResource);
-        } catch (IOException e) {
-            log.error("Failed to save file", e);
-            return null;
-        }
-
-        return fileDestination;
-
+        objectMapper.writeValue(fileDestination, dokumentfilResource);
+        return fileDestination.toPath();
     }
 
+    @Override
+    public void onRemoval(RemovalNotification<String, Path> removal) {
+        if (removal.wasEvicted()) {
+            Path path = removal.getValue();
+            log.info("Removing {}", path);
+            try {
+                Files.delete(path);
+            } catch (IOException e) {
+                log.warn("Unable to delete {}: {}", path, e.getMessage());
+            }
+        }
+    }
+
+    @Override
+    public Path load(String recNo) throws Exception {
+        log.info("Loading {} ...", recNo);
+        FileResult fileResult = fileService.getFileByRecNo(recNo);
+
+        DokumentfilResource dokumentfilResource = new DokumentfilResource();
+        dokumentfilResource.setSystemId(FintUtils.createIdentifikator(recNo));
+        dokumentfilResource.setData(fileResult.getBase64Data().getValue());
+        dokumentfilResource.setFormat(getContentType(fileResult.getFormat().getValue()));
+
+        return saveFile(dokumentfilResource);
+    }
 }

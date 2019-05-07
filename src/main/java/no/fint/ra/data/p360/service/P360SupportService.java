@@ -42,12 +42,9 @@ public class P360SupportService extends P360AbstractService {
 
     @PostConstruct
     private void init() {
-
         supportService = new SupportService(SupportService.WSDL_LOCATION, SERVICE_NAME).getBasicHttpBindingISupportService();
         super.addAuthentication(supportService);
-
         objectFactory = new ObjectFactory();
-
     }
 
     public List<JournalStatusResource> getJournalStatusTable() {
@@ -101,5 +98,9 @@ public class P360SupportService extends P360AbstractService {
         }
 
         return true;
+    }
+
+    public String getSIFVersion() {
+        return supportService.getSIFVersion();
     }
 }

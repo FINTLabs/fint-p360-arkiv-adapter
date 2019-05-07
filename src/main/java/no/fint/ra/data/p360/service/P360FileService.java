@@ -3,6 +3,7 @@ package no.fint.ra.data.p360.service;
 import lombok.extern.slf4j.Slf4j;
 import no.fint.arkiv.p360.file.*;
 import no.fint.ra.AdapterProps;
+import no.fint.ra.data.exception.FileNotFound;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -36,6 +37,7 @@ public class P360FileService extends P360AbstractService {
     }
 
     public FileResult getFileByRecNo(String recNo) {
+        log.info("Retrieving {} ...", recNo);
         GetFileWithMetadataQuery getFileWithMetadataQuery = objectFactory.createGetFileWithMetadataQuery();
         getFileWithMetadataQuery.setRecno(objectFactory.createGetFileWithMetadataQueryRecno(Integer.parseInt(recNo)));
         getFileWithMetadataQuery.setIncludeFileData(objectFactory.createGetFileWithMetadataQueryIncludeFileData(true));
@@ -43,10 +45,12 @@ public class P360FileService extends P360AbstractService {
         GetFileWithMetadataResult fileWithMetadata = fileServicePort.getFileWithMetadata((getFileWithMetadataQuery));
 
         if (fileWithMetadata.isSuccessful()) {
+            log.info("Retrieving {} successfully", recNo);
             return fileWithMetadata.getFile().getValue();
         }
 
-        return null;
+        log.info("Retrieving {} failed: {}", recNo, fileWithMetadata.getErrorDetails().getValue());
+        throw new FileNotFound(fileWithMetadata.getErrorMessage().getValue());
     }
 
 
