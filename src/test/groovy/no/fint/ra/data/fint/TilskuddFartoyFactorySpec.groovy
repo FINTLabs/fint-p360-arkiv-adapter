@@ -27,7 +27,7 @@ class TilskuddFartoyFactorySpec extends Specification {
 
 
         when:
-        def fint = tilskuddFartoyFactory.toFint(caseResult)
+        def fint = tilskuddFartoyFactory.toFintResource(caseResult)
 
         then:
         1 * documentService.getJournalPost(_ as String) >> new JournalpostResource()
@@ -38,7 +38,7 @@ class TilskuddFartoyFactorySpec extends Specification {
     def "Convert list of P360 cases to Tilskudd fartoy"() {
 
         when:
-        def fartoys = tilskuddFartoyFactory.p360ToFintTilskuddFartoys(p360ObjectFactory.newP360CaseList())
+        def fartoys = tilskuddFartoyFactory.toFintResourceList(p360ObjectFactory.newP360CaseList())
 
         then:
         fartoys.size() == 2

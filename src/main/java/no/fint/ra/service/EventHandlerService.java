@@ -14,8 +14,8 @@ import no.fint.model.administrasjon.arkiv.ArkivActions;
 import no.fint.model.kultur.kulturminnevern.KulturminnevernActions;
 import no.fint.model.resource.FintLinks;
 import no.fint.model.resource.administrasjon.arkiv.DokumentfilResource;
+import no.fint.model.resource.administrasjon.arkiv.SakResource;
 import no.fint.model.resource.kultur.kulturminnevern.TilskuddFartoyResource;
-import no.fint.ra.AdapterProps;
 import no.fint.ra.data.FileRepository;
 import no.fint.ra.data.exception.CreateTilskuddFartoyException;
 import no.fint.ra.data.exception.FileNotFound;
@@ -42,7 +42,6 @@ import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 
@@ -149,9 +148,48 @@ public class EventHandlerService {
                 case GET_ALL_JOURNALPOSTTYPE:
                     onGetAllJournalpostType(response);
                     break;
+                case GET_SAK:
+                    onGetSak(event, response);
+                    break;
             }
         }
 
+    }
+
+    private void onGetSak(Event event, Event<FintLinks> response) {
+        String query = event.getQuery();
+
+        try {
+            if (StringUtils.startsWithIgnoreCase(query, "mappeid")) {
+                response.setData(
+                        Collections.singletonList(
+                                p360CaseService.getSakByCaseNumber(StringUtils.removeStartIgnoreCase(event.getQuery(), "mappeid/"))
+                        )
+                );
+            } else if (StringUtils.startsWithIgnoreCase(query, "systemid")) {
+                response.setData(
+                        Collections.singletonList(
+                                p360CaseService.getSakBySystemId(StringUtils.removeStartIgnoreCase(event.getQuery(), "systemid/"))
+                        )
+                );
+            } else if (query.startsWith("?")) {
+                List<SakResource> tilssakResources = p360CaseService.searchSakByTitle(query);
+                tilssakResources.forEach(response::addData);
+            } else {
+                throw new IllegalArgumentException("Invalid query: " + query);
+            }
+            response.setResponseStatus(ResponseStatus.ACCEPTED);
+        } catch (GetTilskuddFartoyNotFoundException e) {
+            response.setResponseStatus(ResponseStatus.REJECTED);
+            response.setStatusCode("NOT_FOUND");
+            response.setMessage(e.getMessage());
+        } catch (GetTilskuddFartoyException e) {
+            response.setResponseStatus(ResponseStatus.ERROR);
+            response.setMessage(String.format("Error from application: %s", e.getMessage()));
+        } catch (Exception e) {
+            response.setResponseStatus(ResponseStatus.ERROR);
+            response.setMessage(String.format("Error from adapter: %s", e.getMessage()));
+        }
     }
 
     private void onCreateDokumentfil(Event<FintLinks> response) throws IOException {

@@ -5,17 +5,15 @@ import no.fint.arkiv.p360.document.*;
 import no.fint.model.administrasjon.arkiv.*;
 import no.fint.model.administrasjon.organisasjon.Organisasjonselement;
 import no.fint.model.administrasjon.personal.Personalressurs;
-import no.fint.model.felles.kompleksedatatyper.Kontaktinformasjon;
 import no.fint.model.resource.Link;
 import no.fint.model.resource.administrasjon.arkiv.*;
-import no.fint.model.resource.felles.kompleksedatatyper.AdresseResource;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import javax.xml.bind.JAXBElement;
+import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.ws.WebServiceException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -55,8 +53,16 @@ public class P360DocumentService extends P360AbstractService {
             journalpost.setAntallVedlegg((long) documentResult.getFiles().getValue().getDocumentFileResult().size());
             journalpost.setTittel(documentResult.getTitle().getValue());
             journalpost.setOffentligTittel(documentResult.getOfficialTitle().getValue());
-            journalpost.setDokumentetsDato(documentResult.getDocumentDate().getValue().toGregorianCalendar().getTime());
-            journalpost.setJournalDato(documentResult.getJournalDate().getValue().toGregorianCalendar().getTime());
+
+            getSafeValue(documentResult.getDocumentDate())
+                    .map(XMLGregorianCalendar::toGregorianCalendar)
+                    .map(GregorianCalendar::getTime)
+                    .ifPresent(journalpost::setDokumentetsDato);
+            getSafeValue(documentResult.getJournalDate())
+                    .map(XMLGregorianCalendar::toGregorianCalendar)
+                    .map(GregorianCalendar::getTime)
+                    .ifPresent(journalpost::setJournalDato);
+
             //journalpost.setOpprettetDato(documentResult.getCreatedDate().getValue());
             journalpost.setDokumentbeskrivelse(Collections.emptyList());
             journalpost.setForfatter(Collections.emptyList());
@@ -71,18 +77,18 @@ public class P360DocumentService extends P360AbstractService {
             journalpost.setForfatter(Collections.singletonList(documentResult.getResponsiblePersonName().getValue()));
 
             journalpost.setKorrespondansepart(
-            documentResult
-                    .getContacts()
-                    .getValue()
-                    .getDocumentContactResult()
-                    .stream()
-                    .map(it -> {
-                        KorrespondanseResource result = new KorrespondanseResource();
-                        result.addKorrespondansepart(Link.with(Korrespondansepart.class, "systemid", it.getContactRecno().getValue()));
-                        result.addKorrespondanseparttype(Link.with(KorrespondansepartType.class, "systemid", it.getRole().getValue()));
-                        return result;
-                    })
-                    .collect(Collectors.toList()));
+                    documentResult
+                            .getContacts()
+                            .getValue()
+                            .getDocumentContactResult()
+                            .stream()
+                            .map(it -> {
+                                KorrespondanseResource result = new KorrespondanseResource();
+                                result.addKorrespondansepart(Link.with(Korrespondansepart.class, "systemid", it.getContactRecno().getValue()));
+                                result.addKorrespondanseparttype(Link.with(KorrespondansepartType.class, "systemid", it.getRole().getValue()));
+                                return result;
+                            })
+                            .collect(Collectors.toList()));
 
             String[] split = documentResult.getDocumentNumber().getValue().split("-");
             if (split.length == 2) {
@@ -124,6 +130,13 @@ public class P360DocumentService extends P360AbstractService {
         return journalpost;
     }
 
+    private <T> Optional<T> getSafeValue(JAXBElement<T> element) {
+        if (!element.isNil()) {
+            return Optional.of(element.getValue());
+        }
+        return Optional.empty();
+    }
+
     public void createJournalPost(SaksmappeResource sak) {
 
         List<JournalpostResource> journalpostResources = sak.getJournalpost();
@@ -137,7 +150,7 @@ public class P360DocumentService extends P360AbstractService {
 
             List<Link> journalPostType = journalpostResource.getJournalPostType();
             String[] split = journalPostType.get(0).getHref().split("/");
-            createDocumentParameter.setCategory(objectFactory.createDocumentParameterBaseCategory(split[split.length -1]));
+            createDocumentParameter.setCategory(objectFactory.createDocumentParameterBaseCategory(split[split.length - 1]));
 
             List<Link> journalStatus = journalpostResource.getJournalStatus();
             String[] split1 = journalStatus.get(0).getHref().split("/");

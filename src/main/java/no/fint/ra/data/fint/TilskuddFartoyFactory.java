@@ -1,12 +1,11 @@
 package no.fint.ra.data.fint;
 
-import no.fint.arkiv.p360.caze.CaseDocumentResult;
 import no.fint.arkiv.p360.caze.CaseResult;
 import no.fint.model.administrasjon.arkiv.Saksstatus;
 import no.fint.model.kultur.kulturminnevern.TilskuddFartoy;
 import no.fint.model.resource.Link;
-import no.fint.model.resource.administrasjon.arkiv.JournalpostResource;
 import no.fint.model.resource.kultur.kulturminnevern.TilskuddFartoyResource;
+import no.fint.ra.data.noark.NoarkFactory;
 import no.fint.ra.data.p360.service.P360DocumentService;
 import no.fint.ra.data.utilities.FintUtils;
 import no.fint.ra.data.utilities.NOARKUtils;
@@ -15,8 +14,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 public class TilskuddFartoyFactory {
@@ -24,41 +21,23 @@ public class TilskuddFartoyFactory {
     @Autowired
     private P360DocumentService documentService;
 
-    public TilskuddFartoyResource toFint(CaseResult caseResult) {
+    @Autowired
+    private NoarkFactory noarkFactory;
+
+    public TilskuddFartoyResource toFintResource(CaseResult caseResult) {
 
         TilskuddFartoyResource tilskuddFartoy = new TilskuddFartoyResource();
-
         String caseNumber = caseResult.getCaseNumber().getValue();
 
         String caseYear = NOARKUtils.getCaseYear(caseNumber);
         String sequenceNumber = NOARKUtils.getCaseSequenceNumber(caseNumber);
 
-        tilskuddFartoy.setMappeId(FintUtils.createIdentifikator(caseNumber));
-        tilskuddFartoy.setSystemId(FintUtils.createIdentifikator(caseResult.getRecno().toString()));
-        tilskuddFartoy.setSakssekvensnummer(sequenceNumber);
-        tilskuddFartoy.setSaksaar(caseYear);
-        tilskuddFartoy.setSaksdato(caseResult.getDate().toGregorianCalendar().getTime());
-        tilskuddFartoy.setOpprettetDato(caseResult.getCreatedDate().getValue().toGregorianCalendar().getTime());
-        tilskuddFartoy.setTittel(caseResult.getUnofficialTitle().getValue());
-        tilskuddFartoy.setOffentligTittel(caseResult.getTitle().getValue());
-        tilskuddFartoy.setNoekkelord(caseResult
-                .getArchiveCodes()
-                .getValue()
-                .getArchiveCodeResult()
-                .stream()
-                .flatMap(it -> Stream.of(it.getArchiveType().getValue(), it.getArchiveCode().getValue()))
-                .collect(Collectors.toList()));
         tilskuddFartoy.setKallesignal("AWQR");
         tilskuddFartoy.setKulturminneId("1234");
         tilskuddFartoy.setSoknadsnummer(FintUtils.createIdentifikator("1"));
-        tilskuddFartoy.setBeskrivelse(caseResult.getNotes().getValue());
 
-        List<JournalpostResource> journalpostResourceList = new ArrayList<>();
-        List<CaseDocumentResult> caseDocumentResult = caseResult.getDocuments().getValue().getCaseDocumentResult();
-        caseDocumentResult.forEach(doc ->
-                journalpostResourceList.add(documentService.getJournalPost(doc.getRecno().toString()))
-        );
-        tilskuddFartoy.setJournalpost(journalpostResourceList);
+
+        noarkFactory.getSaksmappe(caseResult, tilskuddFartoy);
 
         tilskuddFartoy.addSaksstatus(Link.with(Saksstatus.class, "systemid", caseResult.getStatus().getValue()));
         tilskuddFartoy.addSelf(Link.with(TilskuddFartoy.class, "mappeid", caseYear, sequenceNumber));
@@ -70,11 +49,10 @@ public class TilskuddFartoyFactory {
     }
 
 
-
-    public List<TilskuddFartoyResource> p360ToFintTilskuddFartoys(List<CaseResult> caseResult) {
+    public List<TilskuddFartoyResource> toFintResourceList(List<CaseResult> caseResult) {
         List<TilskuddFartoyResource> tilskuddFartoyList = new ArrayList<>();
         caseResult.forEach(c -> {
-            TilskuddFartoyResource tilskuddFartoyResource = toFint(c);
+            TilskuddFartoyResource tilskuddFartoyResource = toFintResource(c);
             if (tilskuddFartoyResource != null) {
                 tilskuddFartoyList.add(tilskuddFartoyResource);
             }

@@ -2,10 +2,12 @@ package no.fint.ra.data.p360.service;
 
 import lombok.extern.slf4j.Slf4j;
 import no.fint.arkiv.p360.caze.*;
+import no.fint.model.resource.administrasjon.arkiv.SakResource;
 import no.fint.model.resource.kultur.kulturminnevern.TilskuddFartoyResource;
 import no.fint.ra.data.exception.CreateTilskuddFartoyException;
 import no.fint.ra.data.exception.GetTilskuddFartoyException;
 import no.fint.ra.data.exception.GetTilskuddFartoyNotFoundException;
+import no.fint.ra.data.fint.SakFactory;
 import no.fint.ra.data.fint.TilskuddFartoyFactory;
 import no.fint.ra.data.p360.P360CaseFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +28,9 @@ public class P360CaseService extends P360AbstractService {
 
     @Autowired
     private TilskuddFartoyFactory tilskuddFartoyFactory;
+
+    @Autowired
+    private SakFactory sakFactory;
 
     @Autowired
     private P360DocumentService documentService;
@@ -77,7 +82,7 @@ public class P360CaseService extends P360AbstractService {
         GetCasesQuery getCasesQuery = new GetCasesQuery();
         getCasesQuery.setCaseNumber(objectFactory.createGetCasesQueryCaseNumber(caseNumber));
         log.info("Query: {}", getCasesQuery);
-        return getCase(getCasesQuery);
+        return tilskuddFartoyFactory.toFintResource(getCase(getCasesQuery));
 
     }
 
@@ -85,25 +90,48 @@ public class P360CaseService extends P360AbstractService {
         GetCasesQuery getCasesQuery = new GetCasesQuery();
         getCasesQuery.setRecno(objectFactory.createGetCasesQueryRecno(Integer.valueOf(systemId)));
         log.info("Query: {}", getCasesQuery);
-        return getCase(getCasesQuery);
+        return tilskuddFartoyFactory.toFintResource(getCase(getCasesQuery));
+
     }
 
     public List<TilskuddFartoyResource> searchTilskuddFartoyCaseByTitle(String query) {
+        return tilskuddFartoyFactory.toFintResourceList(getCases(getGetCasesQueryByTitle(query)));
+    }
+
+    public SakResource getSakByCaseNumber(String caseNumber) {
+        GetCasesQuery getCasesQuery = new GetCasesQuery();
+        getCasesQuery.setCaseNumber(objectFactory.createGetCasesQueryCaseNumber(caseNumber));
+        log.info("Query: {}", getCasesQuery);
+        return sakFactory.toFintResource(getCase(getCasesQuery));
+    }
+
+    public SakResource getSakBySystemId(String systemId) {
+        GetCasesQuery getCasesQuery = new GetCasesQuery();
+        getCasesQuery.setRecno(objectFactory.createGetCasesQueryRecno(Integer.valueOf(systemId)));
+        log.info("Query: {}", getCasesQuery);
+        return sakFactory.toFintResource(getCase(getCasesQuery));
+    }
+
+    public List<SakResource> searchSakByTitle(String query) {
+        return sakFactory.toFintResourceList(getCases(getGetCasesQueryByTitle(query)));
+    }
+
+    private GetCasesQuery getGetCasesQueryByTitle(String query) {
         GetCasesQuery getCasesQuery = new GetCasesQuery();
 
         MultiValueMap<String, String> params =
                 UriComponentsBuilder.fromUriString(query).build().getQueryParams();
         getCasesQuery.setTitle(objectFactory.createGetCasesQueryTitle(String.format("%%%s%%", params.getFirst("title"))));
         getCasesQuery.setMaxReturnedCases(objectFactory.createGetCasesQueryMaxReturnedCases(Integer.valueOf(params.getFirst("maxResult"))));
-
-        return getCases(getCasesQuery);
+        getCasesQuery.setIncludeCustomFields(Boolean.TRUE);
+        return getCasesQuery;
     }
 
-    private List<TilskuddFartoyResource> getCases(GetCasesQuery casesQuery) {
+    private List<CaseResult> getCases(GetCasesQuery casesQuery) {
         GetCasesResult cases = caseServicePort.getCases(casesQuery);
 
         if (cases.isSuccessful() && cases.getTotalPageCount().getValue() > 0) {
-            return tilskuddFartoyFactory.p360ToFintTilskuddFartoys(cases.getCases().getValue().getCaseResult());
+            return cases.getCases().getValue().getCaseResult();
         }
         if (cases.getTotalPageCount().getValue() != 1) {
             throw new GetTilskuddFartoyNotFoundException("Case could not be found");
@@ -111,12 +139,12 @@ public class P360CaseService extends P360AbstractService {
         throw new GetTilskuddFartoyException(cases.getErrorDetails().getValue());
     }
 
-    private TilskuddFartoyResource getCase(GetCasesQuery casesQuery) {
+    private CaseResult getCase(GetCasesQuery casesQuery) {
         GetCasesResult cases = caseServicePort.getCases(casesQuery);
         log.info("Cases: {}", cases);
 
         if (cases.isSuccessful() && cases.getTotalPageCount().getValue() == 1) {
-            return tilskuddFartoyFactory.toFint(cases.getCases().getValue().getCaseResult().get(0));
+            return cases.getCases().getValue().getCaseResult().get(0);
         }
         if (cases.getTotalPageCount().getValue() != 1) {
             throw new GetTilskuddFartoyNotFoundException("Case could not be found");
