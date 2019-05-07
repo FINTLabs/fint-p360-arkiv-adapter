@@ -22,11 +22,15 @@ import no.fint.ra.data.exception.FileNotFound;
 import no.fint.ra.data.exception.GetTilskuddFartoyException;
 import no.fint.ra.data.exception.GetTilskuddFartoyNotFoundException;
 import no.fint.ra.data.noark.NoarkCodeListService;
+
 import no.fint.ra.data.p360.service.P360CaseService;
 import no.fint.ra.data.p360.service.P360DocumentService;
 import no.fint.ra.data.p360.service.P360FileService;
 import no.fint.ra.data.p360.service.P360SupportService;
 import no.fint.ra.data.utilities.FintUtils;
+
+import no.fint.ra.data.p360.service.*;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,6 +77,7 @@ public class EventHandlerService {
     @Autowired
     private NoarkCodeListService noarkCodeListService;
 
+
     @Bean
     private AtomicLong identifiers(@Value("${fint.arkiv.dokument.seq:9999999999}") Long seq) {
         return new AtomicLong(seq);
@@ -80,6 +85,10 @@ public class EventHandlerService {
 
     @Autowired
     private AtomicLong identifier;
+
+    @Autowired
+    private P360ContactService contactService;
+
 
     public void handleEvent(String component, Event event) {
         if (event.isHealthCheck()) {
@@ -285,7 +294,11 @@ public class EventHandlerService {
 
 
     private boolean healthCheck() {
-        return p360CaseService.ping() && p360DocumentService.ping() && p360FileService.ping() && supportService.ping();
+        return p360CaseService.ping()
+                && p360DocumentService.ping()
+                && p360FileService.ping()
+                && supportService.ping()
+                && contactService.ping();
 
     }
 
