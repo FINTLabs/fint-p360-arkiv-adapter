@@ -7,7 +7,7 @@ import no.fint.model.administrasjon.organisasjon.Organisasjonselement;
 import no.fint.model.felles.Person;
 import no.fint.model.resource.Link;
 import no.fint.model.resource.administrasjon.arkiv.*;
-import no.fint.ra.data.utilities.SOAPUtils;
+import no.fint.ra.data.utilities.FintUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
@@ -18,7 +18,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static no.fint.ra.data.utilities.SOAPUtils.getSafeValue;
+import static no.fint.ra.data.utilities.FintUtils.getSafeValue;
 
 @Service
 @Slf4j
@@ -104,12 +104,12 @@ public class P360DocumentService extends P360AbstractService {
 
             getSafeValue(documentResult.getResponsiblePerson())
                     .map(ResponsiblePerson::getExternalId)
-                    .flatMap(SOAPUtils::getSafeValue)
+                    .flatMap(FintUtils::getSafeValue)
                     .map(Link.apply(Person.class, "fodselsnummer"))
                     .ifPresent(journalpost::addSaksbehandler);
             getSafeValue(documentResult.getResponsibleEnterprise())
                     .map(ResponsibleEnterprise::getExternalId)
-                    .flatMap(SOAPUtils::getSafeValue)
+                    .flatMap(FintUtils::getSafeValue)
                     .map(Link.apply(Organisasjonselement.class, "organisasjonsnummer"))
                     .ifPresent(journalpost::addAdministrativEnhet);
             getSafeValue(documentResult.getCategory())

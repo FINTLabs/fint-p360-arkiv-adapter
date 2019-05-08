@@ -1,7 +1,6 @@
 package no.fint.ra.data.utilities;
 
 import no.fint.arkiv.p360.contact.ContactPersonResult;
-import no.fint.arkiv.p360.contact.EnterpriseContactResult;
 import no.fint.arkiv.p360.contact.EnterpriseResult;
 import no.fint.arkiv.p360.contact.PrivatePersonResult;
 import no.fint.model.felles.kompleksedatatyper.Identifikator;
@@ -10,7 +9,6 @@ import no.fint.model.resource.felles.kompleksedatatyper.AdresseResource;
 
 import javax.xml.bind.JAXBElement;
 import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 
 public enum FintUtils {
@@ -23,30 +21,15 @@ public enum FintUtils {
     }
 
     public static Kontaktinformasjon createKontaktinformasjon(PrivatePersonResult result) {
-        Kontaktinformasjon kontaktinformasjon = new Kontaktinformasjon();
-        kontaktinformasjon.setEpostadresse(result.getEmail().getValue());
-        kontaktinformasjon.setMobiltelefonnummer(result.getMobilePhone().getValue());
-        kontaktinformasjon.setTelefonnummer(result.getPhoneNumber().getValue());
-
-        return kontaktinformasjon;
+        return getKontaktinformasjon(result.getEmail(), result.getMobilePhone(), result.getPhoneNumber());
     }
 
     public static Kontaktinformasjon createKontaktinformasjon(ContactPersonResult result) {
-        Kontaktinformasjon kontaktinformasjon = new Kontaktinformasjon();
-        kontaktinformasjon.setEpostadresse(result.getEmail().getValue());
-        kontaktinformasjon.setMobiltelefonnummer(result.getMobilePhone().getValue());
-        kontaktinformasjon.setTelefonnummer(result.getPhoneNumber().getValue());
-
-        return kontaktinformasjon;
+        return getKontaktinformasjon(result.getEmail(), result.getMobilePhone(), result.getPhoneNumber());
     }
 
     public static Kontaktinformasjon createKontaktinformasjon(EnterpriseResult result) {
-        Kontaktinformasjon kontaktinformasjon = new Kontaktinformasjon();
-        getSafeValue(result.getEmail()).ifPresent(kontaktinformasjon::setEpostadresse);
-        getSafeValue(result.getMobilePhone()).ifPresent(kontaktinformasjon::setMobiltelefonnummer);
-        getSafeValue(result.getWeb()).ifPresent(kontaktinformasjon::setNettsted);
-
-        return kontaktinformasjon;
+        return getKontaktinformasjon(result.getEmail(), result.getMobilePhone(), result.getPhoneNumber());
     }
 
 
@@ -85,10 +68,20 @@ public enum FintUtils {
         return "";
     }
 
-    private static <T> Optional<T> getSafeValue(JAXBElement<T> element) {
+    public static <T> Optional<T> getSafeValue(JAXBElement<T> element) {
         if (!element.isNil()) {
             return Optional.of(element.getValue());
         }
         return Optional.empty();
     }
+
+    private static Kontaktinformasjon getKontaktinformasjon(JAXBElement<String> email, JAXBElement<String> mobilePhone, JAXBElement<String> phoneNumber) {
+        Kontaktinformasjon kontaktinformasjon = new Kontaktinformasjon();
+        getSafeValue(email).ifPresent(kontaktinformasjon::setEpostadresse);
+        getSafeValue(mobilePhone).ifPresent(kontaktinformasjon::setMobiltelefonnummer);
+        getSafeValue(phoneNumber).ifPresent(kontaktinformasjon::setTelefonnummer);
+        return kontaktinformasjon;
+    }
+
+
 }

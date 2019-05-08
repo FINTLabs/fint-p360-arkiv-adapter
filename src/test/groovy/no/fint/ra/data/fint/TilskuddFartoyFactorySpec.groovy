@@ -44,6 +44,6 @@ class TilskuddFartoyFactorySpec extends Specification {
         def fartoys = tilskuddFartoyFactory.toFintResourceList(p360ObjectFactory.newP360CaseList())
 
         then:
-        fartoys.size() == 2
+        fartoys.count() == 2
     }
 }

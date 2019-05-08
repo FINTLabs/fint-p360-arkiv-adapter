@@ -36,6 +36,6 @@ class EventStatusServiceSpec extends Specification {
         1 * endpoints.getProviders() >> ['test':'http://localhost']
         1 * endpoints.getStatus() >> '/status'
         1 * restTemplate.exchange('http://localhost/status', _ as HttpMethod, _ as HttpEntity, _ as Class) >> ResponseEntity.ok().build()
-        verifiedEvent.status == Status.ADAPTER_ACCEPTED
+        verifiedEvent
     }
 }

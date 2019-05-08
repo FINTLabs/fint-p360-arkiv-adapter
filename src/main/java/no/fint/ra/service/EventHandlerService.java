@@ -85,7 +85,7 @@ public class EventHandlerService {
         if (event.isHealthCheck()) {
             postHealthCheckResponse(component, event);
         } else {
-            if (eventStatusService.verifyEvent(component, event).getStatus() == Status.ADAPTER_ACCEPTED) {
+            if (eventStatusService.verifyEvent(component, event)) {
                 Event<FintLinks> responseEvent = new Event<>(event);
                 try {
                     createEventResponse(event, responseEvent);

@@ -14,4 +14,6 @@ public class FintAdapterProps {
     @Value("${fint.adapter.sse-expiration:1200000}")
     private int expiration;
 
+    @Value("${fint.adapter.reject-unknown-events:true}")
+    private boolean rejectUnknownEvents;
 }
