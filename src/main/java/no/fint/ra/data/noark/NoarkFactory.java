@@ -26,6 +26,7 @@ public class NoarkFactory {
         String caseYear = NOARKUtils.getCaseYear(caseNumber);
         String sequenceNumber = NOARKUtils.getCaseSequenceNumber(caseNumber);
 
+        // FIXME: 2019-05-08 check for empty string
         saksmappeResource.setBeskrivelse(caseResult.getNotes().getValue());
         saksmappeResource.setMappeId(FintUtils.createIdentifikator(caseNumber));
         saksmappeResource.setSystemId(FintUtils.createIdentifikator(caseResult.getRecno().toString()));

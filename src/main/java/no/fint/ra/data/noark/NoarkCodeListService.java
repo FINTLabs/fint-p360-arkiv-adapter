@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.List;
 
+// FIXME: 2019-05-08 Add caching and mapping @asgeir
 @Slf4j
 @Service
 public class NoarkCodeListService {

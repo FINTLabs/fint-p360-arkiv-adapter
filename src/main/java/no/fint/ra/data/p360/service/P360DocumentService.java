@@ -70,17 +70,24 @@ public class P360DocumentService extends P360AbstractService {
                     .map(GregorianCalendar::getTime)
                     .ifPresent(journalpost::setJournalDato);
 
+            // FIXME: 2019-05-08 parse date
             //journalpost.setOpprettetDato(documentResult.getCreatedDate().getValue());
+            // FIXME: 2019-05-08 check for empty
             journalpost.setDokumentbeskrivelse(Collections.emptyList());
+            // FIXME: 2019-05-08 check for empty
             journalpost.setForfatter(Collections.emptyList());
+            // FIXME: 2019-05-08 check for empty keywords
             journalpost.setNokkelord(Collections.emptyList());
+            // FIXME: 2019-05-08 check for empty
             journalpost.setReferanseArkivDel(Collections.emptyList());
 
+            // FIXME: 2019-05-08 Figure out which is already rep and if some of them should be code lists (noark) + skjerming
             journalpost.setBeskrivelse(String.format("%s - %s - %s", documentResult.getType().getValue().getDescription().getValue(), documentResult.getStatusDescription().getValue(), documentResult.getAccessCodeDescription().getValue()));
 
             journalpost.addJournalPostType(Link.with(JournalpostType.class, "systemid", documentResult.getType().getValue().getCode().getValue()));
             journalpost.addJournalStatus(Link.with(JournalStatus.class, "systemid", documentResult.getStatusCode().getValue()));
 
+            // TODO: 2019-05-08 Check noark if this is correct
             journalpost.setForfatter(Collections.singletonList(documentResult.getResponsiblePersonName().getValue()));
 
             journalpost.setKorrespondansepart(
