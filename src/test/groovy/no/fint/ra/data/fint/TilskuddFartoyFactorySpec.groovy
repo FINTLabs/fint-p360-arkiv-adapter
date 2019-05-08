@@ -15,12 +15,18 @@ class TilskuddFartoyFactorySpec extends Specification {
     private P360DocumentService documentService
     private P360ObjectFactory p360ObjectFactory
     private NoarkFactory noarkFactory
+    private KodeverkService kodeverkService
 
     void setup() {
         objectFactory = new ObjectFactory()
         documentService = Mock(P360DocumentService)
+        kodeverkService = Mock()
         noarkFactory = new NoarkFactory(documentService: documentService)
-        tilskuddFartoyFactory = new TilskuddFartoyFactory(documentService: documentService, noarkFactory: noarkFactory)
+        tilskuddFartoyFactory = new TilskuddFartoyFactory(
+                documentService: documentService,
+                noarkFactory: noarkFactory,
+                kodeverkService: kodeverkService
+        )
         p360ObjectFactory = new P360ObjectFactory()
     }
 
@@ -34,6 +40,7 @@ class TilskuddFartoyFactorySpec extends Specification {
 
         then:
         1 * documentService.getJournalPost(_ as String) >> new JournalpostResource()
+        1 * kodeverkService.getSaksstatus() >> []
         fint
         fint.getMappeId().identifikatorverdi == "19/12345"
     }
@@ -42,8 +49,10 @@ class TilskuddFartoyFactorySpec extends Specification {
 
         when:
         def fartoys = tilskuddFartoyFactory.toFintResourceList(p360ObjectFactory.newP360CaseList())
+        def result = fartoys.count()
 
         then:
-        fartoys.count() == 2
+        result == 2
+        2 * kodeverkService.getSaksstatus() >> []
     }
 }
