@@ -1,5 +1,6 @@
 package no.fint.ra.data.utilities;
 
+import no.fint.arkiv.p360.contact.Address;
 import no.fint.arkiv.p360.contact.ContactPersonResult;
 import no.fint.arkiv.p360.contact.EnterpriseResult;
 import no.fint.arkiv.p360.contact.PrivatePersonResult;
@@ -34,22 +35,27 @@ public enum FintUtils {
 
 
     public static AdresseResource createAdresse(PrivatePersonResult result) {
+        return getSafeValue(result.getPostAddress()).map(FintUtils::createAdresseResource).orElse(null);
+
+    }
+
+    public static AdresseResource createAdresse(ContactPersonResult result) {
+        return getSafeValue(result.getPostAddress()).map(FintUtils::createAdresseResource).orElse(null);
+    }
+
+    private static  AdresseResource createAdresseResource(Address address) {
         AdresseResource adresseResource = new AdresseResource();
 
-        adresseResource.setAdresselinje(Collections.singletonList(result.getPrivateAddress().getValue().getStreetAddress().getValue()));
-        adresseResource.setPostnummer(result.getPrivateAddress().getValue().getZipCode().getValue());
-        adresseResource.setPoststed(result.getPrivateAddress().getValue().getZipPlace().getValue());
+
+        adresseResource.setAdresselinje(Collections.singletonList(address.getStreetAddress().getValue()));
+        adresseResource.setPostnummer(address.getZipCode().getValue());
+        adresseResource.setPoststed(address.getZipPlace().getValue());
 
         return adresseResource;
     }
 
-    public static AdresseResource createAdresse(ContactPersonResult result) {
-        AdresseResource adresseResource = new AdresseResource();
-        adresseResource.setAdresselinje(Collections.singletonList(result.getPostAddress().getValue().getStreetAddress().getValue()));
-        adresseResource.setPostnummer(result.getPostAddress().getValue().getZipCode().getValue());
-        adresseResource.setPoststed(result.getPostAddress().getValue().getZipPlace().getValue());
-
-        return adresseResource;
+    public static AdresseResource createAdresse(EnterpriseResult result) {
+        return getSafeValue(result.getPostAddress()).map(FintUtils::createAdresseResource).orElse(null);
     }
 
     public static String getFullNameString(PrivatePersonResult result) {
@@ -57,7 +63,7 @@ public enum FintUtils {
     }
 
     public static String getFullNameString(ContactPersonResult result) {
-        return String.format("%s %s", result.getFirstName().getValue(), result.getLastName());
+        return String.format("%s %s", result.getFirstName().getValue(), result.getLastName().getValue());
     }
 
     public static String getKontaktpersonString(EnterpriseResult result) {
@@ -75,6 +81,7 @@ public enum FintUtils {
         return Optional.empty();
     }
 
+    // FIXME: 2019-05-08 Must handle if all three elements is empty. Then we should return null
     private static Kontaktinformasjon getKontaktinformasjon(JAXBElement<String> email, JAXBElement<String> mobilePhone, JAXBElement<String> phoneNumber) {
         Kontaktinformasjon kontaktinformasjon = new Kontaktinformasjon();
         getSafeValue(email).ifPresent(kontaktinformasjon::setEpostadresse);

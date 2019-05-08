@@ -18,6 +18,7 @@ import no.fint.model.resource.kultur.kulturminnevern.TilskuddFartoyResource;
 import no.fint.ra.data.FileRepository;
 import no.fint.ra.data.exception.*;
 import no.fint.ra.data.fint.KorrespondansepartService;
+import no.fint.ra.data.fint.PartService;
 import no.fint.ra.data.noark.NoarkCodeListService;
 import no.fint.ra.data.p360.service.*;
 import no.fint.ra.data.utilities.FintUtils;
@@ -67,6 +68,9 @@ public class EventHandlerService {
 
     @Autowired
     private KorrespondansepartService korrespondansepartService;
+
+    @Autowired
+    private PartService partService;
 
 
     @Bean
@@ -146,9 +150,30 @@ public class EventHandlerService {
                 case GET_KORRESPONDANSEPART:
                     onGetKorrespondansepart(event, response);
                     break;
+                case GET_PART:
+                    onGetPart(event, response);
             }
         }
 
+    }
+
+    private void onGetPart(Event event, Event<FintLinks> response) {
+        String query = event.getQuery();
+
+        try {
+            if (StringUtils.startsWithIgnoreCase(query, "partid")) {
+                response.setData(
+                        Collections.singletonList(
+                                partService.getPartBySystemId(Integer.valueOf(StringUtils.removeStartIgnoreCase(event.getQuery(), "partid/")))
+                        )
+                );
+            }
+            response.setResponseStatus(ResponseStatus.ACCEPTED);
+        } catch (PartNotFound e) {
+            response.setResponseStatus(ResponseStatus.REJECTED);
+            response.setStatusCode("NOT_FOUND");
+            response.setMessage(e.getMessage());
+        }
     }
 
     private void onGetKorrespondansepart(Event event, Event<FintLinks> response) {
