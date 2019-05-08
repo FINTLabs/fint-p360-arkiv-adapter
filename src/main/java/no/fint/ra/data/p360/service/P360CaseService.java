@@ -68,8 +68,8 @@ public class P360CaseService extends P360AbstractService {
 
         if (caseOperationResult.isSuccessful()) {
             TilskuddFartoyResource tilskuddFartoyNew = getTilskuddFartoyCaseByCaseNumber(caseOperationResult.getCaseNumber().getValue());
-            tilskuddFartoyNew.setJournalpost(tilskuddFartoy.getJournalpost());
-            documentService.createJournalPost(tilskuddFartoyNew);
+            //tilskuddFartoyNew.setJournalpost(tilskuddFartoy.getJournalpost());
+            //documentService.createJournalPost(tilskuddFartoyNew);
             return tilskuddFartoyNew;
 
 
@@ -102,6 +102,7 @@ public class P360CaseService extends P360AbstractService {
     public SakResource getSakByCaseNumber(String caseNumber) {
         GetCasesQuery getCasesQuery = new GetCasesQuery();
         getCasesQuery.setCaseNumber(objectFactory.createGetCasesQueryCaseNumber(caseNumber));
+        getCasesQuery.setIncludeCustomFields(Boolean.TRUE);
         log.info("Query: {}", getCasesQuery);
         return sakFactory.toFintResource(getCase(getCasesQuery));
     }

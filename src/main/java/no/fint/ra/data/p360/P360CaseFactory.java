@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import javax.xml.bind.JAXBElement;
 import java.util.Arrays;
 import java.util.List;
 
@@ -49,6 +50,12 @@ public class P360CaseFactory {
 
         //createCaseParameter.setArchiveCodes(objectFactory.createCaseParameterBaseArchiveCodes(arrayOfClassCodeParameter));
 
+        ArrayOfRemark arrayOfRemark = objectFactory.createArrayOfRemark();
+        Remark remark = new Remark();
+        remark.setRemarkType(objectFactory.createString("SI"));
+        remark.setContent(objectFactory.createString("test"));
+        arrayOfRemark.getRemark().add(remark);
+        createCaseParameter.setRemarks(objectFactory.createArrayOfRemark(arrayOfRemark));
 
         /*
         createCaseParameter.setResponsiblePersonIdNumber(

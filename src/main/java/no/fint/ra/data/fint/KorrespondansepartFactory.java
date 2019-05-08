@@ -7,9 +7,6 @@ import no.fint.model.resource.administrasjon.arkiv.KorrespondansepartResource;
 import no.fint.ra.data.utilities.FintUtils;
 import org.springframework.stereotype.Service;
 
-import javax.xml.bind.JAXBElement;
-import java.util.Optional;
-
 @SuppressWarnings("Duplicates")
 @Service
 public class KorrespondansepartFactory {
@@ -46,7 +43,6 @@ public class KorrespondansepartFactory {
 
         return korrespondansepartResource;
     }
-
 
 
 }
