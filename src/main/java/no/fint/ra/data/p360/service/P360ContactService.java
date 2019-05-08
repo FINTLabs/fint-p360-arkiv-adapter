@@ -2,9 +2,6 @@ package no.fint.ra.data.p360.service;
 
 import lombok.extern.slf4j.Slf4j;
 import no.fint.arkiv.p360.contact.*;
-import no.fint.ra.data.exception.ContactPersonNotFound;
-import no.fint.ra.data.exception.EnterpriseNotFound;
-import no.fint.ra.data.exception.PrivatePersonNotFound;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -42,8 +39,7 @@ public class P360ContactService extends P360AbstractService {
         if (privatePersons.isSuccessful() && privatePersons.getTotalPageCount().getValue().intValue() == 1) {
             return privatePersons.getPrivatePersons().getValue().getPrivatePersonResult().get(0);
         }
-
-        throw new PrivatePersonNotFound(String.format("Recno %s not found", recNo));
+        return null;
     }
 
     public ContactPersonResult getContactPerson(int recNo) {
@@ -56,8 +52,7 @@ public class P360ContactService extends P360AbstractService {
         if (contactPersons.isSuccessful() && contactPersons.getTotalPageCount().getValue().intValue() == 1) {
             return contactPersons.getContactPersons().getValue().getContactPersonResult().get(0);
         }
-
-        throw new ContactPersonNotFound(String.format("Recno %s not found", recNo));
+        return null;
     }
 
     public EnterpriseResult getEntperiseContact(int recNo) {
@@ -71,7 +66,7 @@ public class P360ContactService extends P360AbstractService {
             return enterprises.getEnterprises().getValue().getEnterpriseResult().get(0);
         }
 
-        throw new EnterpriseNotFound(String.format("Recno %s not found", recNo));
+        return null;
     }
 
     public boolean ping() {
