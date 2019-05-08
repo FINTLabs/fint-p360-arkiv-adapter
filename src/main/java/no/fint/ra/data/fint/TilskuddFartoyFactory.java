@@ -45,7 +45,7 @@ public class TilskuddFartoyFactory {
 
         noarkFactory.getSaksmappe(caseResult, tilskuddFartoy);
 
-        FintUtils.getSafeValue(caseResult.getStatus())
+        FintUtils.optionalValue(caseResult.getStatus())
                 .flatMap(kode -> kodeverkService
                         .getSaksstatus()
                         .stream()

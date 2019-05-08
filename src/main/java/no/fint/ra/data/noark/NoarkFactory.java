@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static no.fint.ra.data.utilities.FintUtils.getSafeValue;
+import static no.fint.ra.data.utilities.FintUtils.optionalValue;
 
 @Service
 public class NoarkFactory {
@@ -29,7 +29,7 @@ public class NoarkFactory {
         String caseYear = NOARKUtils.getCaseYear(caseNumber);
         String sequenceNumber = NOARKUtils.getCaseSequenceNumber(caseNumber);
 
-        getSafeValue(caseResult.getNotes())
+        optionalValue(caseResult.getNotes())
                 .filter(StringUtils::isNotBlank)
                 .ifPresent(saksmappeResource::setBeskrivelse);
         saksmappeResource.setMappeId(FintUtils.createIdentifikator(caseNumber));

@@ -22,7 +22,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static no.fint.ra.data.utilities.FintUtils.getSafeValue;
+import static no.fint.ra.data.utilities.FintUtils.optionalValue;
 
 @Service
 @Slf4j
@@ -64,22 +64,22 @@ public class P360DocumentService extends P360AbstractService {
         if (documentsResult.isSuccessful() && documentsResult.getTotalPageCount().getValue() == 1) {
             DocumentResult documentResult = documentsResult.getDocuments().getValue().getDocumentResult().get(0);
 
-            getSafeValue(documentResult.getFiles())
+            optionalValue(documentResult.getFiles())
                     .map(ArrayOfDocumentFileResult::getDocumentFileResult)
                     .map(List::size)
                     .map(Integer::longValue)
                     .ifPresent(journalpost::setAntallVedlegg);
-            getSafeValue(documentResult.getTitle()).ifPresent(journalpost::setTittel);
-            getSafeValue(documentResult.getOfficialTitle()).ifPresent(journalpost::setOffentligTittel);
-            getSafeValue(documentResult.getDocumentDate())
+            optionalValue(documentResult.getTitle()).ifPresent(journalpost::setTittel);
+            optionalValue(documentResult.getOfficialTitle()).ifPresent(journalpost::setOffentligTittel);
+            optionalValue(documentResult.getDocumentDate())
                     .map(XMLGregorianCalendar::toGregorianCalendar)
                     .map(GregorianCalendar::getTime)
                     .ifPresent(journalpost::setDokumentetsDato);
-            getSafeValue(documentResult.getJournalDate())
+            optionalValue(documentResult.getJournalDate())
                     .map(XMLGregorianCalendar::toGregorianCalendar)
                     .map(GregorianCalendar::getTime)
                     .ifPresent(journalpost::setJournalDato);
-            getSafeValue(documentResult.getCreatedDate())
+            optionalValue(documentResult.getCreatedDate())
                     .map(FintUtils::parseDate)
                     .ifPresent(journalpost::setOpprettetDato);
 
@@ -99,14 +99,14 @@ public class P360DocumentService extends P360AbstractService {
             journalpost.setForfatter(Collections.singletonList(documentResult.getResponsiblePersonName().getValue()));
 
             journalpost.setKorrespondansepart(
-                    getSafeValue(documentResult.getContacts())
+                    optionalValue(documentResult.getContacts())
                             .map(ArrayOfDocumentContactResult::getDocumentContactResult)
                             .map(Collection::stream)
                             .orElse(Stream.empty())
                             .map(it -> {
                                 KorrespondanseResource result = new KorrespondanseResource();
                                 result.addKorrespondansepart(Link.with(Korrespondansepart.class, "systemid", it.getContactRecno().getValue()));
-                                getSafeValue(it.getRole())
+                                optionalValue(it.getRole())
                                         .flatMap(role ->
                                                 kodeverkService
                                                         .getKorrespondansepartType()
@@ -122,27 +122,27 @@ public class P360DocumentService extends P360AbstractService {
                             .collect(Collectors.toList()));
 
 
-            String[] split = getSafeValue(documentResult.getDocumentNumber()).orElse("").split("-");
+            String[] split = optionalValue(documentResult.getDocumentNumber()).orElse("").split("-");
             if (split.length == 2 && StringUtils.isNumeric(split[1])) {
                 journalpost.setJournalSekvensnummer(Long.parseLong(split[1]));
             }
 
-            getSafeValue(documentResult.getResponsiblePerson())
+            optionalValue(documentResult.getResponsiblePerson())
                     .map(ResponsiblePerson::getExternalId)
-                    .flatMap(FintUtils::getSafeValue)
+                    .flatMap(FintUtils::optionalValue)
                     .map(Link.apply(Person.class, "fodselsnummer"))
                     .ifPresent(journalpost::addSaksbehandler);
-            getSafeValue(documentResult.getResponsibleEnterprise())
+            optionalValue(documentResult.getResponsibleEnterprise())
                     .map(ResponsibleEnterprise::getExternalId)
-                    .flatMap(FintUtils::getSafeValue)
+                    .flatMap(FintUtils::optionalValue)
                     .map(Link.apply(Organisasjonselement.class, "organisasjonsnummer"))
                     .ifPresent(journalpost::addAdministrativEnhet);
-            getSafeValue(documentResult.getCategory())
+            optionalValue(documentResult.getCategory())
                     .map(DocumentCategoryResult::getRecno)
                     .map(String::valueOf)
                     .map(Link.apply(JournalpostType.class, "systemid"))
                     .ifPresent(journalpost::addJournalPostType);
-            getSafeValue(documentResult.getStatusCode())
+            optionalValue(documentResult.getStatusCode())
                     .flatMap(code -> kodeverkService
                             .getJournalStatus()
                             .stream()
@@ -154,7 +154,7 @@ public class P360DocumentService extends P360AbstractService {
                     .ifPresent(journalpost::addJournalStatus);
 
             Optional.ofNullable(
-                    getSafeValue(documentResult.getRemarks())
+                    optionalValue(documentResult.getRemarks())
                             .map(ArrayOfRemarkInfo::getRemarkInfo)
                             .map(List::stream)
                             .orElse(Stream.empty())
@@ -172,13 +172,13 @@ public class P360DocumentService extends P360AbstractService {
             List<DokumentbeskrivelseResource> dokumentbeskrivelseResourcesList = new ArrayList<>();
             documentFileResult.forEach(file -> {
                 DokumentbeskrivelseResource dokumentbeskrivelseResource = new DokumentbeskrivelseResource();
-                getSafeValue(file.getTitle()).ifPresent(dokumentbeskrivelseResource::setTittel);
+                optionalValue(file.getTitle()).ifPresent(dokumentbeskrivelseResource::setTittel);
 
                 DokumentobjektResource dokumentobjektResource = new DokumentobjektResource();
-                getSafeValue(file.getFormat()).ifPresent(dokumentobjektResource::setFormat);
+                optionalValue(file.getFormat()).ifPresent(dokumentobjektResource::setFormat);
                 dokumentobjektResource.addReferanseDokumentfil(Link.with(Dokumentfil.class, "systemid", file.getRecno().toString()));
 
-                getSafeValue(file.getStatusCode())
+                optionalValue(file.getStatusCode())
                         .flatMap(kode -> kodeverkService
                                 .getDokumentStatus()
                                 .stream()
@@ -189,18 +189,18 @@ public class P360DocumentService extends P360AbstractService {
                         .map(Link.apply(DokumentStatus.class, "systemid"))
                         .ifPresent(dokumentbeskrivelseResource::addDokumentstatus);
 
-                getSafeValue(file.getModifiedBy())
+                optionalValue(file.getModifiedBy())
                         .map(Collections::singletonList)
                         .ifPresent(dokumentbeskrivelseResource::setForfatter);
                 dokumentbeskrivelseResource.setBeskrivelse(String.format("%s - %s - %s - %s", file.getStatusDescription().getValue(), file.getRelationTypeDescription().getValue(), file.getAccessCodeDescription().getValue(), file.getVersionFormatDescription().getValue()));
 
-                getSafeValue(file.getNote())
+                optionalValue(file.getNote())
                         .filter(StringUtils::isNotBlank)
                         .ifPresent(dokumentbeskrivelseResource::setBeskrivelse);
 
                 dokumentbeskrivelseResource.setDokumentobjekt(Collections.singletonList(dokumentobjektResource));
 
-                getSafeValue(file.getRelationTypeCode())
+                optionalValue(file.getRelationTypeCode())
                         .flatMap(kode -> noarkCodeListService
                                 .getTilknyttetRegistreringSom()
                                 .stream()

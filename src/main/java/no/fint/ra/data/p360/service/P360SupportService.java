@@ -104,7 +104,7 @@ public class P360SupportService extends P360AbstractService {
 
     private Stream<CodeTableRowResult> getCodeTableRowResultStream(String table) {
         GetCodeTableRowsResult codeTable = getCodeTable(table);
-        return FintUtils.getSafeValue(codeTable.getCodeTableRows())
+        return FintUtils.optionalValue(codeTable.getCodeTableRows())
                 .map(ArrayOfCodeTableRowResult::getCodeTableRowResult)
                 .map(List::stream)
                 .orElseThrow(() -> new CodeTableNotFound(table));
