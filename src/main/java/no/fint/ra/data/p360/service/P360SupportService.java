@@ -4,41 +4,43 @@ import lombok.extern.slf4j.Slf4j;
 import no.fint.arkiv.p360.support.*;
 import no.fint.model.resource.administrasjon.arkiv.*;
 import no.fint.ra.data.exception.CodeTableNotFound;
-import no.fint.ra.data.fint.KodeverkFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import no.fint.ra.data.utilities.FintUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import javax.xml.namespace.QName;
 import javax.xml.ws.WebServiceException;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Slf4j
 @Service
 public class P360SupportService extends P360AbstractService {
 
-
-    private static final String CONTACT_ROLE_TABLE = "Activity - Contact role";
-    private static final String DOCUMENT_CATEGORY_TABLE = "Document category";
-    private static final String DOCUMENT_STATUS_TABLE = "Document status";
-    private static final String CASE_STATUS_TABLE = "Case status";
-    private static final String JOURNAL_STATUS_TABLE = "Journal status";
-
-
     private static final QName SERVICE_NAME = new QName("http://software-innovation.com/SI.Data", "SupportService");
-
 
     private ISupportService supportService;
     private ObjectFactory objectFactory;
 
-    @Autowired
-    private KodeverkFactory kodeverkFactory;
-
-
     public P360SupportService() {
         super("http://software-innovation.com/SI.Data", "SupportService");
     }
+
+    @Value("${fint.p360.tables.contact-role:Activity - Contact role}")
+    private String contactRoleTable;
+
+    @Value("${fint.p360.tables.document-category:Document category}")
+    private String documentCategoryTable;
+
+    @Value("${fint.p360.tables.document-status:Document status}")
+    private String documentStatusTable;
+
+    @Value("${fint.p360.tables.case-status:Case status}")
+    private String caseStatusTable;
+
+    @Value("${fint.p360.tables.journal-status:Journal status}")
+    private String journalStatusTable;
 
     @PostConstruct
     private void init() {
@@ -47,34 +49,30 @@ public class P360SupportService extends P360AbstractService {
         objectFactory = new ObjectFactory();
     }
 
-    public List<JournalStatusResource> getJournalStatusTable() {
-        GetCodeTableRowsResult codeTable = getCodeTable(JOURNAL_STATUS_TABLE);
-        return codeTable.getCodeTableRows().getValue().getCodeTableRowResult()
-                .stream().map(kodeverkFactory::toJournalStatus).collect(Collectors.toList());
+    public Stream<JournalStatusResource> getJournalStatusTable() {
+        return getCodeTableRowResultStream(journalStatusTable)
+                .map(this::toJournalStatus);
     }
 
-    public List<SaksstatusResource> getCaseStatusTable() {
-        GetCodeTableRowsResult codeTable = getCodeTable(CASE_STATUS_TABLE);
-        return codeTable.getCodeTableRows().getValue().getCodeTableRowResult()
-                .stream().map(kodeverkFactory::toSaksstatus).collect(Collectors.toList());
+
+    public Stream<SaksstatusResource> getCaseStatusTable() {
+        return getCodeTableRowResultStream(caseStatusTable)
+                .map(this::toSaksstatus);
     }
 
-    public List<DokumentStatusResource> getDocumentStatusTable() {
-        GetCodeTableRowsResult codeTable = getCodeTable(DOCUMENT_STATUS_TABLE);
-        return codeTable.getCodeTableRows().getValue().getCodeTableRowResult()
-                .stream().map(kodeverkFactory::toDokumentstatus).collect(Collectors.toList());
+    public Stream<DokumentStatusResource> getDocumentStatusTable() {
+        return getCodeTableRowResultStream(documentStatusTable)
+                .map(this::toDokumentstatus);
     }
 
-    public List<JournalpostTypeResource> getDocumentCategoryTable() {
-        GetCodeTableRowsResult codeTable = getCodeTable(DOCUMENT_CATEGORY_TABLE);
-        return codeTable.getCodeTableRows().getValue().getCodeTableRowResult()
-                .stream().map(kodeverkFactory::toJournalpostType).collect(Collectors.toList());
+    public Stream<JournalpostTypeResource> getDocumentCategoryTable() {
+        return getCodeTableRowResultStream(documentCategoryTable)
+                .map(this::toJournalpostType);
     }
 
-    public List<KorrespondansepartTypeResource> getDocumentContactRole() {
-        GetCodeTableRowsResult codeTable = getCodeTable(CONTACT_ROLE_TABLE);
-        return codeTable.getCodeTableRows().getValue().getCodeTableRowResult()
-                .stream().map(kodeverkFactory::toKorrespondansepartType).collect(Collectors.toList());
+    public Stream<KorrespondansepartTypeResource> getDocumentContactRole() {
+        return getCodeTableRowResultStream(contactRoleTable)
+                .map(this::toKorrespondansepartType);
     }
 
     public GetCodeTableRowsResult getCodeTable(String table) {
@@ -103,4 +101,63 @@ public class P360SupportService extends P360AbstractService {
     public String getSIFVersion() {
         return supportService.getSIFVersion();
     }
+
+    private Stream<CodeTableRowResult> getCodeTableRowResultStream(String table) {
+        GetCodeTableRowsResult codeTable = getCodeTable(table);
+        return FintUtils.getSafeValue(codeTable.getCodeTableRows())
+                .map(ArrayOfCodeTableRowResult::getCodeTableRowResult)
+                .map(List::stream)
+                .orElseThrow(() -> new CodeTableNotFound(table));
+    }
+
+    private SaksstatusResource toSaksstatus(CodeTableRowResult codeTableRow) {
+        SaksstatusResource saksstatusResource = new SaksstatusResource();
+
+        saksstatusResource.setSystemId(FintUtils.createIdentifikator(codeTableRow.getRecno().toString()));
+        saksstatusResource.setKode(codeTableRow.getCode().getValue());
+        saksstatusResource.setNavn(codeTableRow.getDescription().getValue());
+
+        return saksstatusResource;
+    }
+
+    private DokumentStatusResource toDokumentstatus(CodeTableRowResult codeTableRow) {
+        DokumentStatusResource dokumentStatusResource = new DokumentStatusResource();
+
+        dokumentStatusResource.setSystemId(FintUtils.createIdentifikator(codeTableRow.getRecno().toString()));
+        dokumentStatusResource.setKode(codeTableRow.getCode().getValue());
+        dokumentStatusResource.setNavn(codeTableRow.getDescription().getValue());
+        return dokumentStatusResource;
+    }
+
+    private JournalpostTypeResource toJournalpostType(CodeTableRowResult codeTableRow) {
+        JournalpostTypeResource journalpostTypeResource = new JournalpostTypeResource();
+
+        journalpostTypeResource.setSystemId(FintUtils.createIdentifikator(codeTableRow.getRecno().toString()));
+        journalpostTypeResource.setKode(codeTableRow.getCode().getValue());
+        journalpostTypeResource.setNavn(codeTableRow.getDescription().getValue());
+
+        return journalpostTypeResource;
+    }
+
+    private KorrespondansepartTypeResource toKorrespondansepartType(CodeTableRowResult codeTableRow) {
+        KorrespondansepartTypeResource korrespondansepartTypeResource = new KorrespondansepartTypeResource();
+
+        korrespondansepartTypeResource.setSystemId(FintUtils.createIdentifikator(codeTableRow.getRecno().toString()));
+        korrespondansepartTypeResource.setKode(codeTableRow.getCode().getValue());
+        korrespondansepartTypeResource.setNavn(codeTableRow.getDescription().getValue());
+
+        return korrespondansepartTypeResource;
+
+    }
+
+    private JournalStatusResource toJournalStatus(CodeTableRowResult codeTableRow) {
+        JournalStatusResource journalStatusResource = new JournalStatusResource();
+
+        journalStatusResource.setSystemId(FintUtils.createIdentifikator(codeTableRow.getRecno().toString()));
+        journalStatusResource.setKode(codeTableRow.getCode().getValue());
+        journalStatusResource.setNavn(codeTableRow.getDescription().getValue());
+
+        return journalStatusResource;
+    }
+
 }

@@ -5,10 +5,14 @@ import no.fint.arkiv.p360.document.*;
 import no.fint.model.administrasjon.arkiv.*;
 import no.fint.model.administrasjon.organisasjon.Organisasjonselement;
 import no.fint.model.felles.Person;
+import no.fint.model.felles.kompleksedatatyper.Identifikator;
 import no.fint.model.resource.Link;
 import no.fint.model.resource.administrasjon.arkiv.*;
+import no.fint.ra.data.fint.KodeverkService;
+import no.fint.ra.data.noark.NoarkCodeListService;
 import no.fint.ra.data.utilities.FintUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -30,6 +34,12 @@ public class P360DocumentService extends P360AbstractService {
     public P360DocumentService() {
         super("http://software-innovation.com/SI.Data", "DocumentService");
     }
+
+    @Autowired
+    private KodeverkService kodeverkService;
+
+    @Autowired
+    private NoarkCodeListService noarkCodeListService;
 
     @PostConstruct
     private void init() {
@@ -69,9 +79,10 @@ public class P360DocumentService extends P360AbstractService {
                     .map(XMLGregorianCalendar::toGregorianCalendar)
                     .map(GregorianCalendar::getTime)
                     .ifPresent(journalpost::setJournalDato);
+            getSafeValue(documentResult.getCreatedDate())
+                    .map(FintUtils::parseDate)
+                    .ifPresent(journalpost::setOpprettetDato);
 
-            // FIXME: 2019-05-08 parse date
-            //journalpost.setOpprettetDato(documentResult.getCreatedDate().getValue());
             // FIXME: 2019-05-08 check for empty
             journalpost.setDokumentbeskrivelse(Collections.emptyList());
             // FIXME: 2019-05-08 check for empty
@@ -84,9 +95,6 @@ public class P360DocumentService extends P360AbstractService {
             // FIXME: 2019-05-08 Figure out which is already rep and if some of them should be code lists (noark) + skjerming
             journalpost.setBeskrivelse(String.format("%s - %s - %s", documentResult.getType().getValue().getDescription().getValue(), documentResult.getStatusDescription().getValue(), documentResult.getAccessCodeDescription().getValue()));
 
-            journalpost.addJournalPostType(Link.with(JournalpostType.class, "systemid", documentResult.getType().getValue().getCode().getValue()));
-            journalpost.addJournalStatus(Link.with(JournalStatus.class, "systemid", documentResult.getStatusCode().getValue()));
-
             // TODO: 2019-05-08 Check noark if this is correct
             journalpost.setForfatter(Collections.singletonList(documentResult.getResponsiblePersonName().getValue()));
 
@@ -98,7 +106,17 @@ public class P360DocumentService extends P360AbstractService {
                             .map(it -> {
                                 KorrespondanseResource result = new KorrespondanseResource();
                                 result.addKorrespondansepart(Link.with(Korrespondansepart.class, "systemid", it.getContactRecno().getValue()));
-                                result.addKorrespondanseparttype(Link.with(KorrespondansepartType.class, "systemid", it.getRole().getValue()));
+                                getSafeValue(it.getRole())
+                                        .flatMap(role ->
+                                                kodeverkService
+                                                        .getKorrespondansepartType()
+                                                        .stream()
+                                                        .filter(v -> StringUtils.equalsIgnoreCase(role, v.getKode()))
+                                                        .findAny())
+                                        .map(KorrespondansepartTypeResource::getSystemId)
+                                        .map(Identifikator::getIdentifikatorverdi)
+                                        .map(Link.apply(KorrespondansepartType.class, "systemid"))
+                                        .ifPresent(result::addKorrespondanseparttype);
                                 return result;
                             })
                             .collect(Collectors.toList()));
@@ -125,8 +143,30 @@ public class P360DocumentService extends P360AbstractService {
                     .map(Link.apply(JournalpostType.class, "systemid"))
                     .ifPresent(journalpost::addJournalPostType);
             getSafeValue(documentResult.getStatusCode())
+                    .flatMap(code -> kodeverkService
+                            .getJournalStatus()
+                            .stream()
+                            .filter(it -> StringUtils.equalsIgnoreCase(code, it.getKode()))
+                            .findAny())
+                    .map(JournalStatusResource::getSystemId)
+                    .map(Identifikator::getIdentifikatorverdi)
                     .map(Link.apply(JournalStatus.class, "systemid"))
                     .ifPresent(journalpost::addJournalStatus);
+
+            Optional.ofNullable(
+                    getSafeValue(documentResult.getRemarks())
+                            .map(ArrayOfRemarkInfo::getRemarkInfo)
+                            .map(List::stream)
+                            .orElse(Stream.empty())
+                            .map(r -> String.format("%s: %s\n%s\n%s",
+                                    r.getTypeCode().getValue(),
+                                    r.getTypeDescription().getValue(),
+                                    r.getTitle().getValue(),
+                                    r.getContent().getValue()))
+                            .peek(log::info)
+                            .collect(Collectors.joining("\n\n")))
+                    .filter(StringUtils::isNotBlank)
+                    .ifPresent(journalpost::setBeskrivelse);
 
             List<DocumentFileResult> documentFileResult = documentResult.getFiles().getValue().getDocumentFileResult();
             List<DokumentbeskrivelseResource> dokumentbeskrivelseResourcesList = new ArrayList<>();
@@ -136,18 +176,38 @@ public class P360DocumentService extends P360AbstractService {
 
                 DokumentobjektResource dokumentobjektResource = new DokumentobjektResource();
                 getSafeValue(file.getFormat()).ifPresent(dokumentobjektResource::setFormat);
-                //dokumentobjektResource.setReferanseDokumentfil(file.getRecno().toString());
                 dokumentobjektResource.addReferanseDokumentfil(Link.with(Dokumentfil.class, "systemid", file.getRecno().toString()));
 
-                getSafeValue(file.getStatusCode()).map(Link.apply(DokumentStatus.class, "systemid")).ifPresent(dokumentbeskrivelseResource::addDokumentstatus);
+                getSafeValue(file.getStatusCode())
+                        .flatMap(kode -> kodeverkService
+                                .getDokumentStatus()
+                                .stream()
+                                .filter(it -> StringUtils.equalsIgnoreCase(kode, it.getKode()))
+                                .findAny())
+                        .map(DokumentStatusResource::getSystemId)
+                        .map(Identifikator::getIdentifikatorverdi)
+                        .map(Link.apply(DokumentStatus.class, "systemid"))
+                        .ifPresent(dokumentbeskrivelseResource::addDokumentstatus);
 
                 getSafeValue(file.getModifiedBy())
                         .map(Collections::singletonList)
                         .ifPresent(dokumentbeskrivelseResource::setForfatter);
                 dokumentbeskrivelseResource.setBeskrivelse(String.format("%s - %s - %s - %s", file.getStatusDescription().getValue(), file.getRelationTypeDescription().getValue(), file.getAccessCodeDescription().getValue(), file.getVersionFormatDescription().getValue()));
+
+                getSafeValue(file.getNote())
+                        .filter(StringUtils::isNotBlank)
+                        .ifPresent(dokumentbeskrivelseResource::setBeskrivelse);
+
                 dokumentbeskrivelseResource.setDokumentobjekt(Collections.singletonList(dokumentobjektResource));
 
                 getSafeValue(file.getRelationTypeCode())
+                        .flatMap(kode -> noarkCodeListService
+                                .getTilknyttetRegistreringSom()
+                                .stream()
+                                .filter(it -> StringUtils.equalsIgnoreCase(kode, it.getKode()))
+                                .findAny())
+                        .map(TilknyttetRegistreringSomResource::getSystemId)
+                        .map(Identifikator::getIdentifikatorverdi)
                         .map(Link.apply(TilknyttetRegistreringSom.class, "systemid"))
                         .ifPresent(dokumentbeskrivelseResource::addTilknyttetRegistreringSom);
 

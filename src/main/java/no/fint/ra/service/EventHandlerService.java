@@ -17,6 +17,7 @@ import no.fint.model.resource.administrasjon.arkiv.DokumentfilResource;
 import no.fint.model.resource.kultur.kulturminnevern.TilskuddFartoyResource;
 import no.fint.ra.data.FileRepository;
 import no.fint.ra.data.exception.*;
+import no.fint.ra.data.fint.KodeverkService;
 import no.fint.ra.data.fint.KorrespondansepartService;
 import no.fint.ra.data.fint.PartService;
 import no.fint.ra.data.noark.NoarkCodeListService;
@@ -70,8 +71,10 @@ public class EventHandlerService {
     private KorrespondansepartService korrespondansepartService;
 
     @Autowired
-    private PartService partService;
+    private KodeverkService kodeverkService;
 
+    @Autowired
+    private PartService partService;
 
     @Bean
     private AtomicLong identifiers(@Value("${fint.arkiv.dokument.seq:9999999999}") Long seq) {
@@ -221,7 +224,7 @@ public class EventHandlerService {
             response.setMessage(String.format("Error from application: %s", e.getMessage()));
         } catch (Exception e) {
             response.setResponseStatus(ResponseStatus.ERROR);
-            response.setMessage(String.format("Error from adapter: %s", e.getMessage()));
+            response.setMessage(String.format("Error from adapter: %s", ExceptionUtils.getStackTrace(e)));
         }
     }
 
@@ -235,7 +238,7 @@ public class EventHandlerService {
         DokumentfilResource dokumentfilResource = objectMapper.convertValue(response.getData().get(0), DokumentfilResource.class);
         log.info("Format: {}, data: {}...", dokumentfilResource.getFormat(), StringUtils.substring(dokumentfilResource.getData(), 0, 25));
 
-        // TODO
+        // TODO: Add support for writing documents to P360
         dokumentfilResource.setSystemId(FintUtils.createIdentifikator(String.valueOf(identifier.incrementAndGet())));
         response.getData().clear();
         fileRepository.putFile(dokumentfilResource);
@@ -244,7 +247,7 @@ public class EventHandlerService {
     }
 
     private void onGetAllJournalStatus(Event<FintLinks> response) {
-        supportService.getJournalStatusTable().forEach(response::addData);
+        kodeverkService.getJournalStatus().forEach(response::addData);
         response.setResponseStatus(ResponseStatus.ACCEPTED);
     }
 
@@ -254,22 +257,22 @@ public class EventHandlerService {
     }
 
     private void onGetAllJournalpostType(Event<FintLinks> response) {
-        supportService.getDocumentCategoryTable().forEach(response::addData);
+        kodeverkService.getJournalpostType().forEach(response::addData);
         response.setResponseStatus(ResponseStatus.ACCEPTED);
     }
 
     private void onGetAllKorrespondansepartType(Event<FintLinks> response) {
-        supportService.getDocumentContactRole().forEach(response::addData);
+        kodeverkService.getKorrespondansepartType().forEach(response::addData);
         response.setResponseStatus(ResponseStatus.ACCEPTED);
     }
 
     private void onGetAllDokumentstatus(Event<FintLinks> response) {
-        supportService.getDocumentStatusTable().forEach(response::addData);
+        kodeverkService.getDokumentStatus().forEach(response::addData);
         response.setResponseStatus(ResponseStatus.ACCEPTED);
     }
 
     private void onGetSaksstatus(Event<FintLinks> response) {
-        supportService.getCaseStatusTable().forEach(response::addData);
+        kodeverkService.getSaksstatus().forEach(response::addData);
         response.setResponseStatus(ResponseStatus.ACCEPTED);
     }
 
@@ -298,7 +301,7 @@ public class EventHandlerService {
         try {
             response.getData().clear();
             if (StringUtils.startsWithIgnoreCase(query, "mappeid")) {
-                response.addData(caseService.getTilskuddFartoyCaseByCaseNumber(StringUtils.removeStartIgnoreCase(event.getQuery(), "systemid/")));
+                response.addData(caseService.getTilskuddFartoyCaseByCaseNumber(StringUtils.removeStartIgnoreCase(event.getQuery(), "mappeid/")));
             } else if (StringUtils.startsWithIgnoreCase(query, "systemid")) {
                 response.addData(caseService.getTilskuddFartoyCaseBySystemId(StringUtils.removeStartIgnoreCase(event.getQuery(), "systemid/")));
             } else if (query.startsWith("?")) {

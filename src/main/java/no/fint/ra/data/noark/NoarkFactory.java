@@ -7,6 +7,7 @@ import no.fint.model.resource.administrasjon.arkiv.SaksmappeResource;
 import no.fint.ra.data.p360.service.P360DocumentService;
 import no.fint.ra.data.utilities.FintUtils;
 import no.fint.ra.data.utilities.NOARKUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +15,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static no.fint.ra.data.utilities.FintUtils.getSafeValue;
 
 @Service
 public class NoarkFactory {
@@ -26,8 +29,9 @@ public class NoarkFactory {
         String caseYear = NOARKUtils.getCaseYear(caseNumber);
         String sequenceNumber = NOARKUtils.getCaseSequenceNumber(caseNumber);
 
-        // FIXME: 2019-05-08 check for empty string
-        saksmappeResource.setBeskrivelse(caseResult.getNotes().getValue());
+        getSafeValue(caseResult.getNotes())
+                .filter(StringUtils::isNotBlank)
+                .ifPresent(saksmappeResource::setBeskrivelse);
         saksmappeResource.setMappeId(FintUtils.createIdentifikator(caseNumber));
         saksmappeResource.setSystemId(FintUtils.createIdentifikator(caseResult.getRecno().toString()));
         saksmappeResource.setSakssekvensnummer(sequenceNumber);
