@@ -23,7 +23,6 @@ import no.fint.ra.data.fint.PartService;
 import no.fint.ra.data.noark.NoarkCodeListService;
 import no.fint.ra.data.p360.service.*;
 import no.fint.ra.data.utilities.FintUtils;
-import no.fint.ra.data.utilities.QueryUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -190,7 +189,7 @@ public class EventHandlerService {
                                 korrespondansepartService.getKorrespondansepartBySystemId(Integer.valueOf(StringUtils.removeStartIgnoreCase(query, "systemid/")))
                         )
                 );
-            } else if (query.startsWith("?")) {
+            } else if (StringUtils.startsWith(query, "?")) {
                 korrespondansepartService.search(getQueryParams(query)).forEach(response::addData);
             } else {
                 throw new IllegalArgumentException("Invalid query: " + query);
@@ -212,7 +211,7 @@ public class EventHandlerService {
                 response.addData(caseService.getSakByCaseNumber(StringUtils.removeStartIgnoreCase(query, "mappeid/")));
             } else if (StringUtils.startsWithIgnoreCase(query, "systemid/")) {
                 response.addData(caseService.getSakBySystemId(StringUtils.removeStartIgnoreCase(query, "systemid/")));
-            } else if (query.startsWith("?")) {
+            } else if (StringUtils.startsWith(query, "?")) {
                 caseService.searchSakByTitle(getQueryParams(query)).forEach(response::addData);
             } else {
                 throw new IllegalArgumentException("Invalid query: " + query);
@@ -305,7 +304,7 @@ public class EventHandlerService {
                 response.addData(caseService.getTilskuddFartoyCaseByCaseNumber(StringUtils.removeStartIgnoreCase(query, "mappeid/")));
             } else if (StringUtils.startsWithIgnoreCase(query, "systemid/")) {
                 response.addData(caseService.getTilskuddFartoyCaseBySystemId(StringUtils.removeStartIgnoreCase(query, "systemid/")));
-            } else if (query.startsWith("?")) {
+            } else if (StringUtils.startsWith(query, "?")) {
                 caseService.searchTilskuddFartoyCaseByTitle(getQueryParams(query)).forEach(response::addData);
             } else {
                 throw new IllegalArgumentException("Invalid query: " + query);

@@ -8,7 +8,6 @@ import org.springframework.util.MultiValueMap;
 import javax.annotation.PostConstruct;
 import javax.xml.namespace.QName;
 import javax.xml.ws.WebServiceException;
-import java.util.stream.DoubleStream;
 import java.util.stream.Stream;
 
 @Slf4j
@@ -86,11 +85,46 @@ public class P360ContactService extends P360AbstractService {
     }
 
     public Stream<EnterpriseResult> searchEnterprise(MultiValueMap<String, String> queryParams) {
-        return Stream.empty();
+        GetEnterprisesParameter getEnterprisesParameter = objectFactory.createGetEnterprisesParameter();
+        if (queryParams.containsKey("navn")) {
+            getEnterprisesParameter.setName(objectFactory.createGetEnterprisesParameterName(queryParams.getFirst("navn")));
+        }
+        if (queryParams.containsKey("organisasjonsnummer")) {
+            getEnterprisesParameter.setEnterpriseNumber(objectFactory.createGetEnterprisesParameterEnterpriseNumber(queryParams.getFirst("organisasjonsnummer")));
+        }
+        if (queryParams.containsKey("maxResults")) {
+            getEnterprisesParameter.setMaxRows(objectFactory.createGetEnterprisesParameterMaxRows(Integer.valueOf(queryParams.getFirst("maxResults"))));
+        }
+
+        GetEnterprisesResult result = contactService.getEnterprises(getEnterprisesParameter);
+
+        log.info("Result: {}", result);
+
+        if (!result.isSuccessful()) {
+            return Stream.empty();
+        }
+
+        return result.getEnterprises().getValue().getEnterpriseResult().stream();
     }
 
     public Stream<PrivatePersonResult> searchPrivatePerson(MultiValueMap<String, String> queryParams) {
-        return Stream.empty();
+        GetPrivatePersonsParameter getPrivatePersonsParameter = objectFactory.createGetPrivatePersonsParameter();
+        if (queryParams.containsKey("navn")) {
+            getPrivatePersonsParameter.setName(objectFactory.createGetPrivatePersonsParameterName(queryParams.getFirst("navn")));
+        }
+        if (queryParams.containsKey("maxResults")) {
+            getPrivatePersonsParameter.setMaxRows(objectFactory.createGetPrivatePersonsParameterMaxRows(Integer.valueOf(queryParams.getFirst("maxResults"))));
+        }
+
+        GetPrivatePersonsResult result = contactService.getPrivatePersons(getPrivatePersonsParameter);
+
+        log.info("Result: {}", result);
+
+        if (!result.isSuccessful()) {
+            return Stream.empty();
+        }
+
+        return result.getPrivatePersons().getValue().getPrivatePersonResult().stream();
     }
 
     public Stream<ContactPersonResult> searchContactPerson(MultiValueMap<String, String> queryParams) {

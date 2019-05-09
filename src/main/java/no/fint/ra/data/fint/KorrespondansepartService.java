@@ -42,13 +42,15 @@ public class KorrespondansepartService {
     }
 
     public Stream<KorrespondansepartResource> search(MultiValueMap<String, String> queryParams) {
-        Stream<KorrespondansepartResource> enterpriseContacts =
+        Supplier<Stream<KorrespondansepartResource>> enterpriseContacts = () ->
                 contactService.searchEnterprise(queryParams).map(korrespondansepartFactory::toFintResource);
-        Stream<KorrespondansepartResource> privateContacts =
+        Supplier<Stream<KorrespondansepartResource>> privateContacts = () ->
                 contactService.searchPrivatePerson(queryParams).map(korrespondansepartFactory::toFintResource);
-        Stream<KorrespondansepartResource> contacts =
+        Supplier<Stream<KorrespondansepartResource>> contacts = () ->
                 contactService.searchContactPerson(queryParams).map(korrespondansepartFactory::toFintResource);
 
-        return Stream.concat(Stream.concat(enterpriseContacts, privateContacts), contacts);
+        return Stream.of(enterpriseContacts, privateContacts, contacts)
+                .parallel()
+                .flatMap(Supplier::get);
     }
 }
