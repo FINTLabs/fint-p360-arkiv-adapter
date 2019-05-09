@@ -3,10 +3,13 @@ package no.fint.ra.data.p360.service;
 import lombok.extern.slf4j.Slf4j;
 import no.fint.arkiv.p360.contact.*;
 import org.springframework.stereotype.Service;
+import org.springframework.util.MultiValueMap;
 
 import javax.annotation.PostConstruct;
 import javax.xml.namespace.QName;
 import javax.xml.ws.WebServiceException;
+import java.util.stream.DoubleStream;
+import java.util.stream.Stream;
 
 @Slf4j
 @Service
@@ -36,7 +39,7 @@ public class P360ContactService extends P360AbstractService {
         getPrivatePersonsParameter.setRecno(objectFactory.createGetPrivatePersonsParameterRecno(recNo));
         GetPrivatePersonsResult privatePersons = contactService.getPrivatePersons(getPrivatePersonsParameter);
 
-        if (privatePersons.isSuccessful() && privatePersons.getTotalPageCount().getValue().intValue() == 1) {
+        if (privatePersons.isSuccessful() && privatePersons.getTotalPageCount().getValue() == 1) {
             return privatePersons.getPrivatePersons().getValue().getPrivatePersonResult().get(0);
         }
         return null;
@@ -49,7 +52,7 @@ public class P360ContactService extends P360AbstractService {
         getContactPersonsParameter.setRecno(objectFactory.createGetContactPersonsParameterRecno(recNo));
         GetContactPersonsResult contactPersons = contactService.getContactPersons(getContactPersonsParameter);
 
-        if (contactPersons.isSuccessful() && contactPersons.getTotalPageCount().getValue().intValue() == 1) {
+        if (contactPersons.isSuccessful() && contactPersons.getTotalPageCount().getValue() == 1) {
             return contactPersons.getContactPersons().getValue().getContactPersonResult().get(0);
         }
         return null;
@@ -64,7 +67,7 @@ public class P360ContactService extends P360AbstractService {
 
         log.info("EnterpriseResult: {}", enterprises);
 
-        if (enterprises.isSuccessful() && enterprises.getTotalPageCount().getValue().intValue() == 1) {
+        if (enterprises.isSuccessful() && enterprises.getTotalPageCount().getValue() == 1) {
             return enterprises.getEnterprises().getValue().getEnterpriseResult().get(0);
         }
 
@@ -80,5 +83,17 @@ public class P360ContactService extends P360AbstractService {
         }
 
         return true;
+    }
+
+    public Stream<EnterpriseResult> searchEnterprise(MultiValueMap<String, String> queryParams) {
+        return Stream.empty();
+    }
+
+    public Stream<PrivatePersonResult> searchPrivatePerson(MultiValueMap<String, String> queryParams) {
+        return Stream.empty();
+    }
+
+    public Stream<ContactPersonResult> searchContactPerson(MultiValueMap<String, String> queryParams) {
+        return Stream.empty();
     }
 }

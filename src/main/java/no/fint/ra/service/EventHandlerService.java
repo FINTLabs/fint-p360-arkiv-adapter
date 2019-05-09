@@ -23,6 +23,7 @@ import no.fint.ra.data.fint.PartService;
 import no.fint.ra.data.noark.NoarkCodeListService;
 import no.fint.ra.data.p360.service.*;
 import no.fint.ra.data.utilities.FintUtils;
+import no.fint.ra.data.utilities.QueryUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +35,8 @@ import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.concurrent.atomic.AtomicLong;
+
+import static no.fint.ra.data.utilities.QueryUtils.getQueryParams;
 
 
 @Slf4j
@@ -118,7 +121,7 @@ public class EventHandlerService {
                     break;
 
                 case GET_TILSKUDDFARTOY:
-                    onGetTilskuddFartoy(event, response);
+                    onGetTilskuddFartoy(event.getQuery(), response);
                     break;
             }
         } else if (ArkivActions.getActions().contains(event.getAction())) {
@@ -148,28 +151,28 @@ public class EventHandlerService {
                     onGetAllJournalpostType(response);
                     break;
                 case GET_SAK:
-                    onGetSak(event, response);
+                    onGetSak(event.getQuery(), response);
                     break;
                 case GET_KORRESPONDANSEPART:
-                    onGetKorrespondansepart(event, response);
+                    onGetKorrespondansepart(event.getQuery(), response);
                     break;
                 case GET_PART:
-                    onGetPart(event, response);
+                    onGetPart(event.getQuery(), response);
             }
         }
 
     }
 
-    private void onGetPart(Event event, Event<FintLinks> response) {
-        String query = event.getQuery();
-
+    private void onGetPart(String query, Event<FintLinks> response) {
         try {
-            if (StringUtils.startsWithIgnoreCase(query, "partid")) {
+            if (StringUtils.startsWithIgnoreCase(query, "partid/")) {
                 response.setData(
                         Collections.singletonList(
-                                partService.getPartBySystemId(Integer.valueOf(StringUtils.removeStartIgnoreCase(event.getQuery(), "partid/")))
+                                partService.getPartBySystemId(Integer.valueOf(StringUtils.removeStartIgnoreCase(query, "partid/")))
                         )
                 );
+            } else {
+                throw new IllegalArgumentException("Invalid query: " + query);
             }
             response.setResponseStatus(ResponseStatus.ACCEPTED);
         } catch (PartNotFound e) {
@@ -179,16 +182,18 @@ public class EventHandlerService {
         }
     }
 
-    private void onGetKorrespondansepart(Event event, Event<FintLinks> response) {
-        String query = event.getQuery();
-
+    private void onGetKorrespondansepart(String query, Event<FintLinks> response) {
         try {
-            if (StringUtils.startsWithIgnoreCase(query, "systemid")) {
+            if (StringUtils.startsWithIgnoreCase(query, "systemid/")) {
                 response.setData(
                         Collections.singletonList(
-                                korrespondansepartService.getKorrespondansepartBySystemId(Integer.valueOf(StringUtils.removeStartIgnoreCase(event.getQuery(), "systemid/")))
+                                korrespondansepartService.getKorrespondansepartBySystemId(Integer.valueOf(StringUtils.removeStartIgnoreCase(query, "systemid/")))
                         )
                 );
+            } else if (query.startsWith("?")) {
+                korrespondansepartService.search(getQueryParams(query)).forEach(response::addData);
+            } else {
+                throw new IllegalArgumentException("Invalid query: " + query);
             }
             response.setResponseStatus(ResponseStatus.ACCEPTED);
         } catch (KorrespondansepartNotFound e) {
@@ -200,17 +205,15 @@ public class EventHandlerService {
 
     }
 
-    private void onGetSak(Event event, Event<FintLinks> response) {
-        String query = event.getQuery();
-
+    private void onGetSak(String query, Event<FintLinks> response) {
         try {
             response.getData().clear();
-            if (StringUtils.startsWithIgnoreCase(query, "mappeid")) {
-                response.addData(caseService.getSakByCaseNumber(StringUtils.removeStartIgnoreCase(event.getQuery(), "mappeid/")));
-            } else if (StringUtils.startsWithIgnoreCase(query, "systemid")) {
-                response.addData(caseService.getSakBySystemId(StringUtils.removeStartIgnoreCase(event.getQuery(), "systemid/")));
+            if (StringUtils.startsWithIgnoreCase(query, "mappeid/")) {
+                response.addData(caseService.getSakByCaseNumber(StringUtils.removeStartIgnoreCase(query, "mappeid/")));
+            } else if (StringUtils.startsWithIgnoreCase(query, "systemid/")) {
+                response.addData(caseService.getSakBySystemId(StringUtils.removeStartIgnoreCase(query, "systemid/")));
             } else if (query.startsWith("?")) {
-                caseService.searchSakByTitle(query).forEach(response::addData);
+                caseService.searchSakByTitle(getQueryParams(query)).forEach(response::addData);
             } else {
                 throw new IllegalArgumentException("Invalid query: " + query);
             }
@@ -295,17 +298,15 @@ public class EventHandlerService {
         }
     }
 
-    private void onGetTilskuddFartoy(Event event, Event<FintLinks> response) {
-        String query = event.getQuery();
-
+    private void onGetTilskuddFartoy(String query, Event<FintLinks> response) {
         try {
             response.getData().clear();
-            if (StringUtils.startsWithIgnoreCase(query, "mappeid")) {
-                response.addData(caseService.getTilskuddFartoyCaseByCaseNumber(StringUtils.removeStartIgnoreCase(event.getQuery(), "mappeid/")));
-            } else if (StringUtils.startsWithIgnoreCase(query, "systemid")) {
-                response.addData(caseService.getTilskuddFartoyCaseBySystemId(StringUtils.removeStartIgnoreCase(event.getQuery(), "systemid/")));
+            if (StringUtils.startsWithIgnoreCase(query, "mappeid/")) {
+                response.addData(caseService.getTilskuddFartoyCaseByCaseNumber(StringUtils.removeStartIgnoreCase(query, "mappeid/")));
+            } else if (StringUtils.startsWithIgnoreCase(query, "systemid/")) {
+                response.addData(caseService.getTilskuddFartoyCaseBySystemId(StringUtils.removeStartIgnoreCase(query, "systemid/")));
             } else if (query.startsWith("?")) {
-                caseService.searchTilskuddFartoyCaseByTitle(query).forEach(response::addData);
+                caseService.searchTilskuddFartoyCaseByTitle(getQueryParams(query)).forEach(response::addData);
             } else {
                 throw new IllegalArgumentException("Invalid query: " + query);
             }

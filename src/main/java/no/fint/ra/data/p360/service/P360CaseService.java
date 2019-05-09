@@ -13,7 +13,6 @@ import no.fint.ra.data.p360.P360CaseFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.annotation.PostConstruct;
 import javax.xml.ws.WebServiceException;
@@ -95,7 +94,7 @@ public class P360CaseService extends P360AbstractService {
 
     }
 
-    public Stream<TilskuddFartoyResource> searchTilskuddFartoyCaseByTitle(String query) {
+    public Stream<TilskuddFartoyResource> searchTilskuddFartoyCaseByTitle(MultiValueMap<String, String> query) {
         return tilskuddFartoyFactory.toFintResourceList(getCases(getGetCasesQueryByTitle(query)));
     }
 
@@ -114,15 +113,12 @@ public class P360CaseService extends P360AbstractService {
         return sakFactory.toFintResource(getCase(getCasesQuery));
     }
 
-    public Stream<SakResource> searchSakByTitle(String query) {
+    public Stream<SakResource> searchSakByTitle(MultiValueMap<String, String> query) {
         return sakFactory.toFintResourceList(getCases(getGetCasesQueryByTitle(query)));
     }
 
-    private GetCasesQuery getGetCasesQueryByTitle(String query) {
+    private GetCasesQuery getGetCasesQueryByTitle(MultiValueMap<String, String> params) {
         GetCasesQuery getCasesQuery = new GetCasesQuery();
-
-        MultiValueMap<String, String> params =
-                UriComponentsBuilder.fromUriString(query).build().getQueryParams();
         getCasesQuery.setTitle(objectFactory.createGetCasesQueryTitle(String.format("%%%s%%", params.getFirst("title"))));
         getCasesQuery.setMaxReturnedCases(objectFactory.createGetCasesQueryMaxReturnedCases(Integer.valueOf(params.getFirst("maxResult"))));
         getCasesQuery.setIncludeCustomFields(Boolean.TRUE);

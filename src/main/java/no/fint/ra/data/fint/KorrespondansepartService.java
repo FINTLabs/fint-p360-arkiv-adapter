@@ -1,11 +1,13 @@
 package no.fint.ra.data.fint;
 
 import lombok.extern.slf4j.Slf4j;
+import no.fint.model.resource.FintLinks;
 import no.fint.model.resource.administrasjon.arkiv.KorrespondansepartResource;
 import no.fint.ra.data.exception.KorrespondansepartNotFound;
 import no.fint.ra.data.p360.service.P360ContactService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.MultiValueMap;
 
 import java.util.Objects;
 import java.util.function.Supplier;
@@ -37,5 +39,16 @@ public class KorrespondansepartService {
                 .findAny()
                 .orElseThrow(() -> new KorrespondansepartNotFound("Recno " + id + " not found"));
 
+    }
+
+    public Stream<KorrespondansepartResource> search(MultiValueMap<String, String> queryParams) {
+        Stream<KorrespondansepartResource> enterpriseContacts =
+                contactService.searchEnterprise(queryParams).map(korrespondansepartFactory::toFintResource);
+        Stream<KorrespondansepartResource> privateContacts =
+                contactService.searchPrivatePerson(queryParams).map(korrespondansepartFactory::toFintResource);
+        Stream<KorrespondansepartResource> contacts =
+                contactService.searchContactPerson(queryParams).map(korrespondansepartFactory::toFintResource);
+
+        return Stream.concat(Stream.concat(enterpriseContacts, privateContacts), contacts);
     }
 }
