@@ -2,7 +2,6 @@ package no.fint.ra.data.utilities;
 
 import no.fint.model.resource.kultur.kulturminnevern.TilskuddFartoyResource;
 import no.fint.ra.data.exception.UnableToParseTitle;
-import org.omg.CORBA.PUBLIC_MEMBER;
 
 import java.util.HashMap;
 import java.util.Map;
