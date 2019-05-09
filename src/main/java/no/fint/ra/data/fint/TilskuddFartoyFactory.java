@@ -39,6 +39,7 @@ public class TilskuddFartoyFactory {
         String sequenceNumber = NOARKUtils.getCaseSequenceNumber(caseNumber);
 
         // FIXME
+        tilskuddFartoy.setFartoyNavn("Titanic");
         tilskuddFartoy.setKallesignal("AWQR");
         tilskuddFartoy.setKulturminneId("1234");
         tilskuddFartoy.setSoknadsnummer(FintUtils.createIdentifikator("1"));
