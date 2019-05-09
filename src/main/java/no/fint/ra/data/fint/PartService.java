@@ -22,11 +22,11 @@ public class PartService {
     public PartResource getPartBySystemId(int id) {
 
         Supplier<PartResource> enterpriseContact = () ->
-                partFactory.toFintResource(contactService.getEntperiseContact(id));
+                partFactory.toFintResource(contactService.getEnterpriseByRecno(id));
         Supplier<PartResource> privateContact = () ->
-                partFactory.toFintResource(contactService.getPrivatePrivateByRecno(id));
+                partFactory.toFintResource(contactService.getPrivatePersonByRecno(id));
         Supplier<PartResource> contact = () ->
-                partFactory.toFintResource(contactService.getContactPerson(id));
+                partFactory.toFintResource(contactService.getContactPersonByRecno(id));
 
         return Stream.of(enterpriseContact, privateContact, contact)
                 .parallel()

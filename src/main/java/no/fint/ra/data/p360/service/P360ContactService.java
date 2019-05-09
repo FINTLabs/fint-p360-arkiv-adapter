@@ -30,7 +30,7 @@ public class P360ContactService extends P360AbstractService {
         objectFactory = new ObjectFactory();
     }
 
-    public PrivatePersonResult getPrivatePrivateByRecno(int recNo) {
+    public PrivatePersonResult getPrivatePersonByRecno(int recNo) {
         GetPrivatePersonsParameter getPrivatePersonsParameter = new GetPrivatePersonsParameter();
         getPrivatePersonsParameter.setIncludeCustomFields(Boolean.TRUE);
         getPrivatePersonsParameter.setRecno(objectFactory.createGetPrivatePersonsParameterRecno(recNo));
@@ -42,7 +42,7 @@ public class P360ContactService extends P360AbstractService {
         return null;
     }
 
-    public ContactPersonResult getContactPerson(int recNo) {
+    public ContactPersonResult getContactPersonByRecno(int recNo) {
 
         GetContactPersonsParameter getContactPersonsParameter = new GetContactPersonsParameter();
         getContactPersonsParameter.setIncludeCustomFields(Boolean.TRUE);
@@ -55,12 +55,14 @@ public class P360ContactService extends P360AbstractService {
         return null;
     }
 
-    public EnterpriseResult getEntperiseContact(int recNo) {
+    public EnterpriseResult getEnterpriseByRecno(int recNo) {
 
         GetEnterprisesParameter getEnterpriseParameter = new GetEnterprisesParameter();
         getEnterpriseParameter.setIncludeCustomFields(Boolean.TRUE);
         getEnterpriseParameter.setRecno(objectFactory.createGetEnterprisesParameterRecno(recNo));
         GetEnterprisesResult enterprises = contactService.getEnterprises(getEnterpriseParameter);
+
+        log.info("EnterpriseResult: {}", enterprises);
 
         if (enterprises.isSuccessful() && enterprises.getTotalPageCount().getValue().intValue() == 1) {
             return enterprises.getEnterprises().getValue().getEnterpriseResult().get(0);

@@ -24,11 +24,11 @@ public class KorrespondansepartService {
     public KorrespondansepartResource getKorrespondansepartBySystemId(int id) {
 
         Supplier<KorrespondansepartResource> enterpriseContact = () ->
-                korrespondansepartFactory.toFintResource(contactService.getEntperiseContact(id));
+                korrespondansepartFactory.toFintResource(contactService.getEnterpriseByRecno(id));
         Supplier<KorrespondansepartResource> privateContact = () ->
-                korrespondansepartFactory.toFintResource(contactService.getPrivatePrivateByRecno(id));
+                korrespondansepartFactory.toFintResource(contactService.getPrivatePersonByRecno(id));
         Supplier<KorrespondansepartResource> contact = () ->
-                korrespondansepartFactory.toFintResource(contactService.getContactPerson(id));
+                korrespondansepartFactory.toFintResource(contactService.getContactPersonByRecno(id));
 
         return Stream.of(enterpriseContact, privateContact, contact)
                 .parallel()
