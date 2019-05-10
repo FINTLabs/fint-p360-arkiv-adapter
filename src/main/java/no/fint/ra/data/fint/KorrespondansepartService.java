@@ -1,11 +1,13 @@
 package no.fint.ra.data.fint;
 
 import lombok.extern.slf4j.Slf4j;
+import no.fint.model.resource.FintLinks;
 import no.fint.model.resource.administrasjon.arkiv.KorrespondansepartResource;
 import no.fint.ra.data.exception.KorrespondansepartNotFound;
 import no.fint.ra.data.p360.service.P360ContactService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.MultiValueMap;
 
 import java.util.Objects;
 import java.util.function.Supplier;
@@ -24,11 +26,11 @@ public class KorrespondansepartService {
     public KorrespondansepartResource getKorrespondansepartBySystemId(int id) {
 
         Supplier<KorrespondansepartResource> enterpriseContact = () ->
-                korrespondansepartFactory.toFintResource(contactService.getEntperiseContact(id));
+                korrespondansepartFactory.toFintResource(contactService.getEnterpriseByRecno(id));
         Supplier<KorrespondansepartResource> privateContact = () ->
-                korrespondansepartFactory.toFintResource(contactService.getPrivatePrivateByRecno(id));
+                korrespondansepartFactory.toFintResource(contactService.getPrivatePersonByRecno(id));
         Supplier<KorrespondansepartResource> contact = () ->
-                korrespondansepartFactory.toFintResource(contactService.getContactPerson(id));
+                korrespondansepartFactory.toFintResource(contactService.getContactPersonByRecno(id));
 
         return Stream.of(enterpriseContact, privateContact, contact)
                 .parallel()
@@ -37,5 +39,18 @@ public class KorrespondansepartService {
                 .findAny()
                 .orElseThrow(() -> new KorrespondansepartNotFound("Recno " + id + " not found"));
 
+    }
+
+    public Stream<KorrespondansepartResource> search(MultiValueMap<String, String> queryParams) {
+        Supplier<Stream<KorrespondansepartResource>> enterpriseContacts = () ->
+                contactService.searchEnterprise(queryParams).map(korrespondansepartFactory::toFintResource);
+        Supplier<Stream<KorrespondansepartResource>> privateContacts = () ->
+                contactService.searchPrivatePerson(queryParams).map(korrespondansepartFactory::toFintResource);
+        Supplier<Stream<KorrespondansepartResource>> contacts = () ->
+                contactService.searchContactPerson(queryParams).map(korrespondansepartFactory::toFintResource);
+
+        return Stream.of(enterpriseContacts, privateContacts, contacts)
+                .parallel()
+                .flatMap(Supplier::get);
     }
 }

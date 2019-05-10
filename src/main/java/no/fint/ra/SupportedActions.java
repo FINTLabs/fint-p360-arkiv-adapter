@@ -14,7 +14,7 @@ public class SupportedActions extends AbstractSupportedActions {
     public void addSupportedActions() {
 
         add(KulturminnevernActions.UPDATE_TILSKUDDFARTOY);
-        //add(KulturminnevernActions.GET_TILSKUDDFARTOY);
+        add(KulturminnevernActions.GET_TILSKUDDFARTOY);
 
         add(ArkivActions.GET_DOKUMENTFIL);
         add(ArkivActions.UPDATE_DOKUMENTFIL);

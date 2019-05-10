@@ -51,6 +51,7 @@ public class PartFactory {
         partResource.setAdresse(FintUtils.createAdresse(result));
         partResource.setKontaktinformasjon(FintUtils.createKontaktinformasjon(result));
         partResource.setPartNavn(result.getName().getValue());
+        partResource.setKontaktperson(FintUtils.getKontaktpersonString(result));
         partResource.setPartId(FintUtils.createIdentifikator(result.getRecno().toString()));
 
         return partResource;
