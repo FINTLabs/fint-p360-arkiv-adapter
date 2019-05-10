@@ -68,8 +68,8 @@ public class P360CaseService extends P360AbstractService {
 
         if (caseOperationResult.isSuccessful()) {
             TilskuddFartoyResource tilskuddFartoyNew = getTilskuddFartoyCaseByCaseNumber(caseOperationResult.getCaseNumber().getValue());
-            //tilskuddFartoyNew.setJournalpost(tilskuddFartoy.getJournalpost());
-            //documentService.createJournalPost(tilskuddFartoyNew);
+            tilskuddFartoyNew.setJournalpost(tilskuddFartoy.getJournalpost());
+            documentService.createJournalPost(tilskuddFartoyNew);
             return tilskuddFartoyNew;
 
 

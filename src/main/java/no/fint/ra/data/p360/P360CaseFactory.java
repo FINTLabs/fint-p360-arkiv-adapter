@@ -41,22 +41,30 @@ public class P360CaseFactory {
         createCaseParameter.setResponsibleEnterpriseRecno(objectFactory.createCaseParameterBaseResponsibleEnterpriseRecno(Integer.valueOf(kulturminneProps.getResponsibleUnit())));
         createCaseParameter.setSubArchive(objectFactory.createCaseParameterBaseSubArchive(kulturminneProps.getSubArchive()));
 
+        ExternalIdParameter externalIdParameter = objectFactory.createExternalIdParameter();
+        externalIdParameter.setId(objectFactory.createExternalIdParameterId(tilskuddFartoy.getSoknadsnummer().getIdentifikatorverdi()));
+        externalIdParameter.setType(objectFactory.createExternalIdParameterType("Digisak"));
+
+        createCaseParameter.setExternalId(objectFactory.createCaseParameterBaseExternalId(externalIdParameter));
         ArrayOfClassCodeParameter arrayOfClassCodeParameter = objectFactory.createArrayOfClassCodeParameter();
         ClassCodeParameter classCodeParameter = objectFactory.createClassCodeParameter();
 
-        classCodeParameter.setArchiveCode(objectFactory.createString("Henko"));
-        classCodeParameter.setArchiveType(objectFactory.createString("Fartøy"));
+        classCodeParameter.setSort(1);
+        classCodeParameter.setIsManualText(Boolean.FALSE);
+        classCodeParameter.setArchiveCode(objectFactory.createClassCodeParameterArchiveCode(tilskuddFartoy.getFartoyNavn()));
+        classCodeParameter.setArchiveType(objectFactory.createClassCodeParameterArchiveType("Fartøy"));
         arrayOfClassCodeParameter.getClassCodeParameter().add(classCodeParameter);
 
-        //createCaseParameter.setArchiveCodes(objectFactory.createCaseParameterBaseArchiveCodes(arrayOfClassCodeParameter));
+        createCaseParameter.setArchiveCodes(objectFactory.createCaseParameterBaseArchiveCodes(arrayOfClassCodeParameter));
 
+        /*
         ArrayOfRemark arrayOfRemark = objectFactory.createArrayOfRemark();
         Remark remark = new Remark();
         remark.setRemarkType(objectFactory.createString("SI"));
         remark.setContent(objectFactory.createString("test"));
         arrayOfRemark.getRemark().add(remark);
         createCaseParameter.setRemarks(objectFactory.createArrayOfRemark(arrayOfRemark));
-
+        */
         /*
         createCaseParameter.setResponsiblePersonIdNumber(
                 objectFactory.createCaseParameterBaseResponsiblePersonIdNumber(
