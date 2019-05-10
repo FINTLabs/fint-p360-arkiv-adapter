@@ -2,6 +2,7 @@ package no.fint.ra.data.p360
 
 
 import no.fint.arkiv.p360.caze.ObjectFactory
+import no.fint.model.felles.kompleksedatatyper.Identifikator
 import no.fint.model.resource.kultur.kulturminnevern.TilskuddFartoyResource
 import no.fint.ra.KulturminneProps
 import spock.lang.Specification
@@ -11,7 +12,8 @@ class P360CaseFactorySpec extends Specification {
     def "FINT TilskuddFartoy to P360 CreateCaseParameter"() {
 
         given:
-        def tilskuddFartoyResource = new TilskuddFartoyResource()
+        def tilskuddFartoyResource = new TilskuddFartoyResource(
+                soknadsnummer: new Identifikator(identifikatorverdi: '1234'))
         def objectFactory = new ObjectFactory()
         def props = new KulturminneProps(responsibleUnit: 123, subArchive: "456", keywords: ["test1", "test2"])
         def factory = new P360CaseFactory(objectFactory: objectFactory, kulturminneProps: props)
