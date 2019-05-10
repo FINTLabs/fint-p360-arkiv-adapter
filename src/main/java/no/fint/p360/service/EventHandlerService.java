@@ -243,8 +243,7 @@ public class EventHandlerService {
         DokumentfilResource dokumentfilResource = objectMapper.convertValue(response.getData().get(0), DokumentfilResource.class);
         log.info("Format: {}, data: {}...", dokumentfilResource.getFormat(), StringUtils.substring(dokumentfilResource.getData(), 0, 25));
 
-        // TODO: Add support for writing documents to P360
-        dokumentfilResource.setSystemId(FintUtils.createIdentifikator(String.valueOf(identifier.incrementAndGet())));
+        dokumentfilResource.setSystemId(FintUtils.createIdentifikator(String.format("I_%d", identifier.incrementAndGet())));
         response.getData().clear();
         fileRepository.putFile(dokumentfilResource);
         response.addData(dokumentfilResource);
