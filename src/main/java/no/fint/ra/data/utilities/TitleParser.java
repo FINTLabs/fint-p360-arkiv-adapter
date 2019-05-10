@@ -3,28 +3,26 @@ package no.fint.ra.data.utilities;
 import no.fint.model.resource.kultur.kulturminnevern.TilskuddFartoyResource;
 import no.fint.ra.data.exception.UnableToParseTitle;
 
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 public class TitleParser {
 
     //LM9544 - Ternen - Reketråler - Statsbudsjettet - Tilskudd
 
-    public static final int TILSKUDDFARTOY_KALLESIGNAL = 0;
-    public static final int TILSKUDDFARTOY_NAVN = 1;
-    public static final int DIGISAK_NR = 2;
+    public static final int FARTOY_KALLESIGNAL = 0;
+    public static final int FARTOY_NAVN = 1;
+    public static final int DIGISAK_NUMMER = 2;
     public static final int MATRIKKELNUMMER = 1;
     public static final int KULTURMINNE_ID = 3;
 
     public static class Title {
         Map<Integer, String> titleMap;
 
-        public Title() {
-            titleMap = new HashMap<>();
-        }
-
-        public void setDimension(Integer dimension, String value) {
-            titleMap.put(dimension, value);
+        public Title(Map<Integer, String> map) {
+            titleMap = map;
         }
 
         public String getDimension(Integer dimension) {
@@ -33,17 +31,15 @@ public class TitleParser {
     }
 
     public static Title parseTitle(String caseTitle) {
-        String[] titleArray = caseTitle.split("-");
-        if (titleArray.length <= 1) {
+        AtomicInteger position = new AtomicInteger(0);
+        Map<Integer, String> titleMap = Arrays.stream(caseTitle.split("-"))
+                .collect(Collectors.toMap(i -> position.getAndIncrement(), String::trim));
+
+        if (titleMap.size() <= 1) {
             throw new UnableToParseTitle(String.format("Unable to parse title: %s", caseTitle));
         }
 
-        Title title = new Title();
-
-        for (int i = 0; i < titleArray.length; i++) {
-            title.setDimension(i, titleArray[i].trim());
-        }
-        return title;
+        return new Title(titleMap);
     }
 
     // TODO: 2019-05-09 Vi må finne ut hvordan denne skal være

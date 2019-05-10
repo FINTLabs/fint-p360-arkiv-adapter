@@ -12,14 +12,14 @@ class TitleParserSpec extends Specification {
         def title = TitleParser.parseTitle("LM9544 - Ternen - Reketråler - Statsbudsjettet - Tilskudd")
 
         then:
-        title.getDimension(TitleParser.TILSKUDDFARTOY_KALLESIGNAL) == "LM9544"
-        title.getDimension(TitleParser.TILSKUDDFARTOY_NAVN) == "Ternen"
+        title.getDimension(TitleParser.FARTOY_KALLESIGNAL) == "LM9544"
+        title.getDimension(TitleParser.FARTOY_NAVN) == "Ternen"
         noExceptionThrown()
     }
 
     def "when unable to parse title exception is thrown"() {
         when:
-        def title = TitleParser.parseTitle("LM9544, Ternen, Reketråler, Statsbudsjettet, Tilskudd")
+        TitleParser.parseTitle("LM9544, Ternen, Reketråler, Statsbudsjettet, Tilskudd")
 
         then:
         thrown UnableToParseTitle
@@ -31,7 +31,6 @@ class TitleParserSpec extends Specification {
 
         then:
         title != null
-
     }
 }
 
