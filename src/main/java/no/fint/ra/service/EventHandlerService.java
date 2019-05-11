@@ -16,11 +16,13 @@ import no.fint.model.resource.FintLinks;
 import no.fint.model.resource.administrasjon.arkiv.DokumentfilResource;
 import no.fint.model.resource.kultur.kulturminnevern.TilskuddFartoyResource;
 import no.fint.ra.data.FileRepository;
+import no.fint.ra.data.TilskuddfartoyService;
 import no.fint.ra.data.exception.*;
 import no.fint.ra.data.fint.KodeverkService;
 import no.fint.ra.data.fint.KorrespondansepartService;
 import no.fint.ra.data.fint.PartService;
 import no.fint.ra.data.noark.NoarkCodeListService;
+import no.fint.ra.data.noark.SakService;
 import no.fint.ra.data.p360.service.*;
 import no.fint.ra.data.utilities.FintUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -30,7 +32,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.concurrent.atomic.AtomicLong;
@@ -88,6 +89,12 @@ public class EventHandlerService {
 
     @Autowired
     private P360ContactService contactService;
+
+    @Autowired
+    private TilskuddfartoyService tilskuddfartoyService;
+
+    @Autowired
+    private SakService sakService;
 
 
     public void handleEvent(String component, Event event) {
@@ -208,11 +215,11 @@ public class EventHandlerService {
         try {
             response.getData().clear();
             if (StringUtils.startsWithIgnoreCase(query, "mappeid/")) {
-                response.addData(caseService.getSakByCaseNumber(StringUtils.removeStartIgnoreCase(query, "mappeid/")));
+                response.addData(sakService.getSakByCaseNumber(StringUtils.removeStartIgnoreCase(query, "mappeid/")));
             } else if (StringUtils.startsWithIgnoreCase(query, "systemid/")) {
-                response.addData(caseService.getSakBySystemId(StringUtils.removeStartIgnoreCase(query, "systemid/")));
+                response.addData(sakService.getSakBySystemId(StringUtils.removeStartIgnoreCase(query, "systemid/")));
             } else if (StringUtils.startsWith(query, "?")) {
-                caseService.searchSakByTitle(getQueryParams(query)).forEach(response::addData);
+                sakService.searchSakByTitle(getQueryParams(query)).forEach(response::addData);
             } else {
                 throw new IllegalArgumentException("Invalid query: " + query);
             }
@@ -301,11 +308,11 @@ public class EventHandlerService {
         try {
             response.getData().clear();
             if (StringUtils.startsWithIgnoreCase(query, "mappeid/")) {
-                response.addData(caseService.getTilskuddFartoyCaseByCaseNumber(StringUtils.removeStartIgnoreCase(query, "mappeid/")));
+                response.addData(tilskuddfartoyService.getTilskuddFartoyCaseByCaseNumber(StringUtils.removeStartIgnoreCase(query, "mappeid/")));
             } else if (StringUtils.startsWithIgnoreCase(query, "systemid/")) {
-                response.addData(caseService.getTilskuddFartoyCaseBySystemId(StringUtils.removeStartIgnoreCase(query, "systemid/")));
+                response.addData(tilskuddfartoyService.getTilskuddFartoyCaseBySystemId(StringUtils.removeStartIgnoreCase(query, "systemid/")));
             } else if (StringUtils.startsWith(query, "?")) {
-                caseService.searchTilskuddFartoyCaseByTitle(getQueryParams(query)).forEach(response::addData);
+                tilskuddfartoyService.searchTilskuddFartoyCaseByTitle(getQueryParams(query)).forEach(response::addData);
             } else {
                 throw new IllegalArgumentException("Invalid query: " + query);
             }
@@ -335,10 +342,10 @@ public class EventHandlerService {
         TilskuddFartoyResource tilskuddFartoyResource = objectMapper.convertValue(response.getData().get(0), TilskuddFartoyResource.class);
 
         try {
-            TilskuddFartoyResource tilskuddFartoy = caseService.createTilskuddFartoyCase(tilskuddFartoyResource);
+            TilskuddFartoyResource tilskuddFartoy = tilskuddfartoyService.createTilskuddFartoyCase(tilskuddFartoyResource);
             response.setData(Collections.singletonList(tilskuddFartoy));
             response.setResponseStatus(ResponseStatus.ACCEPTED);
-        } catch (CreateTilskuddFartoyException e) {
+        } catch (CreateCaseException e) {
             response.setResponseStatus(ResponseStatus.ERROR);
             response.setMessage(e.getMessage());
         }
@@ -367,11 +374,5 @@ public class EventHandlerService {
                 && fileService.ping()
                 && supportService.ping()
                 && contactService.ping();
-    }
-
-
-    @PostConstruct
-    void init() {
-
     }
 }
