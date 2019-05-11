@@ -2,7 +2,7 @@ package no.fint.ra.data.fint;
 
 import no.fint.model.resource.administrasjon.arkiv.PartResource;
 import no.fint.ra.data.exception.PartNotFound;
-import no.fint.ra.data.p360.service.P360ContactService;
+import no.fint.ra.data.p360.P360ContactService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

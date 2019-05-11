@@ -4,7 +4,7 @@ import no.fint.arkiv.p360.caze.CaseDocumentResult;
 import no.fint.arkiv.p360.caze.CaseResult;
 import no.fint.model.resource.administrasjon.arkiv.JournalpostResource;
 import no.fint.model.resource.administrasjon.arkiv.SaksmappeResource;
-import no.fint.ra.data.p360.service.P360DocumentService;
+import no.fint.ra.data.p360.P360DocumentService;
 import no.fint.ra.data.utilities.FintUtils;
 import no.fint.ra.data.utilities.NOARKUtils;
 import org.apache.commons.lang3.StringUtils;

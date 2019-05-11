@@ -4,8 +4,8 @@ import no.fint.adapter.event.EventResponseService
 import no.fint.adapter.event.EventStatusService
 import no.fint.event.model.DefaultActions
 import no.fint.event.model.Event
-import no.fint.ra.data.p360.service.P360CaseService
-import no.fint.ra.data.p360.service.P360DocumentService
+import no.fint.ra.data.p360.P360CaseService
+import no.fint.ra.data.p360.P360DocumentService
 import spock.lang.Specification
 
 class EventHandlerServiceSpec extends Specification {

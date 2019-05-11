@@ -1,10 +1,9 @@
 package no.fint.ra.data.fint;
 
 import lombok.extern.slf4j.Slf4j;
-import no.fint.model.resource.FintLinks;
 import no.fint.model.resource.administrasjon.arkiv.KorrespondansepartResource;
 import no.fint.ra.data.exception.KorrespondansepartNotFound;
-import no.fint.ra.data.p360.service.P360ContactService;
+import no.fint.ra.data.p360.P360ContactService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MultiValueMap;

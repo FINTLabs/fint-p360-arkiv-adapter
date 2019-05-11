@@ -6,7 +6,7 @@ import no.fint.arkiv.p360.file.FileResult;
 import no.fint.model.resource.administrasjon.arkiv.DokumentfilResource;
 import no.fint.ra.AdapterProps;
 import no.fint.ra.data.exception.FileNotFound;
-import no.fint.ra.data.p360.service.P360FileService;
+import no.fint.ra.data.p360.P360FileService;
 import no.fint.ra.data.utilities.FintUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.tika.Tika;

@@ -1,4 +1,4 @@
-package no.fint.ra.data.p360.service;
+package no.fint.ra.data.p360;
 
 import no.fint.ra.data.utilities.RequestUtilities;
 import org.springframework.beans.factory.annotation.Autowired;

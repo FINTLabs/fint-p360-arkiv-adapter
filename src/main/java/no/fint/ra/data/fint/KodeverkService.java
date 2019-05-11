@@ -2,10 +2,8 @@ package no.fint.ra.data.fint;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import no.fint.arkiv.p360.support.CodeTableRowResult;
 import no.fint.model.resource.administrasjon.arkiv.*;
-import no.fint.ra.data.p360.service.P360SupportService;
-import no.fint.ra.data.utilities.FintUtils;
+import no.fint.ra.data.p360.P360SupportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;

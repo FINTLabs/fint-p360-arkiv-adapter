@@ -16,14 +16,14 @@ import no.fint.model.resource.FintLinks;
 import no.fint.model.resource.administrasjon.arkiv.DokumentfilResource;
 import no.fint.model.resource.kultur.kulturminnevern.TilskuddFartoyResource;
 import no.fint.ra.data.FileRepository;
-import no.fint.ra.data.TilskuddfartoyService;
+import no.fint.ra.data.kulturminne.TilskuddfartoyService;
 import no.fint.ra.data.exception.*;
 import no.fint.ra.data.fint.KodeverkService;
 import no.fint.ra.data.fint.KorrespondansepartService;
 import no.fint.ra.data.fint.PartService;
 import no.fint.ra.data.noark.NoarkCodeListService;
 import no.fint.ra.data.noark.SakService;
-import no.fint.ra.data.p360.service.*;
+import no.fint.ra.data.p360.*;
 import no.fint.ra.data.utilities.FintUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -320,6 +320,10 @@ public class EventHandlerService {
         } catch (GetTilskuddFartoyNotFoundException e) {
             response.setResponseStatus(ResponseStatus.REJECTED);
             response.setStatusCode("NOT_FOUND");
+            response.setMessage(e.getMessage());
+        } catch (NotTilskuddfartoyException e) {
+            response.setResponseStatus(ResponseStatus.REJECTED);
+            response.setStatusCode("NOT_A_TILSKUDDFARTOY_SAK");
             response.setMessage(e.getMessage());
         } catch (GetTilskuddFartoyException e) {
             response.setResponseStatus(ResponseStatus.ERROR);

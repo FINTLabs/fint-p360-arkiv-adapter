@@ -2,7 +2,7 @@ package no.fint.ra.data.noark;
 
 import no.fint.model.resource.administrasjon.arkiv.SakResource;
 import no.fint.ra.data.fint.SakFactory;
-import no.fint.ra.data.p360.service.P360CaseService;
+import no.fint.ra.data.p360.P360CaseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MultiValueMap;
