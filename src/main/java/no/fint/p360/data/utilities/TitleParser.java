@@ -53,7 +53,7 @@ public class TitleParser {
                 tilskuddFartoy.getKallesignal(),
                 tilskuddFartoy.getFartoyNavn(),
                 tilskuddFartoy.getKulturminneId(),
-                tilskuddFartoy.getSoknadsnummer(),
+                tilskuddFartoy.getSoknadsnummer().getIdentifikatorverdi(),
                 tilskuddFartoy.getTittel());
     }
 
@@ -61,7 +61,7 @@ public class TitleParser {
         return String.format("Dispensasjon - %s - %s - %s - %s ",
                 MatrikkelParser.toString(dispensasjonAutomatiskFredaKulturminne.getMatrikkelnummer()),
                 dispensasjonAutomatiskFredaKulturminne.getKulturminneId(),
-                dispensasjonAutomatiskFredaKulturminne.getSoknadsnummer(),
+                dispensasjonAutomatiskFredaKulturminne.getSoknadsnummer().getIdentifikatorverdi(),
                 dispensasjonAutomatiskFredaKulturminne.getTittel());
     }
 

@@ -1,5 +1,7 @@
 package no.fint.p360.data.fint;
 
+import com.google.common.base.Strings;
+import lombok.extern.slf4j.Slf4j;
 import no.fint.arkiv.p360.caze.CaseResult;
 import no.fint.arkiv.p360.caze.CreateCaseParameter;
 import no.fint.arkiv.p360.caze.ObjectFactory;
@@ -10,6 +12,7 @@ import no.fint.model.resource.Link;
 import no.fint.model.resource.administrasjon.arkiv.SaksstatusResource;
 import no.fint.model.resource.kultur.kulturminnevern.TilskuddFartoyResource;
 import no.fint.p360.KulturminneProps;
+import no.fint.p360.data.exception.UnableToParseTitle;
 import no.fint.p360.data.noark.NoarkFactory;
 import no.fint.p360.data.utilities.*;
 import org.apache.commons.lang3.StringUtils;
@@ -21,6 +24,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 
+@Slf4j
 @Service
 public class TilskuddFartoyFactory {
 
@@ -50,11 +54,15 @@ public class TilskuddFartoyFactory {
         String caseYear = NOARKUtils.getCaseYear(caseNumber);
         String sequenceNumber = NOARKUtils.getCaseSequenceNumber(caseNumber);
 
-        // FIXME
-        tilskuddFartoy.setFartoyNavn("Titanic");
-        tilskuddFartoy.setKallesignal("AWQR");
-        tilskuddFartoy.setKulturminneId("1234");
-        tilskuddFartoy.setSoknadsnummer(FintUtils.createIdentifikator("1"));
+        try {
+            TitleParser.Title title = TitleParser.parseTitle(caseResult.getTitle().getValue());
+            tilskuddFartoy.setFartoyNavn(Strings.nullToEmpty(title.getDimension(TitleParser.FARTOY_NAVN)));
+            tilskuddFartoy.setKallesignal(Strings.nullToEmpty(title.getDimension(TitleParser.FARTOY_KALLESIGNAL)));
+            tilskuddFartoy.setKulturminneId(Strings.nullToEmpty(title.getDimension(TitleParser.KULTURMINNE_ID)));
+            tilskuddFartoy.setSoknadsnummer(FintUtils.createIdentifikator(caseResult.getExternalId().getValue().getId().getValue()));
+        } catch (UnableToParseTitle e) {
+            log.error("{}", e.getMessage(), e);
+        }
 
         noarkFactory.getSaksmappe(caseResult, tilskuddFartoy);
 
