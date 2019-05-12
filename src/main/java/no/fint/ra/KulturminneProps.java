@@ -17,4 +17,10 @@ public class KulturminneProps {
     @Value("${fint.kulturminne.tilskudd-fartoy.keywords}")
     private String[] keywords;
 
+    @Value("${fint.kulturminne.tilskudd-fartoy.achive-code-type:Fartøy}")
+    private String archiveCodetype;
+
+    @Value("${fint.kulturminne.tilskudd-fartoy.intitial-case-status:B}")
+    private String initialCaseStatus;
+
 }

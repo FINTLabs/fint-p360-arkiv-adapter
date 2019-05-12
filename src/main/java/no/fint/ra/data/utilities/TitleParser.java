@@ -1,6 +1,9 @@
 package no.fint.ra.data.utilities;
 
+import no.fint.model.resource.felles.kompleksedatatyper.MatrikkelnummerResource;
+import no.fint.model.resource.kultur.kulturminnevern.DispensasjonAutomatiskFredaKulturminneResource;
 import no.fint.model.resource.kultur.kulturminnevern.TilskuddFartoyResource;
+import no.fint.ra.data.exception.NoSuchTitleDimension;
 import no.fint.ra.data.exception.UnableToParseTitle;
 
 import java.util.Arrays;
@@ -12,11 +15,13 @@ public class TitleParser {
 
     //LM9544 - Ternen - Reketråler - Statsbudsjettet - Tilskudd
 
-    public static final int FARTOY_KALLESIGNAL = 0;
-    public static final int FARTOY_NAVN = 1;
-    public static final int DIGISAK_NUMMER = 2;
+    public static final int FARTOY_KALLESIGNAL = 1;
+    public static final int FARTOY_NAVN = 2;
     public static final int MATRIKKELNUMMER = 1;
     public static final int KULTURMINNE_ID = 3;
+    public static final int DIGISAKSNUMMER = 4;
+    public static final int USER_DEFINED_TITLE = 4;
+
 
     public static class Title {
         Map<Integer, String> titleMap;
@@ -26,7 +31,10 @@ public class TitleParser {
         }
 
         public String getDimension(Integer dimension) {
-            return titleMap.get(dimension);
+            if (titleMap.containsKey(dimension)) {
+                return titleMap.get(dimension);
+            }
+            throw new NoSuchTitleDimension();
         }
     }
 
@@ -44,7 +52,22 @@ public class TitleParser {
 
     // TODO: 2019-05-09 Vi må finne ut hvordan denne skal være
     public static String getTitleString(TilskuddFartoyResource tilskuddFartoy) {
-        return String.format("%s - %s - %s - Tilskudd", tilskuddFartoy.getKallesignal(), tilskuddFartoy.getKulturminneId(), tilskuddFartoy.getSoknadsnummer());
+        return String.format("Tilskudd - %s - %s - %s - %s - %s",
+                tilskuddFartoy.getKallesignal(),
+                tilskuddFartoy.getFartoyNavn(),
+                tilskuddFartoy.getKulturminneId(),
+                tilskuddFartoy.getSoknadsnummer(),
+                tilskuddFartoy.getTittel());
     }
+
+    public static String getTitleString(DispensasjonAutomatiskFredaKulturminneResource dispensasjonAutomatiskFredaKulturminne) {
+        return String.format("Dispensasjon - %s - %s - %s - %s ",
+                MatrikkelParser.toString(dispensasjonAutomatiskFredaKulturminne.getMatrikkelnummer()),
+                dispensasjonAutomatiskFredaKulturminne.getKulturminneId(),
+                dispensasjonAutomatiskFredaKulturminne.getSoknadsnummer(),
+                dispensasjonAutomatiskFredaKulturminne.getTittel());
+    }
+
+
 
 }

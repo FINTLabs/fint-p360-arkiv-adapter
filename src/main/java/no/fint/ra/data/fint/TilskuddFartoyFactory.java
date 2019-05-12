@@ -9,15 +9,14 @@ import no.fint.model.resource.administrasjon.arkiv.SaksstatusResource;
 import no.fint.model.resource.kultur.kulturminnevern.TilskuddFartoyResource;
 import no.fint.ra.KulturminneProps;
 import no.fint.ra.data.noark.NoarkFactory;
-import no.fint.ra.data.utilities.Constants;
-import no.fint.ra.data.utilities.FintUtils;
-import no.fint.ra.data.utilities.NOARKUtils;
+import no.fint.ra.data.utilities.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -84,43 +83,16 @@ public class TilskuddFartoyFactory {
     public CreateCaseParameter toP360(TilskuddFartoyResource tilskuddFartoy) {
         CreateCaseParameter createCaseParameter = new CreateCaseParameter();
 
-        createCaseParameter.setTitle(objectFactory.createCaseParameterBaseTitle(tilskuddFartoy.getTittel()));
-        createCaseParameter.setStatus(objectFactory.createCaseParameterBaseStatus("B"));
+        createCaseParameter.setTitle(objectFactory.createCaseParameterBaseTitle(TitleParser.getTitleString(tilskuddFartoy)));
+        createCaseParameter.setStatus(objectFactory.createCaseParameterBaseStatus(kulturminneProps.getInitialCaseStatus()));
         createCaseParameter.setFiledOnPaper(objectFactory.createCaseParameterBaseFiledOnPaper(false));
-
-        createCaseParameter.setKeywords(objectFactory.createCaseParameterBaseKeywords(getKeywords()));
-
-        // Set default to NOARK Sak
+        createCaseParameter.setKeywords(P360Utils.getKeywords(Arrays.asList(kulturminneProps.getKeywords())));
         createCaseParameter.setCaseType(objectFactory.createCreateCaseParameterCaseType(Constants.CASE_TYPE_NOARK));
-
-        // TODO: 2019-04-30 Denne bør vel egentlig komme fra journalEnhet
-        createCaseParameter.setResponsibleEnterpriseRecno(objectFactory.createCaseParameterBaseResponsibleEnterpriseRecno(Integer.valueOf(kulturminneProps.getResponsibleUnit())));
+        createCaseParameter.setResponsibleEnterpriseRecno(objectFactory.createCaseParameterBaseResponsibleEnterpriseRecno(kulturminneProps.getResponsibleUnit()));
         createCaseParameter.setSubArchive(objectFactory.createCaseParameterBaseSubArchive(kulturminneProps.getSubArchive()));
+        createCaseParameter.setExternalId(P360Utils.getExternalIdParameter(tilskuddFartoy.getSoknadsnummer().getIdentifikatorverdi()));
+        createCaseParameter.setArchiveCodes(P360Utils.getArchiveCodes(tilskuddFartoy.getFartoyNavn(), kulturminneProps.getArchiveCodetype()));
 
-        ExternalIdParameter externalIdParameter = objectFactory.createExternalIdParameter();
-        externalIdParameter.setId(objectFactory.createExternalIdParameterId(tilskuddFartoy.getSoknadsnummer().getIdentifikatorverdi()));
-        externalIdParameter.setType(objectFactory.createExternalIdParameterType(Constants.EXTERNAL_ID_TYPE));
-
-        createCaseParameter.setExternalId(objectFactory.createCaseParameterBaseExternalId(externalIdParameter));
-        ArrayOfClassCodeParameter arrayOfClassCodeParameter = objectFactory.createArrayOfClassCodeParameter();
-        ClassCodeParameter classCodeParameter = objectFactory.createClassCodeParameter();
-
-        classCodeParameter.setSort(1);
-        classCodeParameter.setIsManualText(Boolean.FALSE);
-        classCodeParameter.setArchiveCode(objectFactory.createClassCodeParameterArchiveCode(tilskuddFartoy.getFartoyNavn()));
-        classCodeParameter.setArchiveType(objectFactory.createClassCodeParameterArchiveType("Fartøy"));
-        arrayOfClassCodeParameter.getClassCodeParameter().add(classCodeParameter);
-
-        createCaseParameter.setArchiveCodes(objectFactory.createCaseParameterBaseArchiveCodes(arrayOfClassCodeParameter));
-
-        /*
-        ArrayOfRemark arrayOfRemark = objectFactory.createArrayOfRemark();
-        Remark remark = new Remark();
-        remark.setRemarkType(objectFactory.createString("SI"));
-        remark.setContent(objectFactory.createString("test"));
-        arrayOfRemark.getRemark().add(remark);
-        createCaseParameter.setRemarks(objectFactory.createArrayOfRemark(arrayOfRemark));
-        */
         /*
         createCaseParameter.setResponsiblePersonIdNumber(
                 objectFactory.createCaseParameterBaseResponsiblePersonIdNumber(
@@ -129,19 +101,8 @@ public class TilskuddFartoyFactory {
         );
         */
 
-
         return createCaseParameter;
-
     }
 
-    private ArrayOfstring getKeywords() {
-
-        ArrayOfstring keywordArray = objectFactory.createArrayOfstring();
-        List<String> keywords = Arrays.asList(kulturminneProps.getKeywords());
-
-        keywords.forEach(keywordArray.getString()::add);
-
-        return keywordArray;
-    }
 
 }
