@@ -1,4 +1,4 @@
-package no.fint.p360.data.fint;
+package no.fint.p360.data.noark.korrespondansepart;
 
 import lombok.extern.slf4j.Slf4j;
 import no.fint.model.resource.administrasjon.arkiv.KorrespondansepartResource;

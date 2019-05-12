@@ -1,4 +1,4 @@
-package no.fint.p360.data.fint;
+package no.fint.p360.data.noark.korrespondansepart;
 
 import no.fint.arkiv.p360.contact.ContactPersonResult;
 import no.fint.arkiv.p360.contact.EnterpriseResult;

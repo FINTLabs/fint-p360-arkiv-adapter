@@ -1,4 +1,4 @@
-package no.fint.p360.data.fint;
+package no.fint.p360.data.noark.part;
 
 import no.fint.model.resource.administrasjon.arkiv.PartResource;
 import no.fint.p360.data.exception.PartNotFound;

@@ -1,4 +1,4 @@
-package no.fint.p360.data.fint;
+package no.fint.p360.data.noark.sak;
 
 
 import no.fint.arkiv.p360.caze.CaseResult;
@@ -6,7 +6,7 @@ import no.fint.model.administrasjon.arkiv.Saksstatus;
 import no.fint.model.kultur.kulturminnevern.TilskuddFartoy;
 import no.fint.model.resource.Link;
 import no.fint.model.resource.administrasjon.arkiv.SakResource;
-import no.fint.p360.data.noark.NoarkFactory;
+import no.fint.p360.data.noark.common.NoarkFactory;
 import no.fint.p360.data.utilities.NOARKUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

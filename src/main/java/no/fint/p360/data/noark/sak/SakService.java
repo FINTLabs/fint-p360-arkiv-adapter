@@ -1,7 +1,6 @@
-package no.fint.p360.data.noark;
+package no.fint.p360.data.noark.sak;
 
 import no.fint.model.resource.administrasjon.arkiv.SakResource;
-import no.fint.p360.data.fint.SakFactory;
 import no.fint.p360.data.p360.P360CaseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

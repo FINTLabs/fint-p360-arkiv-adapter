@@ -4,9 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import no.fint.arkiv.p360.caze.CaseResult;
 import no.fint.model.resource.kultur.kulturminnevern.TilskuddFartoyResource;
 import no.fint.p360.data.exception.NotTilskuddfartoyException;
-import no.fint.p360.data.fint.TilskuddFartoyFactory;
+import no.fint.p360.data.noark.journalpost.JournalpostService;
 import no.fint.p360.data.p360.P360CaseService;
-import no.fint.p360.data.p360.P360DocumentService;
 import no.fint.p360.data.utilities.Constants;
 import no.fint.p360.data.utilities.FintUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +26,7 @@ public class TilskuddfartoyService {
     private TilskuddFartoyFactory tilskuddFartoyFactory;
 
     @Autowired
-    private P360DocumentService documentService;
+    private JournalpostService journalpostService;
 
 
     public TilskuddFartoyResource createTilskuddFartoyCase(TilskuddFartoyResource tilskuddFartoy) {
@@ -35,7 +34,7 @@ public class TilskuddfartoyService {
 
         TilskuddFartoyResource tilskuddFartoyNew = getTilskuddFartoyCaseByCaseNumber(caseNumber);
         tilskuddFartoyNew.setJournalpost(tilskuddFartoy.getJournalpost());
-        documentService.createJournalPost(tilskuddFartoyNew);
+        journalpostService.createJournalPost(tilskuddFartoyNew);
         return tilskuddFartoyNew;
     }
 

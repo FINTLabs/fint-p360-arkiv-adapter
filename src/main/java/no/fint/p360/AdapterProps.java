@@ -16,6 +16,9 @@ public class AdapterProps {
     @Value("${fint.p360.password}")
     private String p360Password;
 
+    @Value("${fint.p360.endpoint-base-url}")
+    private String endpointBaseUrl;
+
     @Value("${fint.file-repository.cache-directory:file-cache}")
     private Path fileCacheDirectory;
 

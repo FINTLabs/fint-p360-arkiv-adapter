@@ -1,4 +1,4 @@
-package no.fint.p360.data.noark;
+package no.fint.p360.data.noark.tilknyttetregistreringsom;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -13,7 +13,7 @@ import java.util.List;
 
 @Slf4j
 @Service
-public class NoarkCodeListService {
+public class TilknyttetRegistreringSomService {
 
     @Getter
     private List<TilknyttetRegistreringSomResource> tilknyttetRegistreringSom;

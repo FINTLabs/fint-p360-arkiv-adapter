@@ -1,4 +1,4 @@
-package no.fint.p360.data.fint;
+package no.fint.p360.data.kulturminne;
 
 import com.google.common.base.Strings;
 import lombok.extern.slf4j.Slf4j;
@@ -13,7 +13,8 @@ import no.fint.model.resource.administrasjon.arkiv.SaksstatusResource;
 import no.fint.model.resource.kultur.kulturminnevern.TilskuddFartoyResource;
 import no.fint.p360.KulturminneProps;
 import no.fint.p360.data.exception.UnableToParseTitle;
-import no.fint.p360.data.noark.NoarkFactory;
+import no.fint.p360.data.KodeverkRepository;
+import no.fint.p360.data.noark.common.NoarkFactory;
 import no.fint.p360.data.utilities.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +31,7 @@ public class TilskuddFartoyFactory {
 
 
     @Autowired
-    private KodeverkService kodeverkService;
+    private KodeverkRepository kodeverkRepository;
 
     @Autowired
     private NoarkFactory noarkFactory;
@@ -67,7 +68,7 @@ public class TilskuddFartoyFactory {
         noarkFactory.getSaksmappe(caseResult, tilskuddFartoy);
 
         FintUtils.optionalValue(caseResult.getStatus())
-                .flatMap(kode -> kodeverkService
+                .flatMap(kode -> kodeverkRepository
                         .getSaksstatus()
                         .stream()
                         .filter(it -> StringUtils.equalsIgnoreCase(kode, it.getNavn()))

@@ -1,10 +1,10 @@
-package no.fint.p360.data.noark;
+package no.fint.p360.data.noark.common;
 
 import no.fint.arkiv.p360.caze.CaseDocumentResult;
 import no.fint.arkiv.p360.caze.CaseResult;
 import no.fint.model.resource.administrasjon.arkiv.JournalpostResource;
 import no.fint.model.resource.administrasjon.arkiv.SaksmappeResource;
-import no.fint.p360.data.p360.P360DocumentService;
+import no.fint.p360.data.noark.journalpost.JournalpostService;
 import no.fint.p360.data.utilities.FintUtils;
 import no.fint.p360.data.utilities.NOARKUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -22,7 +22,7 @@ import static no.fint.p360.data.utilities.FintUtils.optionalValue;
 public class NoarkFactory {
 
     @Autowired
-    private P360DocumentService documentService;
+    private JournalpostService journalpostService;
 
     public void getSaksmappe(CaseResult caseResult, SaksmappeResource saksmappeResource) {
         String caseNumber = caseResult.getCaseNumber().getValue();
@@ -51,7 +51,7 @@ public class NoarkFactory {
         List<JournalpostResource> journalpostResourceList = new ArrayList<>();
         List<CaseDocumentResult> caseDocumentResult = caseResult.getDocuments().getValue().getCaseDocumentResult();
         caseDocumentResult.forEach(doc ->
-                journalpostResourceList.add(documentService.getJournalPost(doc.getRecno().toString()))
+                journalpostResourceList.add(journalpostService.getJournalPost(doc.getRecno().toString()))
         );
         saksmappeResource.setJournalpost(journalpostResourceList);
 

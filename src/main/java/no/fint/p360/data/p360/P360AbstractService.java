@@ -17,8 +17,9 @@ public abstract class P360AbstractService {
         serviceName = new QName(namespaceURI, localPart);
     }
 
-    void addAuthentication(Object port) {
+    void setup(Object port, String service) {
         BindingProvider bp = (BindingProvider) port;
         requestUtilities.addAuthentication(bp.getRequestContext());
+        requestUtilities.setEndpointAddress(bp.getRequestContext(), service);
     }
 }

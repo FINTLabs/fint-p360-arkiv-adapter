@@ -27,7 +27,7 @@ public class P360ContactService extends P360AbstractService {
     private void init() {
 
         contactService = new ContactService(ContactService.WSDL_LOCATION, SERVICE_NAME).getBasicHttpBindingIContactService();
-        super.addAuthentication(contactService);
+        super.setup(contactService, "ContactService");
 
         objectFactory = new ObjectFactory();
     }

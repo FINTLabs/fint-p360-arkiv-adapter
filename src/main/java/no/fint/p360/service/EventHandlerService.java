@@ -16,13 +16,12 @@ import no.fint.model.resource.FintLinks;
 import no.fint.model.resource.administrasjon.arkiv.DokumentfilResource;
 import no.fint.model.resource.kultur.kulturminnevern.TilskuddFartoyResource;
 import no.fint.p360.data.FileRepository;
+import no.fint.p360.data.KodeverkRepository;
 import no.fint.p360.data.exception.*;
-import no.fint.p360.data.fint.KodeverkService;
-import no.fint.p360.data.fint.KorrespondansepartService;
-import no.fint.p360.data.fint.PartService;
 import no.fint.p360.data.kulturminne.TilskuddfartoyService;
-import no.fint.p360.data.noark.NoarkCodeListService;
-import no.fint.p360.data.noark.SakService;
+import no.fint.p360.data.noark.korrespondansepart.KorrespondansepartService;
+import no.fint.p360.data.noark.part.PartService;
+import no.fint.p360.data.noark.sak.SakService;
 import no.fint.p360.data.p360.*;
 import no.fint.p360.data.utilities.FintUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -68,13 +67,10 @@ public class EventHandlerService {
     private FileRepository fileRepository;
 
     @Autowired
-    private NoarkCodeListService noarkCodeListService;
-
-    @Autowired
     private KorrespondansepartService korrespondansepartService;
 
     @Autowired
-    private KodeverkService kodeverkService;
+    private KodeverkRepository kodeverkRepository;
 
     @Autowired
     private PartService partService;
@@ -256,32 +252,32 @@ public class EventHandlerService {
     }
 
     private void onGetAllJournalStatus(Event<FintLinks> response) {
-        kodeverkService.getJournalStatus().forEach(response::addData);
+        kodeverkRepository.getJournalStatus().forEach(response::addData);
         response.setResponseStatus(ResponseStatus.ACCEPTED);
     }
 
     private void onGetAllTilknyttetRegistreringSom(Event<FintLinks> response) {
-        noarkCodeListService.getTilknyttetRegistreringSom().forEach(response::addData);
+        kodeverkRepository.getTilknyttetRegistreringSom().forEach(response::addData);
         response.setResponseStatus(ResponseStatus.ACCEPTED);
     }
 
     private void onGetAllJournalpostType(Event<FintLinks> response) {
-        kodeverkService.getJournalpostType().forEach(response::addData);
+        kodeverkRepository.getJournalpostType().forEach(response::addData);
         response.setResponseStatus(ResponseStatus.ACCEPTED);
     }
 
     private void onGetAllKorrespondansepartType(Event<FintLinks> response) {
-        kodeverkService.getKorrespondansepartType().forEach(response::addData);
+        kodeverkRepository.getKorrespondansepartType().forEach(response::addData);
         response.setResponseStatus(ResponseStatus.ACCEPTED);
     }
 
     private void onGetAllDokumentstatus(Event<FintLinks> response) {
-        kodeverkService.getDokumentStatus().forEach(response::addData);
+        kodeverkRepository.getDokumentStatus().forEach(response::addData);
         response.setResponseStatus(ResponseStatus.ACCEPTED);
     }
 
     private void onGetSaksstatus(Event<FintLinks> response) {
-        kodeverkService.getSaksstatus().forEach(response::addData);
+        kodeverkRepository.getSaksstatus().forEach(response::addData);
         response.setResponseStatus(ResponseStatus.ACCEPTED);
     }
 
