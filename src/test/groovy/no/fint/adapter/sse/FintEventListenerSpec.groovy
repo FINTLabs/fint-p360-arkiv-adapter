@@ -2,7 +2,7 @@ package no.fint.adapter.sse
 
 import no.fint.event.model.DefaultActions
 import no.fint.event.model.Event
-import no.fint.ra.service.EventHandlerService
+import no.fint.p360.service.EventHandlerService
 import org.glassfish.jersey.media.sse.InboundEvent
 import spock.lang.Specification
 
