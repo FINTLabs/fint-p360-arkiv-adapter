@@ -6,6 +6,7 @@ import no.fint.model.resource.administrasjon.arkiv.JournalpostResource
 import no.fint.p360.data.kulturminne.TilskuddFartoyFactory
 import no.fint.p360.data.KodeverkRepository
 import no.fint.p360.data.noark.common.NoarkFactory
+import no.fint.p360.data.noark.journalpost.JournalpostService
 import no.fint.p360.data.p360.P360DocumentService
 import no.fint.p360.data.testutils.P360ObjectFactory
 import spock.lang.Specification
@@ -14,14 +15,14 @@ class TilskuddFartoyFactorySpec extends Specification {
 
     private ObjectFactory objectFactory
     private TilskuddFartoyFactory tilskuddFartoyFactory
-    private P360DocumentService documentService
+    private JournalpostService documentService
     private P360ObjectFactory p360ObjectFactory
     private NoarkFactory noarkFactory
     private KodeverkRepository kodeverkService
 
     void setup() {
         objectFactory = new ObjectFactory()
-        documentService = Mock(P360DocumentService)
+        documentService = Mock(JournalpostService)
         kodeverkService = Mock()
         noarkFactory = new NoarkFactory(journalpostService: documentService)
         tilskuddFartoyFactory = new TilskuddFartoyFactory(
