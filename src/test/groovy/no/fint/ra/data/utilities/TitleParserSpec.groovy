@@ -9,7 +9,7 @@ class TitleParserSpec extends Specification {
 
     def "Parse title"() {
         when:
-        def title = TitleParser.parseTitle("LM9544 - Ternen - Reketråler - Statsbudsjettet - Tilskudd")
+        def title = TitleParser.parseTitle("Tilskudd - LM9544 - Ternen - Reketråler - Statsbudsjettet")
 
         then:
         title.getDimension(TitleParser.FARTOY_KALLESIGNAL) == "LM9544"

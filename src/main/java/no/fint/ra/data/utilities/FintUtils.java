@@ -59,7 +59,7 @@ public enum FintUtils {
         return optionalValue(result.getPostAddress()).map(FintUtils::createAdresseResource).orElse(null);
     }
 
-    private static  AdresseResource createAdresseResource(Address address) {
+    private static AdresseResource createAdresseResource(Address address) {
         AdresseResource adresseResource = new AdresseResource();
 
 

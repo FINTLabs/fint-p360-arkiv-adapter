@@ -39,7 +39,6 @@ public class EventStatusService {
     /**
      * Verifies if we can handle the event and set the status accordingly.
      *
-     *
      * @param component
      * @param event
      * @return The inbound event.
@@ -62,7 +61,7 @@ public class EventStatusService {
      * Method for posting back the status to the provider.
      *
      * @param component Name of component
-     * @param event Event to send
+     * @param event     Event to send
      */
     public boolean postStatus(String component, Event event) {
         try {

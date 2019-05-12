@@ -24,7 +24,7 @@ public class NoarkFactory {
     @Autowired
     private P360DocumentService documentService;
 
-    public  void getSaksmappe(CaseResult caseResult, SaksmappeResource saksmappeResource) {
+    public void getSaksmappe(CaseResult caseResult, SaksmappeResource saksmappeResource) {
         String caseNumber = caseResult.getCaseNumber().getValue();
         String caseYear = NOARKUtils.getCaseYear(caseNumber);
         String sequenceNumber = NOARKUtils.getCaseSequenceNumber(caseNumber);

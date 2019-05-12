@@ -3,9 +3,9 @@
  * This package contains code for handling the communication with the provider. The main functionality is:
  * </p>
  * <ul>
- *     <li>Connecting the adapter to the provider SSE endpoint</li>
- *     <li>Sending status back to the provider</li>
- *     <li>Sending the response back to the provider</li>
+ * <li>Connecting the adapter to the provider SSE endpoint</li>
+ * <li>Sending status back to the provider</li>
+ * <li>Sending the response back to the provider</li>
  * </ul>
  *
  * <p>
@@ -14,6 +14,5 @@
  * in the {@link no.fint.adapter.event.EventStatusService#verifyEvent(no.fint.event.model.Event)}
  * method.</i>
  * </p>
- *
  */
 package no.fint.adapter;

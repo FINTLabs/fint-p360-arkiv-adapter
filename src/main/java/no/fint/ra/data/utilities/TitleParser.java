@@ -1,6 +1,5 @@
 package no.fint.ra.data.utilities;
 
-import no.fint.model.resource.felles.kompleksedatatyper.MatrikkelnummerResource;
 import no.fint.model.resource.kultur.kulturminnevern.DispensasjonAutomatiskFredaKulturminneResource;
 import no.fint.model.resource.kultur.kulturminnevern.TilskuddFartoyResource;
 import no.fint.ra.data.exception.NoSuchTitleDimension;
@@ -12,8 +11,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 public class TitleParser {
-
-    //LM9544 - Ternen - Reketråler - Statsbudsjettet - Tilskudd
 
     public static final int FARTOY_KALLESIGNAL = 1;
     public static final int FARTOY_NAVN = 2;
@@ -67,7 +64,6 @@ public class TitleParser {
                 dispensasjonAutomatiskFredaKulturminne.getSoknadsnummer(),
                 dispensasjonAutomatiskFredaKulturminne.getTittel());
     }
-
 
 
 }

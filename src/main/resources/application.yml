@@ -18,12 +18,12 @@ fint:
 
   oauth:
     enabled: true
-#    username:
-#    password:
-#    client-id:
-#    client-secret:
-#    access-token-uri:
-#    scope:
+  #    username:
+  #    password:
+  #    client-id:
+  #    client-secret:
+  #    access-token-uri:
+  #    scope:
 
   kulturminne:
     tilskudd-fartoy:

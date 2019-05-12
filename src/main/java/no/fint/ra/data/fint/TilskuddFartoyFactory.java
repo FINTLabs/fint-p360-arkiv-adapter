@@ -1,6 +1,8 @@
 package no.fint.ra.data.fint;
 
-import no.fint.arkiv.p360.caze.*;
+import no.fint.arkiv.p360.caze.CaseResult;
+import no.fint.arkiv.p360.caze.CreateCaseParameter;
+import no.fint.arkiv.p360.caze.ObjectFactory;
 import no.fint.model.administrasjon.arkiv.Saksstatus;
 import no.fint.model.felles.kompleksedatatyper.Identifikator;
 import no.fint.model.kultur.kulturminnevern.TilskuddFartoy;
@@ -16,7 +18,6 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 

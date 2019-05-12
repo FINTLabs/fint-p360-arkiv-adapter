@@ -15,8 +15,6 @@ import java.util.stream.Collectors;
 
 public class MatrikkelParser {
 
-    // 1108-234/34
-
     public static final int KOMMUNENUMMER = 0;
     public static final int GARDSNUMMER = 1;
     public static final int BRUKSNUMMER = 2;

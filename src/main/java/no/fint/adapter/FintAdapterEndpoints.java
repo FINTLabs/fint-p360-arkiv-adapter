@@ -15,5 +15,5 @@ public class FintAdapterEndpoints {
     private String sse;
     private String status;
     private String response;
-    private Map<String,String> providers;
+    private Map<String, String> providers;
 }

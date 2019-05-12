@@ -23,7 +23,6 @@ class TilskuddFartoyFactorySpec extends Specification {
         kodeverkService = Mock()
         noarkFactory = new NoarkFactory(documentService: documentService)
         tilskuddFartoyFactory = new TilskuddFartoyFactory(
-                documentService: documentService,
                 noarkFactory: noarkFactory,
                 kodeverkService: kodeverkService
         )
