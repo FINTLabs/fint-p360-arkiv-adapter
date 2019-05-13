@@ -28,7 +28,7 @@ class EventResponseServiceSpec extends Specification {
         eventResponseService.postResponse(component, event)
 
         then:
-        1 * endpoints.getProviders() >> ['test':'http://localhost']
+        1 * endpoints.getProviders() >> ['test': 'http://localhost']
         1 * endpoints.getResponse() >> '/response'
         1 * restTemplate.exchange('http://localhost/response', HttpMethod.POST, _ as HttpEntity, Void) >> ResponseEntity.ok().build()
     }

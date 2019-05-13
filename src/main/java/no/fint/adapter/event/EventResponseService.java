@@ -30,7 +30,7 @@ public class EventResponseService {
      * Method for posting back the response to the provider.
      *
      * @param component Name of component
-     * @param event Event to post back
+     * @param event     Event to post back
      */
     public void postResponse(String component, Event event) {
         try {

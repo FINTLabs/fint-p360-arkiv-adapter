@@ -17,7 +17,7 @@ class SseInitializerSpec extends Specification {
             getOrganizations() >> ['rogfk.no', 'hfk.no', 'vaf.no']
         }
         endpoints = Mock(FintAdapterEndpoints) {
-            getProviders() >> ['test':'http://localhost']
+            getProviders() >> ['test': 'http://localhost']
             getSse() >> '/sse/%s'
         }
         fintSse = Mock(FintSse)

@@ -15,7 +15,9 @@ public abstract class AbstractSupportedActions {
         actions.add(e.name());
     }
 
-    public void add(String name) { actions.add(name); }
+    public void add(String name) {
+        actions.add(name);
+    }
 
     public void addAll(Class<? extends Enum> e) {
         Stream.of(e.getEnumConstants()).map(Enum::name).forEach(actions::add);
