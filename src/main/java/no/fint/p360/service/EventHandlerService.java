@@ -143,6 +143,9 @@ public class EventHandlerService {
                 case GET_ALL_KORRESPONDANSEPARTTYPE:
                     onGetAllKorrespondansepartType(response);
                     break;
+                case GET_ALL_PARTROLLE:
+                    onGetAllPartRolle(response);
+                    break;
                 case GET_ALL_TILKNYTTETREGISTRERINGSOM:
                     onGetAllTilknyttetRegistreringSom(response);
                     break;
@@ -170,7 +173,7 @@ public class EventHandlerService {
             if (StringUtils.startsWithIgnoreCase(query, "partid/")) {
                 response.setData(
                         Collections.singletonList(
-                                partService.getPartBySystemId(Integer.valueOf(StringUtils.removeStartIgnoreCase(query, "partid/")))
+                                partService.getPartByPartId(Integer.valueOf(StringUtils.removeStartIgnoreCase(query, "partid/")))
                         )
                 );
             } else {
@@ -267,6 +270,11 @@ public class EventHandlerService {
 
     private void onGetAllKorrespondansepartType(Event<FintLinks> response) {
         kodeverkRepository.getKorrespondansepartType().forEach(response::addData);
+        response.setResponseStatus(ResponseStatus.ACCEPTED);
+    }
+
+    private void onGetAllPartRolle(Event<FintLinks> response) {
+        kodeverkRepository.getPartRolle().forEach(response::addData);
         response.setResponseStatus(ResponseStatus.ACCEPTED);
     }
 

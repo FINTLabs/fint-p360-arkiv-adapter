@@ -1,8 +1,10 @@
 package no.fint.p360.data.noark.korrespondansepart;
 
+import no.fint.arkiv.p360.caze.CaseContactParameter;
 import no.fint.arkiv.p360.contact.ContactPersonResult;
 import no.fint.arkiv.p360.contact.EnterpriseResult;
 import no.fint.arkiv.p360.contact.PrivatePersonResult;
+import no.fint.model.resource.administrasjon.arkiv.KorrespondanseResource;
 import no.fint.model.resource.administrasjon.arkiv.KorrespondansepartResource;
 import no.fint.p360.data.utilities.FintUtils;
 import org.apache.commons.lang3.StringUtils;

@@ -8,6 +8,8 @@ import no.fint.model.felles.Person;
 import no.fint.model.felles.kompleksedatatyper.Identifikator;
 import no.fint.model.resource.Link;
 import no.fint.model.resource.administrasjon.arkiv.*;
+import no.fint.p360.KulturminneProps;
+import no.fint.p360.data.FileRepository;
 import no.fint.p360.data.KodeverkRepository;
 import no.fint.p360.data.utilities.FintUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -28,6 +30,12 @@ public class JournalpostFactory {
 
     @Autowired
     private KodeverkRepository kodeverkRepository;
+
+    @Autowired
+    private FileRepository fileRepository;
+
+    @Autowired
+    private KulturminneProps kulturminneProps;
 
     private ObjectFactory objectFactory;
 
@@ -193,49 +201,118 @@ public class JournalpostFactory {
 
         });
         journalpost.setDokumentbeskrivelse(dokumentbeskrivelseResourcesList);
-        //journalpost.setJournalPostnummer(Long.valueOf(documentResult.getCaseNumber().getValue()));
 
         return journalpost;
     }
 
     public CreateDocumentParameter toP360(JournalpostResource journalpostResource, String caseNumber) {
 
-        CreateDocumentParameter createDocumentParameter = new CreateDocumentParameter();
-
+        CreateDocumentParameter createDocumentParameter = objectFactory.createCreateDocumentParameter();
         createDocumentParameter.setTitle(objectFactory.createDocumentParameterBaseTitle(journalpostResource.getOffentligTittel()));
         createDocumentParameter.setUnofficialTitle(objectFactory.createDocumentParameterBaseTitle(journalpostResource.getTittel()));
         createDocumentParameter.setCaseNumber(objectFactory.createCreateDocumentParameterCaseNumber(caseNumber));
 
-        List<Link> journalPostType = journalpostResource.getJournalPostType();
-        String[] split = journalPostType.get(0).getHref().split("/");
-        createDocumentParameter.setCategory(objectFactory.createDocumentParameterBaseCategory(split[split.length - 1]));
+        journalpostResource
+                .getJournalPostType()
+                .stream()
+                .map(Link::getHref)
+                .filter(StringUtils::isNotBlank)
+                .map(s -> StringUtils.substringAfterLast(s, "/"))
+                .map(s -> StringUtils.prependIfMissing(s, "recno:"))
+                .map(objectFactory::createDocumentParameterBaseCategory)
+                .findFirst()
+                .ifPresent(createDocumentParameter::setCategory);
 
-        List<Link> journalStatus = journalpostResource.getJournalStatus();
-        String[] split1 = journalStatus.get(0).getHref().split("/");
-        createDocumentParameter.setStatus(objectFactory.createDocumentParameterBaseStatus(split1[split1.length - 1]));
+        journalpostResource
+                .getJournalStatus()
+                .stream()
+                .map(Link::getHref)
+                .filter(StringUtils::isNotBlank)
+                .map(s -> StringUtils.substringAfterLast(s, "/"))
+                .map(s -> StringUtils.prependIfMissing(s, "recno:"))
+                .map(objectFactory::createDocumentParameterBaseStatus)
+                .findFirst()
+                .ifPresent(createDocumentParameter::setStatus);
 
         ArrayOfDocumentContactParameter arrayOfDocumentContactParameter = objectFactory.createArrayOfDocumentContactParameter();
-        journalpostResource.getKorrespondansepart().forEach(korrespodansepart -> {
-                /*
-                String[] split2 = korrespodansepart.getHref().split("/");
-                DocumentContactParameter documentContactParameter = objectFactory.createDocumentContactParameter();
-                documentContactParameter.setExternalId(objectFactory.createContactInfoExternalId(String.format("recno:%s", split2[split2.length - 1])));
-                documentContactParameter.setRole(objectFactory.createDocumentContactParameterRole("Mottaker"));
-                arrayOfDocumentContactParameter.getDocumentContactParameter().add(documentContactParameter);
-                 */
-
-        });
+        journalpostResource
+                .getKorrespondansepart()
+                .stream()
+                .map(this::createDocumentContact)
+                .forEach(arrayOfDocumentContactParameter.getDocumentContactParameter()::add);
         createDocumentParameter.setContacts(objectFactory.createArrayOfDocumentContactParameter(arrayOfDocumentContactParameter));
 
-            /*
-            CreateFileParameter createFileParameter = new CreateFileParameter();
-            createDocumentParameter.setFiles();
-            journalpostResource.getDokumentbeskrivelse().forEach(dokumentbeskrivelseResource -> {
-                dokumentbeskrivelseResource.getDokumentobjekt().forEach(dokumentobjektResource -> {
+        ArrayOfCreateFileParameter arrayOfCreateFileParameter = objectFactory.createArrayOfCreateFileParameter();
+        journalpostResource
+                .getDokumentbeskrivelse()
+                .stream()
+                .flatMap(this::createFiles)
+                .forEach(arrayOfCreateFileParameter.getCreateFileParameter()::add);
+        createDocumentParameter.setFiles(objectFactory.createArrayOfCreateFileParameter(arrayOfCreateFileParameter));
 
-                });
-            });
-             */
         return createDocumentParameter;
     }
+
+
+    private DocumentContactParameter createDocumentContact(KorrespondanseResource korrespondansepart) {
+        DocumentContactParameter documentContactParameter = objectFactory.createDocumentContactParameter();
+
+        korrespondansepart
+                .getKorrespondansepart()
+                .stream()
+                .map(Link::getHref)
+                .filter(StringUtils::isNotBlank)
+                .map(s -> StringUtils.substringAfterLast(s, "/"))
+                .map(s -> StringUtils.prependIfMissing(s, "recno:"))
+                .map(objectFactory::createDocumentContactParameterReferenceNumber)
+                .findFirst()
+                .ifPresent(documentContactParameter::setReferenceNumber);
+
+        korrespondansepart
+                .getKorrespondanseparttype()
+                .stream()
+                .map(Link::getHref)
+                .filter(StringUtils::isNotBlank)
+                .map(s -> StringUtils.substringAfterLast(s, "/"))
+                .map(s -> StringUtils.prependIfMissing(s, "recno:"))
+                .map(objectFactory::createDocumentContactParameterRole)
+                .findFirst()
+                .ifPresent(documentContactParameter::setRole);
+
+        documentContactParameter.setDispatchChannel(objectFactory.createDocumentContactParameterDispatchChannel("recno:1"));
+
+        return documentContactParameter;
+    }
+
+    private Stream<CreateFileParameter> createFiles(DokumentbeskrivelseResource dokumentbeskrivelse) {
+        return dokumentbeskrivelse
+                .getDokumentobjekt()
+                .stream()
+                .map(dokumentobjekt -> createFile(dokumentbeskrivelse, dokumentobjekt));
+    }
+
+    private CreateFileParameter createFile(DokumentbeskrivelseResource dokumentbeskrivelse, DokumentobjektResource dokumentobjekt) {
+        CreateFileParameter createFileParameter = objectFactory.createCreateFileParameter();
+
+        createFileParameter.setTitle(objectFactory.createCreateFileParameterTitle(dokumentbeskrivelse.getTittel()));
+        createFileParameter.setFormat(objectFactory.createCreateFileParameterFormat(dokumentobjekt.getFormat()));
+        createFileParameter.setNote(objectFactory.createCreateFileParameterNote(dokumentbeskrivelse.getBeskrivelse()));
+
+        dokumentobjekt
+                .getReferanseDokumentfil()
+                .stream()
+                .map(Link::getHref)
+                .filter(StringUtils::isNotBlank)
+                .map(s -> StringUtils.substringAfterLast(s, "/"))
+                .filter(s -> StringUtils.startsWith(s, "I_"))
+                .map(fileRepository::getFile)
+                .map(DokumentfilResource::getData)
+                .map(Base64.getDecoder()::decode)
+                .map(objectFactory::createCreateFileParameterData)
+                .findFirst()
+                .ifPresent(createFileParameter::setData);
+
+        return createFileParameter;
+    }
+
 }

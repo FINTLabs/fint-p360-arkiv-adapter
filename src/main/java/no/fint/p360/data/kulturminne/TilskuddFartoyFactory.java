@@ -2,19 +2,19 @@ package no.fint.p360.data.kulturminne;
 
 import com.google.common.base.Strings;
 import lombok.extern.slf4j.Slf4j;
-import no.fint.arkiv.p360.caze.CaseResult;
-import no.fint.arkiv.p360.caze.CreateCaseParameter;
-import no.fint.arkiv.p360.caze.ObjectFactory;
+import no.fint.arkiv.p360.caze.*;
 import no.fint.model.administrasjon.arkiv.Saksstatus;
 import no.fint.model.felles.kompleksedatatyper.Identifikator;
 import no.fint.model.kultur.kulturminnevern.TilskuddFartoy;
 import no.fint.model.resource.Link;
+import no.fint.model.resource.administrasjon.arkiv.PartsinformasjonResource;
 import no.fint.model.resource.administrasjon.arkiv.SaksstatusResource;
 import no.fint.model.resource.kultur.kulturminnevern.TilskuddFartoyResource;
 import no.fint.p360.KulturminneProps;
-import no.fint.p360.data.exception.UnableToParseTitle;
 import no.fint.p360.data.KodeverkRepository;
+import no.fint.p360.data.exception.UnableToParseTitle;
 import no.fint.p360.data.noark.common.NoarkFactory;
+import no.fint.p360.data.noark.korrespondansepart.KorrespondansepartFactory;
 import no.fint.p360.data.utilities.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +38,9 @@ public class TilskuddFartoyFactory {
 
     @Autowired
     private KulturminneProps kulturminneProps;
+
+    @Autowired
+    private KorrespondansepartFactory korrespondansepartFactory;
 
     private ObjectFactory objectFactory;
 
@@ -91,7 +94,7 @@ public class TilskuddFartoyFactory {
     }
 
     public CreateCaseParameter toP360(TilskuddFartoyResource tilskuddFartoy) {
-        CreateCaseParameter createCaseParameter = new CreateCaseParameter();
+        CreateCaseParameter createCaseParameter = objectFactory.createCreateCaseParameter();
 
         createCaseParameter.setTitle(objectFactory.createCaseParameterBaseTitle(TitleParser.getTitleString(tilskuddFartoy)));
         createCaseParameter.setStatus(objectFactory.createCaseParameterBaseStatus(kulturminneProps.getInitialCaseStatus()));
@@ -100,8 +103,16 @@ public class TilskuddFartoyFactory {
         createCaseParameter.setCaseType(objectFactory.createCreateCaseParameterCaseType(Constants.CASE_TYPE_NOARK));
         createCaseParameter.setResponsibleEnterpriseRecno(objectFactory.createCaseParameterBaseResponsibleEnterpriseRecno(kulturminneProps.getResponsibleUnit()));
         createCaseParameter.setSubArchive(objectFactory.createCaseParameterBaseSubArchive(kulturminneProps.getSubArchive()));
-        createCaseParameter.setExternalId(P360Utils.getExternalIdParameter(tilskuddFartoy.getSoknadsnummer().getIdentifikatorverdi()));
+        createCaseParameter.setExternalId(P360Utils.getExternalIdParameter(tilskuddFartoy.getSoknadsnummer()));
         createCaseParameter.setArchiveCodes(P360Utils.getArchiveCodes(tilskuddFartoy.getFartoyNavn(), kulturminneProps.getArchiveCodetype()));
+
+        ArrayOfCaseContactParameter arrayOfCaseContactParameter = objectFactory.createArrayOfCaseContactParameter();
+        tilskuddFartoy
+                .getPart()
+                .stream()
+                .map(this::createCaseContactParameter)
+                .forEach(arrayOfCaseContactParameter.getCaseContactParameter()::add);
+        createCaseParameter.setContacts(objectFactory.createArrayOfCaseContactParameter(arrayOfCaseContactParameter));
 
         /*
         createCaseParameter.setResponsiblePersonIdNumber(
@@ -114,5 +125,33 @@ public class TilskuddFartoyFactory {
         return createCaseParameter;
     }
 
+
+    public CaseContactParameter createCaseContactParameter(PartsinformasjonResource partsinformasjon) {
+        CaseContactParameter caseContactParameter = objectFactory.createCaseContactParameter();
+
+        partsinformasjon
+                .getPart()
+                .stream()
+                .map(Link::getHref)
+                .filter(StringUtils::isNotBlank)
+                .map(s -> StringUtils.substringAfterLast(s, "/"))
+                .map(s -> StringUtils.prependIfMissing(s, "recno:"))
+                .map(objectFactory::createCaseContactParameterReferenceNumber)
+                .findFirst()
+                .ifPresent(caseContactParameter::setReferenceNumber);
+
+        partsinformasjon
+                .getPartRolle()
+                .stream()
+                .map(Link::getHref)
+                .filter(StringUtils::isNotBlank)
+                .map(s -> StringUtils.substringAfterLast(s, "/"))
+                .map(s -> StringUtils.prependIfMissing(s, "recno:"))
+                .map(objectFactory::createCaseContactParameterRole)
+                .findFirst()
+                .ifPresent(caseContactParameter::setRole);
+
+        return caseContactParameter;
+    }
 
 }

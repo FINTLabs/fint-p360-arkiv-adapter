@@ -46,6 +46,7 @@ public class P360CaseService extends P360AbstractService {
 
 
     public String createCase(CreateCaseParameter createCaseParameter) {
+        log.info("Create case: {}", createCaseParameter);
         CaseOperationResult operationResult = caseServicePort.createCase(createCaseParameter);
 
         if (operationResult.isSuccessful()) {
@@ -59,6 +60,7 @@ public class P360CaseService extends P360AbstractService {
         GetCasesQuery getCasesQuery = new GetCasesQuery();
         getCasesQuery.setCaseNumber(objectFactory.createGetCasesQueryCaseNumber(caseNumber));
         getCasesQuery.setIncludeCustomFields(Boolean.TRUE);
+        getCasesQuery.setIncludeCaseContacts(Boolean.TRUE);
         log.info("Query: {}", getCasesQuery);
         return getCase(getCasesQuery);
     }
