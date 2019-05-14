@@ -20,22 +20,13 @@ public class JournalpostService {
     @Autowired
     private JournalpostFactory factory;
 
-    public void createJournalPost(SaksmappeResource sak) {
-
-        List<JournalpostResource> journalpostResources = sak.getJournalpost();
-
-        journalpostResources.forEach(journalpostResource ->
-                documentService.createDocument(
-                        factory.toP360(journalpostResource,
-                                sak.getMappeId().getIdentifikatorverdi())
-                )
-        );
+    public void createJournalPost(String caseNumber, JournalpostResource journalpostResource) {
+        documentService.createDocument(factory.toP360(journalpostResource, caseNumber));
     }
 
     public JournalpostResource getJournalPost(String systemId) {
         return factory.toFintResource(documentService.getDocumentBySystemId(systemId));
     }
-
 
 
 }

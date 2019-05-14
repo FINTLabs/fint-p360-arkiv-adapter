@@ -107,12 +107,12 @@ public class TilskuddFartoyFactory {
         createCaseParameter.setArchiveCodes(P360Utils.getArchiveCodes(tilskuddFartoy.getFartoyNavn(), kulturminneProps.getArchiveCodetype()));
 
         ArrayOfCaseContactParameter arrayOfCaseContactParameter = objectFactory.createArrayOfCaseContactParameter();
-        tilskuddFartoy
-                .getPart()
-                .stream()
-                .map(this::createCaseContactParameter)
-                .forEach(arrayOfCaseContactParameter.getCaseContactParameter()::add);
-        createCaseParameter.setContacts(objectFactory.createArrayOfCaseContactParameter(arrayOfCaseContactParameter));
+//        tilskuddFartoy
+//                .getPart()
+//                .stream()
+//                .map(this::createCaseContactParameter)
+//                .forEach(arrayOfCaseContactParameter.getCaseContactParameter()::add);
+//        createCaseParameter.setContacts(objectFactory.createArrayOfCaseContactParameter(arrayOfCaseContactParameter));
 
         /*
         createCaseParameter.setResponsiblePersonIdNumber(

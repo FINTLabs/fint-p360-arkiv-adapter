@@ -7,15 +7,14 @@ import no.fint.arkiv.p360.contact.EnterpriseResult;
 import no.fint.arkiv.p360.contact.PrivatePersonResult;
 import no.fint.model.felles.kompleksedatatyper.Identifikator;
 import no.fint.model.felles.kompleksedatatyper.Kontaktinformasjon;
+import no.fint.model.felles.kompleksedatatyper.Personnavn;
 import no.fint.model.resource.felles.kompleksedatatyper.AdresseResource;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.xml.bind.JAXBElement;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Locale;
-import java.util.Optional;
+import java.util.*;
 
 @Slf4j
 public enum FintUtils {
@@ -25,6 +24,10 @@ public enum FintUtils {
         Identifikator identifikator = new Identifikator();
         identifikator.setIdentifikatorverdi(value);
         return identifikator;
+    }
+
+    public static boolean validIdentifikator(Identifikator input) {
+        return Objects.nonNull(input) && StringUtils.isNotBlank(input.getIdentifikatorverdi());
     }
 
     public static Date parseDate(String value) {
@@ -72,6 +75,20 @@ public enum FintUtils {
 
     public static AdresseResource createAdresse(EnterpriseResult result) {
         return optionalValue(result.getPostAddress()).map(FintUtils::createAdresseResource).orElse(null);
+    }
+
+    public static Personnavn parsePersonnavn(String input) {
+        Personnavn personnavn = new Personnavn();
+        if (StringUtils.contains(input, ", ")) {
+            personnavn.setEtternavn(StringUtils.substringBefore(input, ", "));
+            personnavn.setFornavn(StringUtils.substringAfter(input, ", "));
+        } else if (StringUtils.contains(input, ' ')) {
+            personnavn.setEtternavn(StringUtils.substringAfterLast(input, " "));
+            personnavn.setFornavn(StringUtils.substringBeforeLast(input, " "));
+        } else {
+            throw new IllegalArgumentException("Ugyldig personnavn: " + input);
+        }
+        return personnavn;
     }
 
     public static String getFullNameString(PrivatePersonResult result) {

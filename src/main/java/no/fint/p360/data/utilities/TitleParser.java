@@ -37,7 +37,7 @@ public class TitleParser {
 
     public static Title parseTitle(String caseTitle) {
         AtomicInteger position = new AtomicInteger(0);
-        Map<Integer, String> titleMap = Arrays.stream(caseTitle.split("-"))
+        Map<Integer, String> titleMap = Arrays.stream(caseTitle.split(" - "))
                 .collect(Collectors.toMap(i -> position.getAndIncrement(), String::trim));
 
         if (titleMap.size() <= 1) {

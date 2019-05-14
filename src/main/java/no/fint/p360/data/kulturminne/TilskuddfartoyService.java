@@ -31,11 +31,24 @@ public class TilskuddfartoyService {
 
     public TilskuddFartoyResource createTilskuddFartoyCase(TilskuddFartoyResource tilskuddFartoy) {
         String caseNumber = caseService.createCase(tilskuddFartoyFactory.toP360(tilskuddFartoy));
+        tilskuddFartoy
+                .getJournalpost()
+                .forEach(journalpostResource ->
+                        journalpostService.createJournalPost(caseNumber, journalpostResource));
+        return getTilskuddFartoyCaseByCaseNumber(caseNumber);
+    }
 
-        TilskuddFartoyResource tilskuddFartoyNew = getTilskuddFartoyCaseByCaseNumber(caseNumber);
-        tilskuddFartoyNew.setJournalpost(tilskuddFartoy.getJournalpost());
-        journalpostService.createJournalPost(tilskuddFartoyNew);
-        return tilskuddFartoyNew;
+    public TilskuddFartoyResource updateTilskuddFartoyCase(String caseNumber, TilskuddFartoyResource tilskuddFartoyResource) {
+        CaseResult sakByCaseNumber = caseService.getSakByCaseNumber(caseNumber);
+        if (!isTilskuddFartoy(sakByCaseNumber)) {
+            throw new NotTilskuddfartoyException("Ikke en Tilskuddfartøy sak: " + caseNumber);
+        }
+        tilskuddFartoyResource
+                .getJournalpost()
+                .forEach(journalpostResource ->
+                        journalpostService.createJournalPost(caseNumber, journalpostResource));
+
+        return getTilskuddFartoyCaseByCaseNumber(caseNumber);
     }
 
     public TilskuddFartoyResource getTilskuddFartoyCaseByCaseNumber(String caseNumber) {
@@ -78,4 +91,5 @@ public class TilskuddfartoyService {
         return false;
 
     }
+
 }

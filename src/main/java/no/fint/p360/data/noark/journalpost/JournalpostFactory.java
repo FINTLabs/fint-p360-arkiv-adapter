@@ -279,8 +279,6 @@ public class JournalpostFactory {
                 .findFirst()
                 .ifPresent(documentContactParameter::setRole);
 
-        documentContactParameter.setDispatchChannel(objectFactory.createDocumentContactParameterDispatchChannel("recno:1"));
-
         return documentContactParameter;
     }
 
@@ -307,10 +305,9 @@ public class JournalpostFactory {
                 .filter(s -> StringUtils.startsWith(s, "I_"))
                 .map(fileRepository::getFile)
                 .map(DokumentfilResource::getData)
-                .map(Base64.getDecoder()::decode)
-                .map(objectFactory::createCreateFileParameterData)
+                .map(objectFactory::createCreateFileParameterBase64Data)
                 .findFirst()
-                .ifPresent(createFileParameter::setData);
+                .ifPresent(createFileParameter::setBase64Data);
 
         return createFileParameter;
     }

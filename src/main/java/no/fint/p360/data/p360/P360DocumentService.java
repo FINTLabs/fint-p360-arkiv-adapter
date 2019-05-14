@@ -32,6 +32,7 @@ public class P360DocumentService extends P360AbstractService {
     public void createDocument(CreateDocumentParameter createDocumentParameter) {
         log.info("Create Document: {}", createDocumentParameter);
         DocumentOperationResult documentOperationResult = documentService.createDocument(createDocumentParameter);
+        log.info("Create Document Result: {}", documentOperationResult);
         if (documentOperationResult.isSuccessful()) {
             log.info("Documents successfully created");
             return;

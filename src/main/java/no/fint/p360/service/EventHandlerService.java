@@ -14,6 +14,7 @@ import no.fint.model.administrasjon.arkiv.ArkivActions;
 import no.fint.model.kultur.kulturminnevern.KulturminnevernActions;
 import no.fint.model.resource.FintLinks;
 import no.fint.model.resource.administrasjon.arkiv.DokumentfilResource;
+import no.fint.model.resource.administrasjon.arkiv.KorrespondansepartResource;
 import no.fint.model.resource.kultur.kulturminnevern.TilskuddFartoyResource;
 import no.fint.p360.data.FileRepository;
 import no.fint.p360.data.KodeverkRepository;
@@ -102,6 +103,10 @@ public class EventHandlerService {
                 try {
                     createEventResponse(event, responseEvent);
                     log.info("Response: {}", responseEvent);
+                } catch (IllegalArgumentException e) {
+                    log.warn("Illegal arguments in event {}: {}", event, e.getMessage());
+                    responseEvent.setResponseStatus(ResponseStatus.REJECTED);
+                    responseEvent.setMessage(e.getMessage());
                 } catch (Exception e) {
                     log.error("Error handling event {}", event, e);
                     responseEvent.setResponseStatus(ResponseStatus.ERROR);
@@ -119,7 +124,7 @@ public class EventHandlerService {
         if (KulturminnevernActions.getActions().contains(event.getAction())) {
             switch (KulturminnevernActions.valueOf(event.getAction())) {
                 case UPDATE_TILSKUDDFARTOY:
-                    onCreateTilskuddFartoy(response);
+                    onUpdateTilskuddFartoy(event.getQuery(), event.getOperation(), response);
                     break;
 
                 case GET_TILSKUDDFARTOY:
@@ -161,6 +166,9 @@ public class EventHandlerService {
                 case GET_KORRESPONDANSEPART:
                     onGetKorrespondansepart(event.getQuery(), response);
                     break;
+                case UPDATE_KORRESPONDANSEPART:
+                    onUpdateKorrespondansepart(event.getQuery(), response);
+                    break;
                 case GET_PART:
                     onGetPart(event.getQuery(), response);
             }
@@ -185,6 +193,20 @@ public class EventHandlerService {
             response.setStatusCode("NOT_FOUND");
             response.setMessage(e.getMessage());
         }
+    }
+
+    private void onUpdateKorrespondansepart(String query, Event<FintLinks> response) {
+        if (response.getOperation() != Operation.CREATE) {
+            throw new IllegalArgumentException("Illegal operation: " + response.getOperation());
+        }
+        if (response.getData() == null || response.getData().size() != 1) {
+            throw new IllegalArgumentException("Illegal request data payload.");
+        }
+        KorrespondansepartResource korrespondansepartResource = objectMapper.convertValue(response.getData().get(0),
+                KorrespondansepartResource.class);
+        KorrespondansepartResource result = korrespondansepartService.createKorrespondansepart(korrespondansepartResource);
+        response.setData(Collections.singletonList(result));
+        response.setResponseStatus(ResponseStatus.ACCEPTED);
     }
 
     private void onGetKorrespondansepart(String query, Event<FintLinks> response) {
@@ -333,12 +355,12 @@ public class EventHandlerService {
             response.setMessage(String.format("Error from application: %s", e.getMessage()));
         } catch (Exception e) {
             response.setResponseStatus(ResponseStatus.ERROR);
-            response.setMessage(String.format("Error from adapter: %s", e.getMessage()));
+            response.setMessage(String.format("Error from adapter: %s", ExceptionUtils.getStackTrace(e)));
         }
 
     }
 
-    private void onCreateTilskuddFartoy(Event<FintLinks> response) {
+    private void onUpdateTilskuddFartoy(String query, Operation operation, Event<FintLinks> response) {
 
         if (response.getData().size() != 1) {
             response.setResponseStatus(ResponseStatus.REJECTED);
@@ -348,13 +370,23 @@ public class EventHandlerService {
 
         TilskuddFartoyResource tilskuddFartoyResource = objectMapper.convertValue(response.getData().get(0), TilskuddFartoyResource.class);
 
-        try {
-            TilskuddFartoyResource tilskuddFartoy = tilskuddfartoyService.createTilskuddFartoyCase(tilskuddFartoyResource);
-            response.setData(Collections.singletonList(tilskuddFartoy));
-            response.setResponseStatus(ResponseStatus.ACCEPTED);
-        } catch (CreateCaseException e) {
-            response.setResponseStatus(ResponseStatus.ERROR);
-            response.setMessage(e.getMessage());
+        if (operation == Operation.CREATE) {
+            try {
+                TilskuddFartoyResource tilskuddFartoy = tilskuddfartoyService.createTilskuddFartoyCase(tilskuddFartoyResource);
+                response.setData(Collections.singletonList(tilskuddFartoy));
+                response.setResponseStatus(ResponseStatus.ACCEPTED);
+            } catch (CreateCaseException e) {
+                response.setResponseStatus(ResponseStatus.ERROR);
+                response.setMessage(e.getMessage());
+            }
+        } else if (operation == Operation.UPDATE) {
+            if (!StringUtils.startsWithIgnoreCase(query, "mappeid/")) {
+                throw new IllegalArgumentException("Invalid query: " + query);
+            }
+            String caseNumber = StringUtils.removeStartIgnoreCase(query, "mappeid/");
+            TilskuddFartoyResource result = tilskuddfartoyService.updateTilskuddFartoyCase(caseNumber, tilskuddFartoyResource);
+        } else {
+            throw new IllegalArgumentException("Invalid operation: " + operation);
         }
     }
 
