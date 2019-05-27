@@ -133,7 +133,24 @@ public class P360ContactService extends P360AbstractService {
     }
 
     public Stream<ContactPersonResult> searchContactPerson(MultiValueMap<String, String> queryParams) {
-        return Stream.empty();
+        GetContactPersonsParameter getContactPersonsParameter = objectFactory.createGetContactPersonsParameter();
+
+        if (queryParams.containsKey("navn")) {
+            getContactPersonsParameter.setName(objectFactory.createGetPrivatePersonsParameterName(queryParams.getFirst("navn")));
+        }
+        if (queryParams.containsKey("maxResults")) {
+            getContactPersonsParameter.setMaxRows(objectFactory.createGetPrivatePersonsParameterMaxRows(Integer.valueOf(queryParams.getFirst("maxResults"))));
+        }
+
+        GetContactPersonsResult result = contactService.getContactPersons(getContactPersonsParameter);
+
+        log.info("Result: {}", result);
+
+        if (!result.isSuccessful()) {
+            return Stream.empty();
+        }
+
+        return result.getContactPersons().getValue().getContactPersonResult().stream();
     }
 
     public Integer createPrivatePerson(SynchronizePrivatePersonParameter privatePerson) {

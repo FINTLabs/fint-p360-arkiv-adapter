@@ -53,7 +53,7 @@ public class FileRepository extends CacheLoader<String, Path> implements Removal
     public void scan() {
         try {
             log.info("Start scanning cache directory for files.");
-            Files.walk(props.getFileCacheDirectory()).filter(Files::isRegularFile).forEach(this::addFile); //.filter(Objects::nonNull).forEach(repository::add);
+            Files.walk(props.getFileCacheDirectory()).filter(Files::isRegularFile).map(Path::toAbsolutePath).forEach(this::addFile); //.filter(Objects::nonNull).forEach(repository::add);
             log.info("Finished scanning cache directory. {} file(s) in repository", files.size());
         } catch (IOException e) {
             log.error("During scan", e);
@@ -100,17 +100,19 @@ public class FileRepository extends CacheLoader<String, Path> implements Removal
     }
 
     private Path saveFile(DokumentfilResource dokumentfilResource) throws IOException {
-        File fileDestination = new File(
-                String.format("%s/%s.json", props.getFileCacheDirectory().toAbsolutePath(), dokumentfilResource.getSystemId().getIdentifikatorverdi())
-        );
-        objectMapper.writeValue(fileDestination, dokumentfilResource);
-        return fileDestination.toPath();
+        Path path = props.getFileCacheDirectory().resolve(dokumentfilResource.getSystemId().getIdentifikatorverdi() + ".json");
+        objectMapper.writeValue(Files.newOutputStream(path), dokumentfilResource);
+        return path;
     }
 
     @Override
     public void onRemoval(RemovalNotification<String, Path> removal) {
         if (removal.wasEvicted()) {
             Path path = removal.getValue();
+            if (StringUtils.startsWith(path.getFileName().toString(), "I_")) {
+                log.info("Not removing {}", path);
+                return;
+            }
             log.info("Removing {}", path);
             try {
                 Files.delete(path);
@@ -123,13 +125,23 @@ public class FileRepository extends CacheLoader<String, Path> implements Removal
     @Override
     public Path load(String recNo) throws Exception {
         log.info("Loading {} ...", recNo);
-        FileResult fileResult = fileService.getFileByRecNo(recNo);
 
-        DokumentfilResource dokumentfilResource = new DokumentfilResource();
-        dokumentfilResource.setSystemId(FintUtils.createIdentifikator(recNo));
-        dokumentfilResource.setData(fileResult.getBase64Data().getValue());
-        dokumentfilResource.setFormat(getContentType(fileResult.getFormat().getValue()));
+        if (StringUtils.startsWith(recNo, "I_")) {
+            Path path = props.getFileCacheDirectory().resolve(recNo + ".json");
+            if (Files.exists(path)) {
+                return path;
+            }
+            throw new FileNotFound(recNo);
 
-        return saveFile(dokumentfilResource);
+        } else {
+            FileResult fileResult = fileService.getFileByRecNo(recNo);
+
+            DokumentfilResource dokumentfilResource = new DokumentfilResource();
+            dokumentfilResource.setSystemId(FintUtils.createIdentifikator(recNo));
+            dokumentfilResource.setData(fileResult.getBase64Data().getValue());
+            dokumentfilResource.setFormat(getContentType(fileResult.getFormat().getValue()));
+
+            return saveFile(dokumentfilResource);
+        }
     }
 }
