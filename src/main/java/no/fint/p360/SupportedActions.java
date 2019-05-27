@@ -27,6 +27,7 @@ public class SupportedActions extends AbstractSupportedActions {
         add(ArkivActions.GET_ALL_PARTROLLE);
         add(ArkivActions.GET_SAK);
         add(ArkivActions.GET_KORRESPONDANSEPART);
+        add(ArkivActions.UPDATE_KORRESPONDANSEPART);
         add(ArkivActions.GET_PART);
     }
 

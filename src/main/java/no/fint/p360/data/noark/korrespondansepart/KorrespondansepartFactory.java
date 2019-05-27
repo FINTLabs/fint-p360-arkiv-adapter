@@ -1,19 +1,35 @@
 package no.fint.p360.data.noark.korrespondansepart;
 
-import no.fint.arkiv.p360.contact.ContactPersonResult;
-import no.fint.arkiv.p360.contact.EnterpriseResult;
-import no.fint.arkiv.p360.contact.PrivatePersonResult;
+import no.fint.arkiv.p360.contact.*;
+import no.fint.model.felles.kompleksedatatyper.Kontaktinformasjon;
+import no.fint.model.felles.kompleksedatatyper.Personnavn;
 import no.fint.model.resource.administrasjon.arkiv.KorrespondansepartResource;
+import no.fint.model.resource.felles.kompleksedatatyper.AdresseResource;
 import no.fint.p360.data.utilities.FintUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
-import static no.fint.p360.data.utilities.FintUtils.createIdentifikator;
-import static no.fint.p360.data.utilities.FintUtils.optionalValue;
+import javax.annotation.PostConstruct;
+import javax.xml.bind.JAXBElement;
+
+import java.util.List;
+import java.util.Optional;
+
+import static java.util.Optional.ofNullable;
+import static no.fint.p360.data.utilities.FintUtils.*;
 
 @SuppressWarnings("Duplicates")
 @Service
 public class KorrespondansepartFactory {
+
+    private ObjectFactory objectFactory;
+
+
+    @PostConstruct
+    public void init() {
+        objectFactory = new ObjectFactory();
+    }
+
 
     public KorrespondansepartResource toFintResource(PrivatePersonResult result) {
 
@@ -69,4 +85,40 @@ public class KorrespondansepartFactory {
         return korrespondansepartResource;
     }
 
+    public SynchronizePrivatePersonParameter toPrivatePerson(KorrespondansepartResource korrespondansepartResource) {
+        SynchronizePrivatePersonParameter privatePersonParameter = objectFactory.createSynchronizePrivatePersonParameter();
+        Personnavn personnavn = parsePersonnavn(korrespondansepartResource.getKorrespondansepartNavn());
+        privatePersonParameter.setFirstName(objectFactory.createPrivatePersonBaseFirstName(personnavn.getFornavn()));
+        privatePersonParameter.setLastName(objectFactory.createPrivatePersonBaseLastName(personnavn.getEtternavn()));
+        privatePersonParameter.setPersonalIdNumber(
+                objectFactory.createPrivatePersonBasePersonalIdNumber(
+                        korrespondansepartResource.getFodselsnummer().getIdentifikatorverdi()));
+
+        ofNullable(korrespondansepartResource.getKontaktinformasjon())
+                .map(Kontaktinformasjon::getEpostadresse)
+                .map(objectFactory::createPrivatePersonBaseEmail)
+                .ifPresent(privatePersonParameter::setEmail);
+
+        ofNullable(korrespondansepartResource.getKontaktinformasjon())
+                .map(Kontaktinformasjon::getMobiltelefonnummer)
+                .map(objectFactory::createPrivatePersonBaseMobilePhone)
+                .ifPresent(privatePersonParameter::setMobilePhone);
+
+        privatePersonParameter.setPrivateAddress(createAddress(korrespondansepartResource.getAdresse()));
+
+        return privatePersonParameter;
+    }
+
+    private JAXBElement<Address> createAddress(AdresseResource adresse) {
+        Address address = objectFactory.createAddress();
+        address.setCountry(objectFactory.createAddressCountry("NOR"));
+        ofNullable(adresse.getAdresselinje())
+                .map(l -> l.get(0))
+                .map(objectFactory::createAddressStreetAddress)
+                .ifPresent(address::setStreetAddress);
+        address.setZipCode(objectFactory.createAddressZipCode(adresse.getPostnummer()));
+        address.setZipPlace(objectFactory.createAddressZipPlace(adresse.getPoststed()));
+
+        return objectFactory.createAddress(address);
+    }
 }

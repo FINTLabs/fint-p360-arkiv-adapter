@@ -19,7 +19,7 @@ public class PartService {
     @Autowired
     private P360ContactService contactService;
 
-    public PartResource getPartBySystemId(int id) {
+    public PartResource getPartByPartId(int id) {
 
         Supplier<PartResource> enterpriseContact = () ->
                 partFactory.toFintResource(contactService.getEnterpriseByRecno(id));
@@ -36,4 +36,5 @@ public class PartService {
                 .orElseThrow(() -> new PartNotFound("Recno " + id + " not found"));
 
     }
+
 }

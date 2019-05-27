@@ -1,13 +1,14 @@
 package no.fint.p360.data.testutils;
 
-import no.fint.arkiv.p360.caze.ArrayOfCaseDocumentResult;
-import no.fint.arkiv.p360.caze.CaseDocumentResult;
-import no.fint.arkiv.p360.caze.CaseResult;
-import no.fint.arkiv.p360.caze.ObjectFactory;
+import no.fint.arkiv.p360.caze.*;
+import no.fint.model.felles.kompleksedatatyper.Identifikator;
+import no.fint.p360.data.utilities.FintUtils;
+import no.fint.p360.data.utilities.P360Utils;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.GregorianCalendar;
 import java.util.List;
 
@@ -22,17 +23,16 @@ public class P360ObjectFactory {
     }
 
     public CaseResult newP360Case() {
-        CaseResult caseResult = new CaseResult();
+        CaseResult caseResult = objectFactory.createCaseResult();
         caseResult.setCaseNumber(objectFactory.createString("19/12345"));
         caseResult.setRecno(12345);
         caseResult.setDate(datatypeFactory.newXMLGregorianCalendar(new GregorianCalendar()));
         caseResult.setCreatedDate(objectFactory.createCaseResultCreatedDate(datatypeFactory.newXMLGregorianCalendar(new GregorianCalendar())));
-        caseResult.setTitle(objectFactory.createString("title"));
-        caseResult.setUnofficialTitle(objectFactory.createString("title"));
-        caseResult.setNotes(objectFactory.createString("notes"));
+        caseResult.setTitle(objectFactory.createCaseResultTitle("Tilskudd - AWQR - Ternen - 232291-0 - 35 - FINT Test #1"));
+        caseResult.setUnofficialTitle(objectFactory.createCaseResultUnofficialTitle("Tilskudd - AWQR - Ternen - 232291-0 - 35 - FINT Test #1"));
+        caseResult.setNotes(objectFactory.createCaseResultNotes("notes"));
         caseResult.setArchiveCodes(objectFactory.createArrayOfArchiveCodeResult(objectFactory.createArrayOfArchiveCodeResult()));
-
-
+        caseResult.setExternalId(P360Utils.getExternalIdParameter(FintUtils.createIdentifikator("35")));
         caseResult.setDocuments(objectFactory.createArrayOfCaseDocumentResult(newP360ArrayOfCaseDocument()));
         caseResult.setStatus(objectFactory.createString("S"));
 

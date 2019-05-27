@@ -2,6 +2,7 @@ package no.fint.p360.data.p360;
 
 import lombok.extern.slf4j.Slf4j;
 import no.fint.arkiv.p360.contact.*;
+import no.fint.p360.data.exception.CreateContactException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MultiValueMap;
 
@@ -38,6 +39,8 @@ public class P360ContactService extends P360AbstractService {
         getPrivatePersonsParameter.setRecno(objectFactory.createGetPrivatePersonsParameterRecno(recNo));
         GetPrivatePersonsResult privatePersons = contactService.getPrivatePersons(getPrivatePersonsParameter);
 
+        log.info("PrivatePersonsResult: {}", privatePersons);
+
         if (privatePersons.isSuccessful() && privatePersons.getTotalPageCount().getValue() == 1) {
             return privatePersons.getPrivatePersons().getValue().getPrivatePersonResult().get(0);
         }
@@ -50,6 +53,8 @@ public class P360ContactService extends P360AbstractService {
         getContactPersonsParameter.setIncludeCustomFields(Boolean.TRUE);
         getContactPersonsParameter.setRecno(objectFactory.createGetContactPersonsParameterRecno(recNo));
         GetContactPersonsResult contactPersons = contactService.getContactPersons(getContactPersonsParameter);
+
+        log.info("ContactPersonsResult: {}", contactPersons);
 
         if (contactPersons.isSuccessful() && contactPersons.getTotalPageCount().getValue() == 1) {
             return contactPersons.getContactPersons().getValue().getContactPersonResult().get(0);
@@ -128,6 +133,33 @@ public class P360ContactService extends P360AbstractService {
     }
 
     public Stream<ContactPersonResult> searchContactPerson(MultiValueMap<String, String> queryParams) {
-        return Stream.empty();
+        GetContactPersonsParameter getContactPersonsParameter = objectFactory.createGetContactPersonsParameter();
+
+        if (queryParams.containsKey("navn")) {
+            getContactPersonsParameter.setName(objectFactory.createGetPrivatePersonsParameterName(queryParams.getFirst("navn")));
+        }
+        if (queryParams.containsKey("maxResults")) {
+            getContactPersonsParameter.setMaxRows(objectFactory.createGetPrivatePersonsParameterMaxRows(Integer.valueOf(queryParams.getFirst("maxResults"))));
+        }
+
+        GetContactPersonsResult result = contactService.getContactPersons(getContactPersonsParameter);
+
+        log.info("Result: {}", result);
+
+        if (!result.isSuccessful()) {
+            return Stream.empty();
+        }
+
+        return result.getContactPersons().getValue().getContactPersonResult().stream();
+    }
+
+    public Integer createPrivatePerson(SynchronizePrivatePersonParameter privatePerson) {
+        log.info("Create Private Person: {}", privatePerson);
+        SynchronizePrivatePersonResult privatePersonResult = contactService.synchronizePrivatePerson(privatePerson);
+        log.info("Private Person Result: {}", privatePersonResult);
+        if (privatePersonResult.isSuccessful()) {
+            return privatePersonResult.getRecno();
+        }
+        throw new CreateContactException(privatePersonResult.getErrorMessage().getValue());
     }
 }

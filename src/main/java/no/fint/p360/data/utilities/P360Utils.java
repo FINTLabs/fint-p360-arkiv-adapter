@@ -1,6 +1,7 @@
 package no.fint.p360.data.utilities;
 
 import no.fint.arkiv.p360.caze.*;
+import no.fint.model.felles.kompleksedatatyper.Identifikator;
 
 import javax.xml.bind.JAXBElement;
 import java.util.List;
@@ -17,11 +18,11 @@ public enum P360Utils {
         return objectFactory.createCaseParameterBaseKeywords(keywordArray);
     }
 
-    public static JAXBElement<ExternalIdParameter> getExternalIdParameter(String id) {
+    public static JAXBElement<ExternalIdParameter> getExternalIdParameter(Identifikator id) {
         ObjectFactory objectFactory = new ObjectFactory();
 
         ExternalIdParameter externalIdParameter = objectFactory.createExternalIdParameter();
-        externalIdParameter.setId(objectFactory.createExternalIdParameterId(id));
+        externalIdParameter.setId(objectFactory.createExternalIdParameterId(id.getIdentifikatorverdi()));
         externalIdParameter.setType(objectFactory.createExternalIdParameterType(Constants.EXTERNAL_ID_TYPE));
 
         return objectFactory.createCaseParameterBaseExternalId(externalIdParameter);
