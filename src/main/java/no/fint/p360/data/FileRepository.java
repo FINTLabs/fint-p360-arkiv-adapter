@@ -53,7 +53,7 @@ public class FileRepository extends CacheLoader<String, Path> implements Removal
     public void scan() {
         try {
             log.info("Start scanning cache directory for files.");
-            Files.walk(props.getFileCacheDirectory()).filter(Files::isRegularFile).map(Path::toAbsolutePath).forEach(this::addFile); //.filter(Objects::nonNull).forEach(repository::add);
+            Files.walk(props.getFileCacheDirectory()).filter(Files::isRegularFile).map(Path::toAbsolutePath).forEach(this::addFile); 
             log.info("Finished scanning cache directory. {} file(s) in repository", files.size());
         } catch (IOException e) {
             log.error("During scan", e);
