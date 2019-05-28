@@ -145,6 +145,9 @@ public class EventHandlerService {
                 case GET_ALL_DOKUMENTSTATUS:
                     onGetAllDokumentstatus(response);
                     break;
+                case GET_ALL_DOKUMENTTYPE:
+                    onGetAllDokumenttype(response);
+                    break;
                 case GET_ALL_KORRESPONDANSEPARTTYPE:
                     onGetAllKorrespondansepartType(response);
                     break;
@@ -302,6 +305,11 @@ public class EventHandlerService {
 
     private void onGetAllDokumentstatus(Event<FintLinks> response) {
         kodeverkRepository.getDokumentStatus().forEach(response::addData);
+        response.setResponseStatus(ResponseStatus.ACCEPTED);
+    }
+
+    private void onGetAllDokumenttype(Event<FintLinks> response) {
+        kodeverkRepository.getDokumentType().forEach(response::addData);
         response.setResponseStatus(ResponseStatus.ACCEPTED);
     }
 

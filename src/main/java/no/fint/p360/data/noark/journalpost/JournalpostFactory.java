@@ -304,12 +304,33 @@ public class JournalpostFactory {
 
         createFileParameter.setTitle(objectFactory.createCreateFileParameterTitle(dokumentbeskrivelse.getTittel()));
         createFileParameter.setFormat(objectFactory.createCreateFileParameterFormat(dokumentobjekt.getFormat()));
+
+        dokumentbeskrivelse
+                .getTilknyttetRegistreringSom()
+                .stream()
+                .map(Link::getHref)
+                .filter(StringUtils::isNotBlank)
+                .map(s -> StringUtils.substringAfterLast(s, "/"))
+                .map(s -> StringUtils.prependIfMissing(s, "recno:"))
+                .map(objectFactory::createCreateFileParameterRelationType)
+                .findFirst()
+                .ifPresent(createFileParameter::setRelationType);
+
+        dokumentbeskrivelse
+                .getDokumentType()
+                .stream()
+                .map(Link::getHref)
+                .filter(StringUtils::isNotBlank)
+                .map(s -> StringUtils.substringAfterLast(s, "/"))
+                .map(s -> StringUtils.prependIfMissing(s, "recno:"))
+                .map(objectFactory::createCreateFileParameterCategory)
+                .findFirst()
+                .ifPresent(createFileParameter::setCategory);
+
         // TODO Map from incoming fields
         //createFileParameter.setNote(objectFactory.createCreateFileParameterNote(dokumentbeskrivelse.getBeskrivelse()));
 //        createFileParameter.setAccessCode(objectFactory.createCreateFileParameterAccessCode("U"));
-//        createFileParameter.setRelationType(objectFactory.createCreateFileParameterRelationType("H"));
 //        createFileParameter.setVersionFormat(objectFactory.createCreateFileParameterVersionFormat("A"));
-//        createFileParameter.setCategory(objectFactory.createCreateFileParameterCategory("Brev"));
 //        createFileParameter.setStatus(objectFactory.createCreateFileParameterStatus("B"));
 
         createFileParameter.setData(

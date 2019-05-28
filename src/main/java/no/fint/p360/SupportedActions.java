@@ -20,6 +20,7 @@ public class SupportedActions extends AbstractSupportedActions {
         add(ArkivActions.UPDATE_DOKUMENTFIL);
         add(ArkivActions.GET_ALL_SAKSSTATUS);
         add(ArkivActions.GET_ALL_DOKUMENTSTATUS);
+        add(ArkivActions.GET_ALL_DOKUMENTTYPE);
         add(ArkivActions.GET_ALL_TILKNYTTETREGISTRERINGSOM);
         add(ArkivActions.GET_ALL_KORRESPONDANSEPARTTYPE);
         add(ArkivActions.GET_ALL_JOURNALSTATUS);
