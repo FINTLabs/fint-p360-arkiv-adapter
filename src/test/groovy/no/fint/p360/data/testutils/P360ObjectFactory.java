@@ -35,6 +35,7 @@ public class P360ObjectFactory {
         caseResult.setExternalId(P360Utils.getExternalIdParameter(FintUtils.createIdentifikator("35")));
         caseResult.setDocuments(objectFactory.createArrayOfCaseDocumentResult(newP360ArrayOfCaseDocument()));
         caseResult.setStatus(objectFactory.createString("S"));
+        caseResult.setContacts(objectFactory.createArrayOfCaseContactResult(objectFactory.createArrayOfCaseContactResult()));
 
         return caseResult;
     }
