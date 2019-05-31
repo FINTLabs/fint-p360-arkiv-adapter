@@ -19,7 +19,7 @@ public class JournalpostTypeService {
     @Autowired
     private JournalpostTypeFactory factory;
 
-    @Value("${fint.p360.tables.document-category:Document category}")
+    @Value("${fint.p360.tables.document-category:code table: Document category}")
     private String documentCategoryTable;
 
     public Stream<JournalpostTypeResource> getDocumentCategoryTable() {

@@ -34,7 +34,7 @@ public class P360SupportService extends P360AbstractService {
 
     public GetCodeTableRowsResult getCodeTable(String table) {
         GetCodeTableRowsQuery codeTableRowsQuery = new GetCodeTableRowsQuery();
-        codeTableRowsQuery.setCodeTableName(objectFactory.createGetCodeTableRowsQueryCodeTableName(String.format("code table: %s", table)));
+        codeTableRowsQuery.setCodeTableName(objectFactory.createGetCodeTableRowsQueryCodeTableName(table));
         GetCodeTableRowsResult codeTableRows = supportService.getCodeTableRows(codeTableRowsQuery);
         if (codeTableRows.isSuccessful()) {
             return codeTableRows;

@@ -19,7 +19,7 @@ public class DokumenttypeService {
     @Autowired
     private DokumenttypeFactory factory;
 
-    @Value("${fint.p360.tables.document-type:File category}")
+    @Value("${fint.p360.tables.document-type:code table: File category}")
     private String documentStatusTable;
 
     public Stream<DokumentTypeResource> getDocumenttypeTable() {

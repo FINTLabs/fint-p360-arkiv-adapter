@@ -64,7 +64,8 @@ public class KorrespondansepartService {
             int recNo = contactService.createPrivatePerson(korrespondansepartFactory.toPrivatePerson(korrespondansepartResource));
             return  korrespondansepartFactory.toFintResource(contactService.getPrivatePersonByRecno(recNo));
         } else if (validIdentifikator(korrespondansepartResource.getOrganisasjonsnummer())) {
-            throw new NotImplementedException("Create Enterprise not implemented yet.");
+            int recNo = contactService.createEnterprise(korrespondansepartFactory.toEnterprise(korrespondansepartResource));
+            return korrespondansepartFactory.toFintResource(contactService.getEnterpriseByRecno(recNo));
         } else {
             throw new IllegalArgumentException("Invalid Korrespondansepart - neither fodselsnummer nor organisasjonsnummer is set.");
         }

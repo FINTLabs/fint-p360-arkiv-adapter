@@ -19,7 +19,7 @@ public class DokumentstatusService {
     @Autowired
     private DokumentstatusFactory factory;
 
-    @Value("${fint.p360.tables.document-status:Document status}")
+    @Value("${fint.p360.tables.document-status:code table: Document status}")
     private String documentStatusTable;
 
     public Stream<DokumentStatusResource> getDocumentStatusTable() {

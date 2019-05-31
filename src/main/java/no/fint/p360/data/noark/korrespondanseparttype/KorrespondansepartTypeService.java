@@ -19,7 +19,7 @@ public class KorrespondansepartTypeService {
     @Autowired
     private KorrespondansepartTypeFactory factory;
 
-    @Value("${fint.p360.tables.contact-role:Activity - Contact role}")
+    @Value("${fint.p360.tables.contact-role:code table: Activity - Contact role}")
     private String contactRoleTable;
 
     public Stream<KorrespondansepartTypeResource> getKorrespondansepartType() {

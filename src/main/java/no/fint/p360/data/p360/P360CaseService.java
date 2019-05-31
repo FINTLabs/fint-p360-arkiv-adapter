@@ -60,16 +60,12 @@ public class P360CaseService extends P360AbstractService {
     public CaseResult getSakByCaseNumber(String caseNumber) {
         GetCasesQuery getCasesQuery = new GetCasesQuery();
         getCasesQuery.setCaseNumber(objectFactory.createGetCasesQueryCaseNumber(caseNumber));
-        getCasesQuery.setIncludeCustomFields(Boolean.TRUE);
-        getCasesQuery.setIncludeCaseContacts(Boolean.TRUE);
-        log.info("Query: {}", getCasesQuery);
         return getCase(getCasesQuery);
     }
 
     public CaseResult getSakBySystemId(String systemId) {
         GetCasesQuery getCasesQuery = new GetCasesQuery();
         getCasesQuery.setRecno(objectFactory.createGetCasesQueryRecno(Integer.valueOf(systemId)));
-        log.info("Query: {}", getCasesQuery);
         return getCase(getCasesQuery);
     }
 
@@ -103,7 +99,9 @@ public class P360CaseService extends P360AbstractService {
     }
 
     private CaseResult getCase(GetCasesQuery casesQuery) {
-        log.info("Case query: {}", casesQuery);
+        casesQuery.setIncludeCustomFields(Boolean.TRUE);
+        casesQuery.setIncludeCaseContacts(Boolean.TRUE);
+        log.info("Query: {}", casesQuery);
         GetCasesResult cases = caseServicePort.getCases(casesQuery);
         log.info("Cases: {}", cases);
 

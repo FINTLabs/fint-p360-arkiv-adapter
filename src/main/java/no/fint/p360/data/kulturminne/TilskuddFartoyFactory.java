@@ -25,10 +25,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 
+import static no.fint.p360.data.utilities.FintUtils.optionalValue;
+
 @Slf4j
 @Service
 public class TilskuddFartoyFactory {
-
 
     @Autowired
     private KodeverkRepository kodeverkRepository;
@@ -70,7 +71,7 @@ public class TilskuddFartoyFactory {
 
         noarkFactory.getSaksmappe(caseResult, tilskuddFartoy);
 
-        FintUtils.optionalValue(caseResult.getStatus())
+        optionalValue(caseResult.getStatus())
                 .flatMap(kode -> kodeverkRepository
                         .getSaksstatus()
                         .stream()
@@ -80,6 +81,8 @@ public class TilskuddFartoyFactory {
                 .map(Identifikator::getIdentifikatorverdi)
                 .map(Link.apply(Saksstatus.class, "systemid"))
                 .ifPresent(tilskuddFartoy::addSaksstatus);
+
+
         tilskuddFartoy.addSelf(Link.with(TilskuddFartoy.class, "mappeid", caseYear, sequenceNumber));
         tilskuddFartoy.addSelf(Link.with(TilskuddFartoy.class, "systemid", caseResult.getRecno().toString()));
 
@@ -107,12 +110,13 @@ public class TilskuddFartoyFactory {
         createCaseParameter.setArchiveCodes(P360Utils.getArchiveCodes(tilskuddFartoy.getFartoyNavn(), kulturminneProps.getArchiveCodetype()));
 
         ArrayOfCaseContactParameter arrayOfCaseContactParameter = objectFactory.createArrayOfCaseContactParameter();
-//        tilskuddFartoy
-//                .getPart()
-//                .stream()
-//                .map(this::createCaseContactParameter)
-//                .forEach(arrayOfCaseContactParameter.getCaseContactParameter()::add);
-//        createCaseParameter.setContacts(objectFactory.createArrayOfCaseContactParameter(arrayOfCaseContactParameter));
+
+        tilskuddFartoy
+                .getPart()
+                .stream()
+                .map(this::createCaseContactParameter)
+                .forEach(arrayOfCaseContactParameter.getCaseContactParameter()::add);
+        createCaseParameter.setContacts(objectFactory.createCaseParameterBaseContacts(arrayOfCaseContactParameter));
 
         /*
         createCaseParameter.setResponsiblePersonIdNumber(

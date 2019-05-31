@@ -19,7 +19,7 @@ public class SaksStatusService {
     @Autowired
     private SaksStatusFactory factory;
 
-    @Value("${fint.p360.tables.case-status:Case status}")
+    @Value("${fint.p360.tables.case-status:code table: Case status}")
     private String caseStatusTable;
 
     public Stream<SaksstatusResource> getCaseStatusTable() {

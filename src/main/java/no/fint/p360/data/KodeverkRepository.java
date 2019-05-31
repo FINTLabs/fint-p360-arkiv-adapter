@@ -78,7 +78,7 @@ public class KodeverkRepository {
         journalpostType = journalpostTypeService.getDocumentCategoryTable().collect(Collectors.toList());
         korrespondansepartType = korrespondansepartTypeService.getKorrespondansepartType().collect(Collectors.toList());
         journalStatus = journalStatusService.getJournalStatusTable().collect(Collectors.toList());
-        tilknyttetRegistreringSom = tilknyttetRegistreringSomService.getTilknyttetRegistreringSom();
+        tilknyttetRegistreringSom = tilknyttetRegistreringSomService.getDocumentRelationTable().collect(Collectors.toList());
         partRolle = partRolleService.getPartRolle().collect(Collectors.toList());
         log.info("Refreshed code lists");
     }
