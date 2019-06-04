@@ -158,10 +158,10 @@ public class EventHandlerService {
                     onGetAllJournalpostType(response);
                     break;
                 case GET_ALL_TILGANGSRESTRIKSJON:
-                    // TODO
+                    onGetAllTilgangsrestriksjon(response);
                     break;
                 case GET_ALL_SKJERMINGSHJEMMEL:
-                    // TODO
+                    onGetAllSkjermingshjemmel(response);
                     break;
                 case GET_ALL_MERKNADSTYPE:
                     onGetAllMerknadstype(response);
@@ -333,6 +333,16 @@ public class EventHandlerService {
 
     private void onGetSaksstatus(Event<FintLinks> response) {
         kodeverkRepository.getSaksstatus().forEach(response::addData);
+        response.setResponseStatus(ResponseStatus.ACCEPTED);
+    }
+
+    private void onGetAllTilgangsrestriksjon(Event<FintLinks> response) {
+        kodeverkRepository.getTilgangsrestriksjon().forEach(response::addData);
+        response.setResponseStatus(ResponseStatus.ACCEPTED);
+    }
+
+    private void onGetAllSkjermingshjemmel(Event<FintLinks> response) {
+        kodeverkRepository.getSkjermingshjemmel().forEach(response::addData);
         response.setResponseStatus(ResponseStatus.ACCEPTED);
     }
 

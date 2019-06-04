@@ -11,6 +11,8 @@ import no.fint.p360.data.noark.korrespondanseparttype.KorrespondansepartTypeServ
 import no.fint.p360.data.noark.merknadstype.MerknadstypeService;
 import no.fint.p360.data.noark.partrolle.PartRolleService;
 import no.fint.p360.data.noark.saksstatus.SaksStatusService;
+import no.fint.p360.data.noark.skjermingshjemmel.SkjermingshjemmelService;
+import no.fint.p360.data.noark.tilgangsrestriksjon.TilgangsrestriksjonService;
 import no.fint.p360.data.noark.tilknyttetregistreringsom.TilknyttetRegistreringSomService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -48,6 +50,12 @@ public class KodeverkRepository {
     private TilknyttetRegistreringSomService tilknyttetRegistreringSomService;
 
     @Autowired
+    private TilgangsrestriksjonService tilgangsrestriksjonService;
+
+    @Autowired
+    private SkjermingshjemmelService skjermingshjemmelService;
+
+    @Autowired
     private MerknadstypeService merknadstypeService;
 
     @Getter
@@ -75,6 +83,12 @@ public class KodeverkRepository {
     private List<JournalStatusResource> journalStatus;
 
     @Getter
+    private List<TilgangsrestriksjonResource> tilgangsrestriksjon;
+
+    @Getter
+    private List<SkjermingshjemmelResource> skjermingshjemmel;
+
+    @Getter
     private List<MerknadstypeResource> merknadstype;
 
     @Scheduled(initialDelay = 10000, fixedDelayString = "${fint.kodeverk.refresh-interval:1500000}")
@@ -88,6 +102,8 @@ public class KodeverkRepository {
         tilknyttetRegistreringSom = tilknyttetRegistreringSomService.getDocumentRelationTable().collect(Collectors.toList());
         partRolle = partRolleService.getPartRolle().collect(Collectors.toList());
         merknadstype = merknadstypeService.getMerknadstype().collect(Collectors.toList());
+        tilgangsrestriksjon = tilgangsrestriksjonService.getAccessCodeTable().collect(Collectors.toList());
+        skjermingshjemmel = skjermingshjemmelService.getLawTable().collect(Collectors.toList());
         log.info("Refreshed code lists");
     }
 
