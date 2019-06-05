@@ -19,7 +19,7 @@ public class PartRolleService {
     @Autowired
     private PartRolleFactory factory;
 
-    @Value("${fint.p360.tables.contact-role:Activity - Contact role}")
+    @Value("${fint.p360.tables.case-contact-role:code table: Contact - Case role}")
     private String contactRoleTable;
 
     public Stream<PartRolleResource> getPartRolle() {

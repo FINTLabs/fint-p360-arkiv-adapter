@@ -1,8 +1,10 @@
 package no.fint.p360.data.noark.common;
 
-import no.fint.arkiv.p360.caze.ArrayOfCaseDocumentResult;
-import no.fint.arkiv.p360.caze.CaseDocumentResult;
-import no.fint.arkiv.p360.caze.CaseResult;
+import no.fint.arkiv.p360.caze.*;
+import no.fint.model.administrasjon.arkiv.Part;
+import no.fint.model.administrasjon.arkiv.PartRolle;
+import no.fint.model.resource.Link;
+import no.fint.model.resource.administrasjon.arkiv.PartsinformasjonResource;
 import no.fint.model.resource.administrasjon.arkiv.SaksmappeResource;
 import no.fint.p360.data.noark.journalpost.JournalpostService;
 import no.fint.p360.data.noark.part.PartFactory;
@@ -51,10 +53,18 @@ public class NoarkFactory {
                 .flatMap(it -> Stream.of(it.getArchiveType().getValue(), it.getArchiveCode().getValue()))
                 .collect(Collectors.toList()));
 
+        saksmappeResource.setPart(
+                optionalValue(caseResult.getContacts())
+                        .map(ArrayOfCaseContactResult::getCaseContactResult)
+                        .map(List::stream)
+                        .orElseGet(Stream::empty)
+                        .map(this::createPartsinformasjon)
+                        .collect(Collectors.toList()));
+
         saksmappeResource.setJournalpost(
                 optionalValue(caseResult.getDocuments())
                         .map(ArrayOfCaseDocumentResult::getCaseDocumentResult)
-                        .map(List::stream)
+                        .map(List::parallelStream)
                         .orElse(Stream.empty())
                         .map(CaseDocumentResult::getRecno)
                         .map(String::valueOf)
@@ -62,4 +72,21 @@ public class NoarkFactory {
                         .collect(Collectors.toList()));
 
     }
+
+    private PartsinformasjonResource createPartsinformasjon(CaseContactResult caseContactResult) {
+        PartsinformasjonResource partsinformasjon = new PartsinformasjonResource();
+
+        optionalValue(caseContactResult.getRecno())
+                .map(String::valueOf)
+                .map(Link.apply(Part.class, "partid"))
+                .ifPresent(partsinformasjon::addPart);
+
+        optionalValue(caseContactResult.getRole())
+                .map(Link.apply(PartRolle.class, "systemid"))
+                .ifPresent(partsinformasjon::addPartRolle);
+
+        return partsinformasjon;
+    }
+
+
 }

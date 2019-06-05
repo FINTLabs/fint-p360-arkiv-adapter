@@ -202,6 +202,17 @@ public class JournalpostFactory {
                     .map(Link.apply(TilknyttetRegistreringSom.class, "systemid"))
                     .ifPresent(dokumentbeskrivelseResource::addTilknyttetRegistreringSom);
 
+            optionalValue(file.getCategoryCode())
+                    .flatMap(kode -> kodeverkRepository
+                            .getDokumentType()
+                            .stream()
+                            .filter(it -> StringUtils.equalsIgnoreCase(kode, it.getKode()))
+                            .findAny())
+                    .map(DokumentTypeResource::getSystemId)
+                    .map(Identifikator::getIdentifikatorverdi)
+                    .map(Link.apply(DokumentType.class, "systemid"))
+                    .ifPresent(dokumentbeskrivelseResource::addDokumentType);
+
             dokumentbeskrivelseResourcesList.add(dokumentbeskrivelseResource);
 
         });
@@ -304,13 +315,44 @@ public class JournalpostFactory {
 
         createFileParameter.setTitle(objectFactory.createCreateFileParameterTitle(dokumentbeskrivelse.getTittel()));
         createFileParameter.setFormat(objectFactory.createCreateFileParameterFormat(dokumentobjekt.getFormat()));
+
+        dokumentbeskrivelse
+                .getTilknyttetRegistreringSom()
+                .stream()
+                .map(Link::getHref)
+                .filter(StringUtils::isNotBlank)
+                .map(s -> StringUtils.substringAfterLast(s, "/"))
+                .map(s -> StringUtils.prependIfMissing(s, "recno:"))
+                .map(objectFactory::createCreateFileParameterRelationType)
+                .findFirst()
+                .ifPresent(createFileParameter::setRelationType);
+
+        dokumentbeskrivelse
+                .getDokumentType()
+                .stream()
+                .map(Link::getHref)
+                .filter(StringUtils::isNotBlank)
+                .map(s -> StringUtils.substringAfterLast(s, "/"))
+                .map(s -> StringUtils.prependIfMissing(s, "recno:"))
+                .map(objectFactory::createCreateFileParameterCategory)
+                .findFirst()
+                .ifPresent(createFileParameter::setCategory);
+
+        dokumentbeskrivelse
+                .getDokumentstatus()
+                .stream()
+                .map(Link::getHref)
+                .filter(StringUtils::isNotBlank)
+                .map(s -> StringUtils.substringAfterLast(s, "/"))
+                .map(s -> StringUtils.prependIfMissing(s, "recno:"))
+                .map(objectFactory::createCreateFileParameterStatus)
+                .findFirst()
+                .ifPresent(createFileParameter::setStatus);
+
         // TODO Map from incoming fields
         //createFileParameter.setNote(objectFactory.createCreateFileParameterNote(dokumentbeskrivelse.getBeskrivelse()));
 //        createFileParameter.setAccessCode(objectFactory.createCreateFileParameterAccessCode("U"));
-//        createFileParameter.setRelationType(objectFactory.createCreateFileParameterRelationType("H"));
 //        createFileParameter.setVersionFormat(objectFactory.createCreateFileParameterVersionFormat("A"));
-//        createFileParameter.setCategory(objectFactory.createCreateFileParameterCategory("Brev"));
-//        createFileParameter.setStatus(objectFactory.createCreateFileParameterStatus("B"));
 
         createFileParameter.setData(
                 dokumentobjekt

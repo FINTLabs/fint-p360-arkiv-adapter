@@ -109,6 +109,39 @@ public class KorrespondansepartFactory {
         return privatePersonParameter;
     }
 
+    public SynchronizeEnterpriseParameter toEnterprise(KorrespondansepartResource korrespondansepartResource) {
+        SynchronizeEnterpriseParameter parameter = objectFactory.createSynchronizeEnterpriseParameter();
+
+        parameter.setName(objectFactory.createEnterpriseBaseName(
+                korrespondansepartResource.getKorrespondansepartNavn()));
+        parameter.setEnterpriseNumber(objectFactory.createEnterpriseBaseEnterpriseNumber(
+                korrespondansepartResource.getOrganisasjonsnummer().getIdentifikatorverdi()));
+
+        ofNullable(korrespondansepartResource.getKontaktinformasjon())
+                .map(Kontaktinformasjon::getEpostadresse)
+                .map(objectFactory::createEnterpriseBaseEmail)
+                .ifPresent(parameter::setEmail);
+
+        ofNullable(korrespondansepartResource.getKontaktinformasjon())
+                .map(Kontaktinformasjon::getMobiltelefonnummer)
+                .map(objectFactory::createEnterpriseBaseMobilePhone)
+                .ifPresent(parameter::setMobilePhone);
+
+        ofNullable(korrespondansepartResource.getKontaktinformasjon())
+                .map(Kontaktinformasjon::getTelefonnummer)
+                .map(objectFactory::createEnterpriseBasePhoneNumber)
+                .ifPresent(parameter::setPhoneNumber);
+
+        ofNullable(korrespondansepartResource.getKontaktinformasjon())
+                .map(Kontaktinformasjon::getNettsted)
+                .map(objectFactory::createEnterpriseBaseWeb)
+                .ifPresent(parameter::setWeb);
+
+        parameter.setPostAddress(createAddress(korrespondansepartResource.getAdresse()));
+
+        return parameter;
+    }
+
     private JAXBElement<Address> createAddress(AdresseResource adresse) {
         Address address = objectFactory.createAddress();
         address.setCountry(objectFactory.createAddressCountry("NOR"));

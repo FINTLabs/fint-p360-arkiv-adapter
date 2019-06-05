@@ -25,6 +25,7 @@ import no.fint.p360.data.noark.part.PartService;
 import no.fint.p360.data.noark.sak.SakService;
 import no.fint.p360.data.p360.*;
 import no.fint.p360.data.utilities.FintUtils;
+import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -144,6 +145,9 @@ public class EventHandlerService {
                     break;
                 case GET_ALL_DOKUMENTSTATUS:
                     onGetAllDokumentstatus(response);
+                    break;
+                case GET_ALL_DOKUMENTTYPE:
+                    onGetAllDokumenttype(response);
                     break;
                 case GET_ALL_KORRESPONDANSEPARTTYPE:
                     onGetAllKorrespondansepartType(response);
@@ -302,6 +306,11 @@ public class EventHandlerService {
 
     private void onGetAllDokumentstatus(Event<FintLinks> response) {
         kodeverkRepository.getDokumentStatus().forEach(response::addData);
+        response.setResponseStatus(ResponseStatus.ACCEPTED);
+    }
+
+    private void onGetAllDokumenttype(Event<FintLinks> response) {
+        kodeverkRepository.getDokumentType().forEach(response::addData);
         response.setResponseStatus(ResponseStatus.ACCEPTED);
     }
 

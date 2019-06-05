@@ -3,6 +3,7 @@ package no.fint.p360.data.p360;
 import lombok.extern.slf4j.Slf4j;
 import no.fint.arkiv.p360.contact.*;
 import no.fint.p360.data.exception.CreateContactException;
+import no.fint.p360.data.exception.CreateEnterpriseException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MultiValueMap;
 
@@ -162,4 +163,15 @@ public class P360ContactService extends P360AbstractService {
         }
         throw new CreateContactException(privatePersonResult.getErrorMessage().getValue());
     }
+
+    public Integer createEnterprise(SynchronizeEnterpriseParameter enterprise) {
+        log.info("Create Enterprise: {}", enterprise);
+        SynchronizeEnterpriseResult result = contactService.synchronizeEnterprise(enterprise);
+        log.info("Enterprise Result: {}", result);
+        if (result.isSuccessful()) {
+            return result.getRecno();
+        }
+        throw new CreateEnterpriseException(result.getErrorMessage().getValue());
+    }
 }
+

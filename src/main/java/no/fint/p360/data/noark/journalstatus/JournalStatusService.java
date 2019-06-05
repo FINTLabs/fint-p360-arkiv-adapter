@@ -19,7 +19,7 @@ public class JournalStatusService {
     @Autowired
     private JournalStatusFactory factory;
 
-    @Value("${fint.p360.tables.journal-status:Journal status}")
+    @Value("${fint.p360.tables.journal-status:code table: Journal status}")
     private String journalStatusTable;
 
     public Stream<JournalStatusResource> getJournalStatusTable() {

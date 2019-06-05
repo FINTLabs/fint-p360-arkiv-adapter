@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import no.fint.model.resource.administrasjon.arkiv.*;
 import no.fint.p360.data.noark.dokumentstatus.DokumentstatusService;
+import no.fint.p360.data.noark.dokumenttype.DokumenttypeService;
 import no.fint.p360.data.noark.journalposttype.JournalpostTypeService;
 import no.fint.p360.data.noark.journalstatus.JournalStatusService;
 import no.fint.p360.data.noark.korrespondanseparttype.KorrespondansepartTypeService;
@@ -28,6 +29,9 @@ public class KodeverkRepository {
     private DokumentstatusService dokumentstatusService;
 
     @Autowired
+    private DokumenttypeService dokumenttypeService;
+
+    @Autowired
     private JournalpostTypeService journalpostTypeService;
 
     @Autowired
@@ -49,6 +53,9 @@ public class KodeverkRepository {
     private List<DokumentStatusResource> dokumentStatus;
 
     @Getter
+    private List<DokumentTypeResource> dokumentType;
+
+    @Getter
     private List<JournalpostTypeResource> journalpostType;
 
     @Getter
@@ -67,10 +74,11 @@ public class KodeverkRepository {
     public void refresh() {
         saksstatus = saksStatusService.getCaseStatusTable().collect(Collectors.toList());
         dokumentStatus = dokumentstatusService.getDocumentStatusTable().collect(Collectors.toList());
+        dokumentType = dokumenttypeService.getDocumenttypeTable().collect(Collectors.toList());
         journalpostType = journalpostTypeService.getDocumentCategoryTable().collect(Collectors.toList());
         korrespondansepartType = korrespondansepartTypeService.getKorrespondansepartType().collect(Collectors.toList());
         journalStatus = journalStatusService.getJournalStatusTable().collect(Collectors.toList());
-        tilknyttetRegistreringSom = tilknyttetRegistreringSomService.getTilknyttetRegistreringSom();
+        tilknyttetRegistreringSom = tilknyttetRegistreringSomService.getDocumentRelationTable().collect(Collectors.toList());
         partRolle = partRolleService.getPartRolle().collect(Collectors.toList());
         log.info("Refreshed code lists");
     }
