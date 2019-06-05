@@ -14,6 +14,7 @@ import no.fint.p360.data.FileRepository;
 import no.fint.p360.data.KodeverkRepository;
 import no.fint.p360.data.exception.FileNotFound;
 import no.fint.p360.data.utilities.FintUtils;
+import no.fint.p360.data.utilities.P360Utils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,6 +26,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static no.fint.p360.data.utilities.FintUtils.optionalValue;
+import static no.fint.p360.data.utilities.P360Utils.applyParameterFromLink;
 
 @Slf4j
 @Service
@@ -253,31 +255,33 @@ public class JournalpostFactory {
         createDocumentParameter.setTitle(objectFactory.createDocumentParameterBaseTitle(journalpostResource.getOffentligTittel()));
         createDocumentParameter.setUnofficialTitle(objectFactory.createDocumentParameterBaseUnofficialTitle(journalpostResource.getTittel()));
         createDocumentParameter.setCaseNumber(objectFactory.createCreateDocumentParameterCaseNumber(caseNumber));
+
+        if (journalpostResource.getSkjerming() != null) {
+            applyParameterFromLink(
+                    journalpostResource.getSkjerming().getTilgangsrestriksjon(),
+                    objectFactory::createDocumentParameterBaseAccessCode,
+                    createDocumentParameter::setAccessCode);
+
+            applyParameterFromLink(
+                    journalpostResource.getSkjerming().getSkjermingshjemmel(),
+                    objectFactory::createDocumentParameterBaseParagraph,
+                    createDocumentParameter::setParagraph);
+
+            // TODO createDocumentParameter.setAccessGroup();
+        }
+
         // TODO Set from incoming fields
-//        createDocumentParameter.setAccessCode(objectFactory.createDocumentParameterBaseAccessCode("U"));
-//        createDocumentParameter.setAccessGroup(objectFactory.createDocumentParameterBaseAccessGroup("Public"));
+        //createDocumentParameter.setDocumentDate();
 
-        journalpostResource
-                .getJournalposttype()
-                .stream()
-                .map(Link::getHref)
-                .filter(StringUtils::isNotBlank)
-                .map(s -> StringUtils.substringAfterLast(s, "/"))
-                .map(s -> StringUtils.prependIfMissing(s, "recno:"))
-                .map(objectFactory::createDocumentParameterBaseCategory)
-                .findFirst()
-                .ifPresent(createDocumentParameter::setCategory);
+        applyParameterFromLink(
+                journalpostResource.getJournalposttype(),
+                objectFactory::createDocumentParameterBaseCategory,
+                createDocumentParameter::setCategory);
 
-        journalpostResource
-                .getJournalstatus()
-                .stream()
-                .map(Link::getHref)
-                .filter(StringUtils::isNotBlank)
-                .map(s -> StringUtils.substringAfterLast(s, "/"))
-                .map(s -> StringUtils.prependIfMissing(s, "recno:"))
-                .map(objectFactory::createDocumentParameterBaseStatus)
-                .findFirst()
-                .ifPresent(createDocumentParameter::setStatus);
+        applyParameterFromLink(
+                journalpostResource.getJournalstatus(),
+                objectFactory::createDocumentParameterBaseStatus,
+                createDocumentParameter::setStatus);
 
         ArrayOfDocumentContactParameter arrayOfDocumentContactParameter = objectFactory.createArrayOfDocumentContactParameter();
         journalpostResource
@@ -329,27 +333,16 @@ public class JournalpostFactory {
     private DocumentContactParameter createDocumentContact(KorrespondanseResource korrespondansepart) {
         DocumentContactParameter documentContactParameter = objectFactory.createDocumentContactParameter();
 
-        korrespondansepart
-                .getKorrespondansepart()
-                .stream()
-                .map(Link::getHref)
-                .filter(StringUtils::isNotBlank)
-                .map(s -> StringUtils.substringAfterLast(s, "/"))
-                .map(s -> StringUtils.prependIfMissing(s, "recno:"))
-                .map(objectFactory::createDocumentContactParameterReferenceNumber)
-                .findFirst()
-                .ifPresent(documentContactParameter::setReferenceNumber);
+        applyParameterFromLink(
+                korrespondansepart.getKorrespondansepart(),
+                objectFactory::createDocumentContactParameterReferenceNumber,
+                documentContactParameter::setReferenceNumber
+        );
 
-        korrespondansepart
-                .getKorrespondanseparttype()
-                .stream()
-                .map(Link::getHref)
-                .filter(StringUtils::isNotBlank)
-                .map(s -> StringUtils.substringAfterLast(s, "/"))
-                .map(s -> StringUtils.prependIfMissing(s, "recno:"))
-                .map(objectFactory::createDocumentContactParameterRole)
-                .findFirst()
-                .ifPresent(documentContactParameter::setRole);
+        applyParameterFromLink(
+                korrespondansepart.getKorrespondanseparttype(),
+                objectFactory::createDocumentContactParameterRole,
+                documentContactParameter::setRole);
 
         return documentContactParameter;
     }
@@ -367,43 +360,34 @@ public class JournalpostFactory {
         createFileParameter.setTitle(objectFactory.createCreateFileParameterTitle(dokumentbeskrivelse.getTittel()));
         createFileParameter.setFormat(objectFactory.createCreateFileParameterFormat(dokumentobjekt.getFormat()));
 
-        dokumentbeskrivelse
-                .getTilknyttetRegistreringSom()
-                .stream()
-                .map(Link::getHref)
-                .filter(StringUtils::isNotBlank)
-                .map(s -> StringUtils.substringAfterLast(s, "/"))
-                .map(s -> StringUtils.prependIfMissing(s, "recno:"))
-                .map(objectFactory::createCreateFileParameterRelationType)
-                .findFirst()
-                .ifPresent(createFileParameter::setRelationType);
+        applyParameterFromLink(
+                dokumentbeskrivelse.getTilknyttetRegistreringSom(),
+                objectFactory::createCreateFileParameterRelationType,
+                createFileParameter::setRelationType);
 
-        dokumentbeskrivelse
-                .getDokumentType()
-                .stream()
-                .map(Link::getHref)
-                .filter(StringUtils::isNotBlank)
-                .map(s -> StringUtils.substringAfterLast(s, "/"))
-                .map(s -> StringUtils.prependIfMissing(s, "recno:"))
-                .map(objectFactory::createCreateFileParameterCategory)
-                .findFirst()
-                .ifPresent(createFileParameter::setCategory);
+        applyParameterFromLink(
+                dokumentbeskrivelse.getDokumentType(),
+                objectFactory::createCreateFileParameterCategory,
+                createFileParameter::setCategory);
 
-        dokumentbeskrivelse
-                .getDokumentstatus()
-                .stream()
-                .map(Link::getHref)
-                .filter(StringUtils::isNotBlank)
-                .map(s -> StringUtils.substringAfterLast(s, "/"))
-                .map(s -> StringUtils.prependIfMissing(s, "recno:"))
-                .map(objectFactory::createCreateFileParameterStatus)
-                .findFirst()
-                .ifPresent(createFileParameter::setStatus);
+        applyParameterFromLink(
+                dokumentbeskrivelse.getDokumentstatus(),
+                objectFactory::createCreateFileParameterStatus,
+                createFileParameter::setStatus);
 
         // TODO Map from incoming fields
         //createFileParameter.setNote(objectFactory.createCreateFileParameterNote(dokumentbeskrivelse.getBeskrivelse()));
-//        createFileParameter.setAccessCode(objectFactory.createCreateFileParameterAccessCode("U"));
 //        createFileParameter.setVersionFormat(objectFactory.createCreateFileParameterVersionFormat("A"));
+
+        if (dokumentbeskrivelse.getSkjerming() != null) {
+            applyParameterFromLink(
+                    dokumentbeskrivelse.getSkjerming().getTilgangsrestriksjon(),
+                    objectFactory::createCreateFileParameterAccessCode,
+                    createFileParameter::setAccessCode
+            );
+
+            // TODO createDocumentParameter.setAccessGroup();
+        }
 
         createFileParameter.setData(
                 dokumentobjekt
