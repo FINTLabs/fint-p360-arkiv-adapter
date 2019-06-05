@@ -5,6 +5,7 @@ import no.fint.arkiv.p360.caze.*;
 import no.fint.p360.data.exception.CreateCaseException;
 import no.fint.p360.data.exception.GetTilskuddFartoyException;
 import no.fint.p360.data.exception.GetTilskuddFartoyNotFoundException;
+import no.fint.p360.data.utilities.Constants;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MultiValueMap;
 
@@ -48,7 +49,7 @@ public class P360CaseService extends P360AbstractService {
     public String createCase(CreateCaseParameter createCaseParameter) {
         log.info("Create case: {}", createCaseParameter);
         CaseOperationResult operationResult = caseServicePort.createCase(createCaseParameter);
-
+        log.info("Create case result: {}", operationResult);
         if (operationResult.isSuccessful()) {
             return operationResult.getCaseNumber().getValue();
         } else {
@@ -72,6 +73,14 @@ public class P360CaseService extends P360AbstractService {
         return getCase(getCasesQuery);
     }
 
+    public CaseResult getSakByExternalId(String externalId) {
+        GetCasesQuery getCasesQuery = objectFactory.createGetCasesQuery();
+        ExternalIdParameter externalIdParameter = objectFactory.createExternalIdParameter();
+        externalIdParameter.setType(objectFactory.createExternalIdParameterType(Constants.EXTERNAL_ID_TYPE));
+        externalIdParameter.setId(objectFactory.createExternalIdParameterId(externalId));
+        getCasesQuery.setExternalId(objectFactory.createGetCasesQueryExternalId(externalIdParameter));
+        return getCase(getCasesQuery);
+    }
 
     public List<CaseResult> getGetCasesQueryByTitle(MultiValueMap<String, String> params) {
         GetCasesQuery getCasesQuery = new GetCasesQuery();
