@@ -61,6 +61,16 @@ public class TilskuddfartoyService {
         throw new NotTilskuddfartoyException(String.format("MappeId %s er ikke en Tilskuddfartøy sak", caseNumber));
     }
 
+    public TilskuddFartoyResource getTilskuddFartoyCaseByExternalId(String externalId) {
+        CaseResult caseResult = caseService.getSakByExternalId(externalId);
+
+        if (isTilskuddFartoy(caseResult)) {
+            return tilskuddFartoyFactory.toFintResource(caseResult);
+        }
+
+        throw new NotTilskuddfartoyException("Søknadsnummer " + externalId + " er ikke en Tilskuddfartøy sak");
+    }
+
     public TilskuddFartoyResource getTilskuddFartoyCaseBySystemId(String systemId) {
         CaseResult sakBySystemId = caseService.getSakBySystemId(systemId);
 

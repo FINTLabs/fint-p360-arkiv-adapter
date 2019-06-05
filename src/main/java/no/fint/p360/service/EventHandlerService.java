@@ -336,6 +336,8 @@ public class EventHandlerService {
                 response.addData(tilskuddfartoyService.getTilskuddFartoyCaseByCaseNumber(StringUtils.removeStartIgnoreCase(query, "mappeid/")));
             } else if (StringUtils.startsWithIgnoreCase(query, "systemid/")) {
                 response.addData(tilskuddfartoyService.getTilskuddFartoyCaseBySystemId(StringUtils.removeStartIgnoreCase(query, "systemid/")));
+            } else if (StringUtils.startsWithIgnoreCase(query, "soknadsnummer/")) {
+                response.addData(tilskuddfartoyService.getTilskuddFartoyCaseByExternalId(StringUtils.removeStartIgnoreCase(query, "soknadsnummer/")));
             } else if (StringUtils.startsWith(query, "?")) {
                 tilskuddfartoyService.searchTilskuddFartoyCaseByTitle(getQueryParams(query)).forEach(response::addData);
             } else {
