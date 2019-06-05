@@ -103,6 +103,7 @@ public class P360CaseService extends P360AbstractService {
     }
 
     private CaseResult getCase(GetCasesQuery casesQuery) {
+        log.info("Case query: {}", casesQuery);
         GetCasesResult cases = caseServicePort.getCases(casesQuery);
         log.info("Cases: {}", cases);
 
