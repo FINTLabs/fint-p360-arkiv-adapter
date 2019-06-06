@@ -25,7 +25,6 @@ import no.fint.p360.data.noark.part.PartService;
 import no.fint.p360.data.noark.sak.SakService;
 import no.fint.p360.data.p360.*;
 import no.fint.p360.data.utilities.FintUtils;
-import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -216,9 +215,18 @@ public class EventHandlerService {
     private void onGetKorrespondansepart(String query, Event<FintLinks> response) {
         try {
             if (StringUtils.startsWithIgnoreCase(query, "systemid/")) {
-                response.setData(
-                        Collections.singletonList(
-                                korrespondansepartService.getKorrespondansepartBySystemId(Integer.valueOf(StringUtils.removeStartIgnoreCase(query, "systemid/")))
+                response.addData(
+                        korrespondansepartService.getKorrespondansepartBySystemId(
+                                Integer.valueOf(
+                                        StringUtils.removeStartIgnoreCase(query, "systemid/"))));
+            } else if (StringUtils.startsWith(query, "organisasjonsnummer/")) {
+                response.addData(
+                        korrespondansepartService.getKorrespondansepartByOrganisasjonsnummer(
+                                StringUtils.removeStart(query, "organisasjonsnummer/")));
+            } else if (StringUtils.startsWith(query, "fodselsnummer/")) {
+                response.addData(
+                        korrespondansepartService.getKorrespondansepartByFodselsnummer(
+                                StringUtils.removeStart(query, "fodselsnummer/")
                         )
                 );
             } else if (StringUtils.startsWith(query, "?")) {

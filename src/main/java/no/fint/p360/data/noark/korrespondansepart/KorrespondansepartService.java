@@ -2,11 +2,10 @@ package no.fint.p360.data.noark.korrespondansepart;
 
 import lombok.extern.slf4j.Slf4j;
 import no.fint.model.resource.administrasjon.arkiv.KorrespondansepartResource;
+import no.fint.p360.data.exception.EnterpriseNotFound;
 import no.fint.p360.data.exception.KorrespondansepartNotFound;
+import no.fint.p360.data.exception.PrivatePersonNotFound;
 import no.fint.p360.data.p360.P360ContactService;
-import no.fint.p360.data.utilities.FintUtils;
-import org.apache.commons.lang3.NotImplementedException;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MultiValueMap;
@@ -15,7 +14,6 @@ import java.util.Objects;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-import static no.fint.p360.data.utilities.FintUtils.createIdentifikator;
 import static no.fint.p360.data.utilities.FintUtils.validIdentifikator;
 
 @Slf4j
@@ -46,6 +44,26 @@ public class KorrespondansepartService {
 
     }
 
+    public KorrespondansepartResource getKorrespondansepartByFodselsnummer(String fodselsnummer) {
+        try {
+            return  korrespondansepartFactory.toFintResource(
+                    contactService.getPrivatePersonByPersonalIdNumber(fodselsnummer)
+            );
+        } catch (PrivatePersonNotFound e) {
+            throw new KorrespondansepartNotFound(e.getMessage());
+        }
+
+    }
+
+    public KorrespondansepartResource getKorrespondansepartByOrganisasjonsnummer(String organisasjonsNummer) {
+        try {
+            return korrespondansepartFactory.toFintResource(
+                    contactService.getEnterpriseByEnterpriseNumber(organisasjonsNummer));
+        } catch (EnterpriseNotFound e) {
+            throw new KorrespondansepartNotFound(e.getMessage());
+        }
+    }
+
     public Stream<KorrespondansepartResource> search(MultiValueMap<String, String> queryParams) {
         Supplier<Stream<KorrespondansepartResource>> enterpriseContacts = () ->
                 contactService.searchEnterprise(queryParams).map(korrespondansepartFactory::toFintResource);
@@ -70,4 +88,5 @@ public class KorrespondansepartService {
             throw new IllegalArgumentException("Invalid Korrespondansepart - neither fodselsnummer nor organisasjonsnummer is set.");
         }
     }
+
 }

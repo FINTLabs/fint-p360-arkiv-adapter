@@ -4,6 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import no.fint.arkiv.p360.contact.*;
 import no.fint.p360.data.exception.CreateContactException;
 import no.fint.p360.data.exception.CreateEnterpriseException;
+import no.fint.p360.data.exception.EnterpriseNotFound;
+import no.fint.p360.data.exception.PrivatePersonNotFound;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MultiValueMap;
 
@@ -48,6 +50,24 @@ public class P360ContactService extends P360AbstractService {
         return null;
     }
 
+    public PrivatePersonResult getPrivatePersonByPersonalIdNumber(String personalIdNumber) {
+        GetPrivatePersonsParameter getPrivatePersonsParameter = objectFactory.createGetPrivatePersonsParameter();
+        getPrivatePersonsParameter.setIncludeCustomFields(Boolean.TRUE);
+
+        getPrivatePersonsParameter.setPersonalIdNumber(
+                objectFactory.createGetPrivatePersonsParameterPersonalIdNumber(personalIdNumber));
+
+        GetPrivatePersonsResult privatePersons = contactService.getPrivatePersons(getPrivatePersonsParameter);
+
+        log.info("PrivatePersonsResult: {}", privatePersons);
+
+        if (privatePersons.isSuccessful() && privatePersons.getTotalPageCount().getValue() == 1) {
+            return privatePersons.getPrivatePersons().getValue().getPrivatePersonResult().get(0);
+        }
+
+        throw new PrivatePersonNotFound(privatePersons.getErrorMessage().getValue());
+    }
+
     public ContactPersonResult getContactPersonByRecno(int recNo) {
 
         GetContactPersonsParameter getContactPersonsParameter = new GetContactPersonsParameter();
@@ -77,6 +97,22 @@ public class P360ContactService extends P360AbstractService {
         }
 
         return null;
+    }
+
+    public EnterpriseResult getEnterpriseByEnterpriseNumber(String enterpriseNumber) {
+        GetEnterprisesParameter getEnterprisesParameter = objectFactory.createGetEnterprisesParameter();
+        getEnterprisesParameter.setIncludeCustomFields(Boolean.TRUE);
+        getEnterprisesParameter.setEnterpriseNumber(objectFactory.createGetEnterprisesParameterEnterpriseNumber(enterpriseNumber));
+
+        GetEnterprisesResult enterprises = contactService.getEnterprises(getEnterprisesParameter);
+
+        log.info("EnterpriseResult: {}", enterprises);
+
+        if (enterprises.isSuccessful() && enterprises.getTotalPageCount().getValue() == 1) {
+            return enterprises.getEnterprises().getValue().getEnterpriseResult().get(0);
+        }
+
+        throw new EnterpriseNotFound(enterprises.getErrorMessage().getValue());
     }
 
     public boolean ping() {
@@ -173,5 +209,6 @@ public class P360ContactService extends P360AbstractService {
         }
         throw new CreateEnterpriseException(result.getErrorMessage().getValue());
     }
+
 }
 
