@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import no.fint.arkiv.p360.contact.*;
 import no.fint.p360.data.exception.CreateContactException;
 import no.fint.p360.data.exception.CreateEnterpriseException;
+import no.fint.p360.data.exception.EnterpriseNotFound;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MultiValueMap;
 
@@ -77,6 +78,22 @@ public class P360ContactService extends P360AbstractService {
         }
 
         return null;
+    }
+
+    public EnterpriseResult getEnterpriseByEnterpriseNumber(String enterpriseNumber) {
+        GetEnterprisesParameter getEnterprisesParameter = objectFactory.createGetEnterprisesParameter();
+        getEnterprisesParameter.setIncludeCustomFields(Boolean.TRUE);
+        getEnterprisesParameter.setEnterpriseNumber(objectFactory.createGetEnterprisesParameterEnterpriseNumber(enterpriseNumber));
+
+        GetEnterprisesResult enterprises = contactService.getEnterprises(getEnterprisesParameter);
+
+        log.info("EnterpriseResult: {}", enterprises);
+
+        if (enterprises.isSuccessful() && enterprises.getTotalPageCount().getValue() == 1) {
+            return enterprises.getEnterprises().getValue().getEnterpriseResult().get(0);
+        }
+
+        throw new EnterpriseNotFound(enterprises.getErrorMessage().getValue());
     }
 
     public boolean ping() {
@@ -173,5 +190,6 @@ public class P360ContactService extends P360AbstractService {
         }
         throw new CreateEnterpriseException(result.getErrorMessage().getValue());
     }
+
 }
 
