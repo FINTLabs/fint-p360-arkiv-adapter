@@ -2,7 +2,9 @@ package no.fint.p360.data.noark.korrespondansepart;
 
 import lombok.extern.slf4j.Slf4j;
 import no.fint.model.resource.administrasjon.arkiv.KorrespondansepartResource;
+import no.fint.p360.data.exception.EnterpriseNotFound;
 import no.fint.p360.data.exception.KorrespondansepartNotFound;
+import no.fint.p360.data.exception.PrivatePersonNotFound;
 import no.fint.p360.data.p360.P360ContactService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -42,9 +44,24 @@ public class KorrespondansepartService {
 
     }
 
+    public KorrespondansepartResource getKorrespondansepartByFodselsnummer(String fodselsnummer) {
+        try {
+            return  korrespondansepartFactory.toFintResource(
+                    contactService.getPrivatePersonByPersonalIdNumber(fodselsnummer)
+            );
+        } catch (PrivatePersonNotFound e) {
+            throw new KorrespondansepartNotFound(e.getMessage());
+        }
+
+    }
+
     public KorrespondansepartResource getKorrespondansepartByOrganisasjonsnummer(String organisasjonsNummer) {
-        return korrespondansepartFactory.toFintResource(
-                contactService.getEnterpriseByEnterpriseNumber(organisasjonsNummer));
+        try {
+            return korrespondansepartFactory.toFintResource(
+                    contactService.getEnterpriseByEnterpriseNumber(organisasjonsNummer));
+        } catch (EnterpriseNotFound e) {
+            throw new KorrespondansepartNotFound(e.getMessage());
+        }
     }
 
     public Stream<KorrespondansepartResource> search(MultiValueMap<String, String> queryParams) {

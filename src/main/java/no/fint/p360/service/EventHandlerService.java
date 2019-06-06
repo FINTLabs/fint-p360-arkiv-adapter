@@ -223,6 +223,12 @@ public class EventHandlerService {
                 response.addData(
                         korrespondansepartService.getKorrespondansepartByOrganisasjonsnummer(
                                 StringUtils.removeStart(query, "organisasjonsnummer/")));
+            } else if (StringUtils.startsWith(query, "fodselsnummer/")) {
+                response.addData(
+                        korrespondansepartService.getKorrespondansepartByFodselsnummer(
+                                StringUtils.removeStart(query, "fodselsnummer/")
+                        )
+                );
             } else if (StringUtils.startsWith(query, "?")) {
                 korrespondansepartService.search(getQueryParams(query)).forEach(response::addData);
             } else {
