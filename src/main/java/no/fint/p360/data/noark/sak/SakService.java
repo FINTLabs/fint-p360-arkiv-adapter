@@ -4,8 +4,8 @@ import no.fint.model.resource.administrasjon.arkiv.SakResource;
 import no.fint.p360.data.p360.P360CaseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.MultiValueMap;
 
+import java.util.Map;
 import java.util.stream.Stream;
 
 @Service
@@ -17,7 +17,7 @@ public class SakService {
     @Autowired
     private P360CaseService caseService;
 
-    public Stream<SakResource> searchSakByTitle(MultiValueMap<String, String> query) {
+    public Stream<SakResource> searchSakByTitle(Map<String, String> query) {
         return sakFactory.toFintResourceList(caseService.getGetCasesQueryByTitle(query));
     }
 

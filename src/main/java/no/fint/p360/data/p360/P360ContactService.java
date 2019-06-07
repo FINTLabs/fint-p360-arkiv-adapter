@@ -7,11 +7,11 @@ import no.fint.p360.data.exception.CreateEnterpriseException;
 import no.fint.p360.data.exception.EnterpriseNotFound;
 import no.fint.p360.data.exception.PrivatePersonNotFound;
 import org.springframework.stereotype.Service;
-import org.springframework.util.MultiValueMap;
 
 import javax.annotation.PostConstruct;
 import javax.xml.namespace.QName;
 import javax.xml.ws.WebServiceException;
+import java.util.Map;
 import java.util.stream.Stream;
 
 @Slf4j
@@ -126,21 +126,21 @@ public class P360ContactService extends P360AbstractService {
         return true;
     }
 
-    public Stream<EnterpriseResult> searchEnterprise(MultiValueMap<String, String> queryParams) {
+    public Stream<EnterpriseResult> searchEnterprise(Map<String, String> queryParams) {
         GetEnterprisesParameter getEnterprisesParameter = objectFactory.createGetEnterprisesParameter();
         if (queryParams.containsKey("navn")) {
-            getEnterprisesParameter.setName(objectFactory.createGetEnterprisesParameterName(queryParams.getFirst("navn")));
+            getEnterprisesParameter.setName(objectFactory.createGetEnterprisesParameterName(queryParams.get("navn")));
         }
         if (queryParams.containsKey("organisasjonsnummer")) {
-            getEnterprisesParameter.setEnterpriseNumber(objectFactory.createGetEnterprisesParameterEnterpriseNumber(queryParams.getFirst("organisasjonsnummer")));
+            getEnterprisesParameter.setEnterpriseNumber(objectFactory.createGetEnterprisesParameterEnterpriseNumber(queryParams.get("organisasjonsnummer")));
         }
         if (queryParams.containsKey("maxResults")) {
-            getEnterprisesParameter.setMaxRows(objectFactory.createGetEnterprisesParameterMaxRows(Integer.valueOf(queryParams.getFirst("maxResults"))));
+            getEnterprisesParameter.setMaxRows(objectFactory.createGetEnterprisesParameterMaxRows(Integer.valueOf(queryParams.get("maxResults"))));
         }
 
+        log.info("GetEnterprises query: {}", getEnterprisesParameter);
         GetEnterprisesResult result = contactService.getEnterprises(getEnterprisesParameter);
-
-        log.info("Result: {}", result);
+        log.info("GetEnterprises result: {}", result);
 
         if (!result.isSuccessful()) {
             return Stream.empty();
@@ -149,18 +149,18 @@ public class P360ContactService extends P360AbstractService {
         return result.getEnterprises().getValue().getEnterpriseResult().stream();
     }
 
-    public Stream<PrivatePersonResult> searchPrivatePerson(MultiValueMap<String, String> queryParams) {
+    public Stream<PrivatePersonResult> searchPrivatePerson(Map<String, String> queryParams) {
         GetPrivatePersonsParameter getPrivatePersonsParameter = objectFactory.createGetPrivatePersonsParameter();
         if (queryParams.containsKey("navn")) {
-            getPrivatePersonsParameter.setName(objectFactory.createGetPrivatePersonsParameterName(queryParams.getFirst("navn")));
+            getPrivatePersonsParameter.setName(objectFactory.createGetPrivatePersonsParameterName(queryParams.get("navn")));
         }
         if (queryParams.containsKey("maxResults")) {
-            getPrivatePersonsParameter.setMaxRows(objectFactory.createGetPrivatePersonsParameterMaxRows(Integer.valueOf(queryParams.getFirst("maxResults"))));
+            getPrivatePersonsParameter.setMaxRows(objectFactory.createGetPrivatePersonsParameterMaxRows(Integer.valueOf(queryParams.get("maxResults"))));
         }
 
+        log.info("GetPrivatePersons query: {}", getPrivatePersonsParameter);
         GetPrivatePersonsResult result = contactService.getPrivatePersons(getPrivatePersonsParameter);
-
-        log.info("Result: {}", result);
+        log.info("GetPrivatePersons: {}", result);
 
         if (!result.isSuccessful()) {
             return Stream.empty();
@@ -169,19 +169,19 @@ public class P360ContactService extends P360AbstractService {
         return result.getPrivatePersons().getValue().getPrivatePersonResult().stream();
     }
 
-    public Stream<ContactPersonResult> searchContactPerson(MultiValueMap<String, String> queryParams) {
+    public Stream<ContactPersonResult> searchContactPerson(Map<String, String> queryParams) {
         GetContactPersonsParameter getContactPersonsParameter = objectFactory.createGetContactPersonsParameter();
 
         if (queryParams.containsKey("navn")) {
-            getContactPersonsParameter.setName(objectFactory.createGetPrivatePersonsParameterName(queryParams.getFirst("navn")));
+            getContactPersonsParameter.setName(objectFactory.createGetPrivatePersonsParameterName(queryParams.get("navn")));
         }
         if (queryParams.containsKey("maxResults")) {
-            getContactPersonsParameter.setMaxRows(objectFactory.createGetPrivatePersonsParameterMaxRows(Integer.valueOf(queryParams.getFirst("maxResults"))));
+            getContactPersonsParameter.setMaxRows(objectFactory.createGetPrivatePersonsParameterMaxRows(Integer.valueOf(queryParams.get("maxResults"))));
         }
 
+        log.info("GetContactPersons query: {}", getContactPersonsParameter);
         GetContactPersonsResult result = contactService.getContactPersons(getContactPersonsParameter);
-
-        log.info("Result: {}", result);
+        log.info("GetContactPersons result: {}", result);
 
         if (!result.isSuccessful()) {
             return Stream.empty();
