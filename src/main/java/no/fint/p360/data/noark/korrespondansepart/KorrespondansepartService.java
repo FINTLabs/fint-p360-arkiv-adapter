@@ -8,8 +8,8 @@ import no.fint.p360.data.exception.PrivatePersonNotFound;
 import no.fint.p360.data.p360.P360ContactService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.MultiValueMap;
 
+import java.util.Map;
 import java.util.Objects;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -64,7 +64,7 @@ public class KorrespondansepartService {
         }
     }
 
-    public Stream<KorrespondansepartResource> search(MultiValueMap<String, String> queryParams) {
+    public Stream<KorrespondansepartResource> search(Map<String, String> queryParams) {
         Supplier<Stream<KorrespondansepartResource>> enterpriseContacts = () ->
                 contactService.searchEnterprise(queryParams).map(korrespondansepartFactory::toFintResource);
         Supplier<Stream<KorrespondansepartResource>> privateContacts = () ->

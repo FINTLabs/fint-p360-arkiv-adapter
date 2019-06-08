@@ -7,11 +7,11 @@ import no.fint.p360.data.exception.GetTilskuddFartoyException;
 import no.fint.p360.data.exception.GetTilskuddFartoyNotFoundException;
 import no.fint.p360.data.utilities.Constants;
 import org.springframework.stereotype.Service;
-import org.springframework.util.MultiValueMap;
 
 import javax.annotation.PostConstruct;
 import javax.xml.ws.WebServiceException;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @Slf4j
@@ -78,10 +78,10 @@ public class P360CaseService extends P360AbstractService {
         return getCase(getCasesQuery);
     }
 
-    public List<CaseResult> getGetCasesQueryByTitle(MultiValueMap<String, String> params) {
+    public List<CaseResult> getGetCasesQueryByTitle(Map<String, String> params) {
         GetCasesQuery getCasesQuery = new GetCasesQuery();
-        getCasesQuery.setTitle(objectFactory.createGetCasesQueryTitle(String.format("%%%s%%", params.getFirst("title"))));
-        getCasesQuery.setMaxReturnedCases(objectFactory.createGetCasesQueryMaxReturnedCases(Integer.valueOf(params.getFirst("maxResult"))));
+        getCasesQuery.setTitle(objectFactory.createGetCasesQueryTitle(String.format("%%%s%%", params.get("title"))));
+        getCasesQuery.setMaxReturnedCases(objectFactory.createGetCasesQueryMaxReturnedCases(Integer.valueOf(params.get("maxResult"))));
         getCasesQuery.setIncludeCustomFields(Boolean.TRUE);
         return getCases(getCasesQuery);
     }

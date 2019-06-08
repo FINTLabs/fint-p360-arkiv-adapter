@@ -63,6 +63,7 @@ dependencies {
     compile('org.glassfish.jersey.core:jersey-common:2.28')
     compile('org.glassfish.jersey.core:jersey-client:2.28')
     compile('org.apache.commons:commons-lang3:3.9')
+    compile group: 'org.jooq', name: 'jool-java-8', version: '0.9.14'
 
     compile('no.fint:fint-sse:1.4.0-rc-1')
     compile('no.fint:fint-event-model:3.0.0')

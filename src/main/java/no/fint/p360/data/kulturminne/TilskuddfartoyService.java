@@ -10,8 +10,8 @@ import no.fint.p360.data.utilities.Constants;
 import no.fint.p360.data.utilities.FintUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.MultiValueMap;
 
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -80,7 +80,7 @@ public class TilskuddfartoyService {
         throw new NotTilskuddfartoyException(String.format("SystemId %s er ikke en Tilskuddfartøy sak", systemId));
     }
 
-    public Stream<TilskuddFartoyResource> searchTilskuddFartoyCaseByTitle(MultiValueMap<String, String> query) {
+    public Stream<TilskuddFartoyResource> searchTilskuddFartoyCaseByTitle(Map<String, String> query) {
 
         return tilskuddFartoyFactory.toFintResourceList(
                 caseService.getGetCasesQueryByTitle(query)
