@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import no.fint.arkiv.p360.document.*;
 import no.fint.model.administrasjon.arkiv.*;
 import no.fint.model.administrasjon.organisasjon.Organisasjonselement;
-import no.fint.model.felles.Person;
+import no.fint.model.administrasjon.personal.Personalressurs;
 import no.fint.model.felles.kompleksedatatyper.Identifikator;
 import no.fint.model.resource.Link;
 import no.fint.model.resource.administrasjon.arkiv.*;
@@ -119,14 +119,14 @@ public class JournalpostFactory {
         }
 
         optionalValue(documentResult.getResponsiblePerson())
-                .map(ResponsiblePerson::getExternalId)
-                .flatMap(FintUtils::optionalValue)
-                .map(Link.apply(Person.class, "fodselsnummer"))
+                .map(ResponsiblePerson::getRecno)
+                .map(String::valueOf)
+                .map(Link.apply(Personalressurs.class, "ansattnummer"))
                 .ifPresent(journalpost::addSaksbehandler);
         optionalValue(documentResult.getResponsibleEnterprise())
-                .map(ResponsibleEnterprise::getExternalId)
-                .flatMap(FintUtils::optionalValue)
-                .map(Link.apply(Organisasjonselement.class, "organisasjonsnummer"))
+                .map(ResponsibleEnterprise::getRecno)
+                .map(String::valueOf)
+                .map(Link.apply(Organisasjonselement.class, "organisasjonsid"))
                 .ifPresent(journalpost::addAdministrativEnhet);
         optionalValue(documentResult.getCategory())
                 .map(DocumentCategoryResult::getRecno)

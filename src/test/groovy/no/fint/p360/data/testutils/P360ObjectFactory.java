@@ -5,6 +5,7 @@ import no.fint.model.felles.kompleksedatatyper.Identifikator;
 import no.fint.p360.data.utilities.FintUtils;
 import no.fint.p360.data.utilities.P360Utils;
 
+import javax.xml.bind.JAXBElement;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import java.util.ArrayList;
@@ -36,8 +37,24 @@ public class P360ObjectFactory {
         caseResult.setDocuments(objectFactory.createArrayOfCaseDocumentResult(newP360ArrayOfCaseDocument()));
         caseResult.setStatus(objectFactory.createString("S"));
         caseResult.setContacts(objectFactory.createArrayOfCaseContactResult(objectFactory.createArrayOfCaseContactResult()));
+        caseResult.setResponsibleEnterprise(newResponsibleEnterprise());
+        caseResult.setResponsiblePerson(newResponsiblePerson());
 
         return caseResult;
+    }
+
+    private JAXBElement<ResponsiblePerson> newResponsiblePerson() {
+        ResponsiblePerson responsiblePerson = objectFactory.createResponsiblePerson();
+        responsiblePerson.setRecno(23456);
+        responsiblePerson.setName(objectFactory.createContactInfoName("Arkivaren"));
+        return objectFactory.createResponsiblePerson(responsiblePerson);
+    }
+
+    private JAXBElement<ResponsibleEnterprise> newResponsibleEnterprise() {
+        ResponsibleEnterprise responsibleEnterprise = objectFactory.createResponsibleEnterprise();
+        responsibleEnterprise.setRecno(123456);
+        responsibleEnterprise.setName(objectFactory.createContactInfoName("Arkivet"));
+        return objectFactory.createResponsibleEnterprise(responsibleEnterprise);
     }
 
     public List<CaseResult> newP360CaseList() {
