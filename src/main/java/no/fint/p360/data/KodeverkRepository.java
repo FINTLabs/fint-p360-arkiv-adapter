@@ -8,6 +8,7 @@ import no.fint.p360.data.noark.dokumenttype.DokumenttypeService;
 import no.fint.p360.data.noark.journalposttype.JournalpostTypeService;
 import no.fint.p360.data.noark.journalstatus.JournalStatusService;
 import no.fint.p360.data.noark.korrespondanseparttype.KorrespondansepartTypeService;
+import no.fint.p360.data.noark.merknadstype.MerknadstypeService;
 import no.fint.p360.data.noark.partrolle.PartRolleService;
 import no.fint.p360.data.noark.saksstatus.SaksStatusService;
 import no.fint.p360.data.noark.tilknyttetregistreringsom.TilknyttetRegistreringSomService;
@@ -46,6 +47,9 @@ public class KodeverkRepository {
     @Autowired
     private TilknyttetRegistreringSomService tilknyttetRegistreringSomService;
 
+    @Autowired
+    private MerknadstypeService merknadstypeService;
+
     @Getter
     private List<SaksstatusResource> saksstatus;
 
@@ -70,6 +74,9 @@ public class KodeverkRepository {
     @Getter
     private List<JournalStatusResource> journalStatus;
 
+    @Getter
+    private List<MerknadstypeResource> merknadstype;
+
     @Scheduled(initialDelay = 10000, fixedDelayString = "${fint.kodeverk.refresh-interval:1500000}")
     public void refresh() {
         saksstatus = saksStatusService.getCaseStatusTable().collect(Collectors.toList());
@@ -80,6 +87,7 @@ public class KodeverkRepository {
         journalStatus = journalStatusService.getJournalStatusTable().collect(Collectors.toList());
         tilknyttetRegistreringSom = tilknyttetRegistreringSomService.getDocumentRelationTable().collect(Collectors.toList());
         partRolle = partRolleService.getPartRolle().collect(Collectors.toList());
+        merknadstype = merknadstypeService.getMerknadstype().collect(Collectors.toList());
         log.info("Refreshed code lists");
     }
 
