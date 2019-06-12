@@ -3,6 +3,7 @@ package no.fint.p360.data.noark.common;
 import no.fint.arkiv.p360.caze.*;
 import no.fint.model.administrasjon.arkiv.Part;
 import no.fint.model.administrasjon.arkiv.PartRolle;
+import no.fint.model.administrasjon.organisasjon.Organisasjonselement;
 import no.fint.model.resource.Link;
 import no.fint.model.resource.administrasjon.arkiv.PartsinformasjonResource;
 import no.fint.model.resource.administrasjon.arkiv.SaksmappeResource;
@@ -70,7 +71,6 @@ public class NoarkFactory {
                         .map(String::valueOf)
                         .map(journalpostService::getJournalPost)
                         .collect(Collectors.toList()));
-
     }
 
     private PartsinformasjonResource createPartsinformasjon(CaseContactResult caseContactResult) {

@@ -4,6 +4,8 @@ import com.google.common.base.Strings;
 import lombok.extern.slf4j.Slf4j;
 import no.fint.arkiv.p360.caze.*;
 import no.fint.model.administrasjon.arkiv.Saksstatus;
+import no.fint.model.administrasjon.organisasjon.Organisasjonselement;
+import no.fint.model.administrasjon.personal.Personalressurs;
 import no.fint.model.felles.kompleksedatatyper.Identifikator;
 import no.fint.model.kultur.kulturminnevern.TilskuddFartoy;
 import no.fint.model.resource.Link;
@@ -82,9 +84,21 @@ public class TilskuddFartoyFactory {
                 .map(Link.apply(Saksstatus.class, "systemid"))
                 .ifPresent(tilskuddFartoy::addSaksstatus);
 
+        optionalValue(caseResult.getResponsibleEnterprise())
+                .map(ResponsibleEnterprise::getRecno)
+                .map(String::valueOf)
+                .map(Link.apply(Organisasjonselement.class, "organisasjonsid"))
+                .ifPresent(tilskuddFartoy::addAdministrativEnhet);
+
+        optionalValue(caseResult.getResponsiblePerson())
+                .map(ResponsiblePerson::getRecno)
+                .map(String::valueOf)
+                .map(Link.apply(Personalressurs.class, "ansattnummer"))
+                .ifPresent(tilskuddFartoy::addSaksansvarlig);
 
         tilskuddFartoy.addSelf(Link.with(TilskuddFartoy.class, "mappeid", caseYear, sequenceNumber));
         tilskuddFartoy.addSelf(Link.with(TilskuddFartoy.class, "systemid", caseResult.getRecno().toString()));
+        tilskuddFartoy.addSelf(Link.with(TilskuddFartoy.class, "soknadsnummer", caseResult.getExternalId().getValue().getId().getValue()));
 
         return tilskuddFartoy;
     }
