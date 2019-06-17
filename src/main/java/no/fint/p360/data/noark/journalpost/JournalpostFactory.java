@@ -294,7 +294,35 @@ public class JournalpostFactory {
                 .flatMap(this::createFiles)
                 .forEach(arrayOfCreateFileParameter.getCreateFileParameter()::add);
         createDocumentParameter.setFiles(objectFactory.createDocumentParameterBaseFiles(arrayOfCreateFileParameter));
+
+        ArrayOfRemark arrayOfRemark = objectFactory.createArrayOfRemark();
+        journalpostResource
+                .getMerknad()
+                .stream()
+                .map(this::createDocumentRemarkParameter)
+                .forEach(arrayOfRemark.getRemark()::add);
+        createDocumentParameter.setRemarks(objectFactory.createDocumentParameterBaseRemarks(arrayOfRemark));
+
+
         return createDocumentParameter;
+    }
+
+    private Remark createDocumentRemarkParameter(MerknadResource merknadResource) {
+        Remark remark = objectFactory.createRemark();
+        remark.setContent(objectFactory.createRemarkContent(merknadResource.getMerknadstekst()));
+
+        merknadResource
+                .getMerknadstype()
+                .stream()
+                .map(Link::getHref)
+                .filter(StringUtils::isNotBlank)
+                .map(s -> StringUtils.substringAfterLast(s, "/"))
+                .map(s -> StringUtils.prependIfMissing(s, "recno:"))
+                .map(objectFactory::createRemarkRemarkType)
+                .findFirst()
+                .ifPresent(remark::setRemarkType);
+
+        return remark;
     }
 
 

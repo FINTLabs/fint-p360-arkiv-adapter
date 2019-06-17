@@ -9,6 +9,7 @@ import no.fint.model.administrasjon.personal.Personalressurs;
 import no.fint.model.felles.kompleksedatatyper.Identifikator;
 import no.fint.model.kultur.kulturminnevern.TilskuddFartoy;
 import no.fint.model.resource.Link;
+import no.fint.model.resource.administrasjon.arkiv.MerknadResource;
 import no.fint.model.resource.administrasjon.arkiv.PartsinformasjonResource;
 import no.fint.model.resource.administrasjon.arkiv.SaksstatusResource;
 import no.fint.model.resource.kultur.kulturminnevern.TilskuddFartoyResource;
@@ -132,6 +133,14 @@ public class TilskuddFartoyFactory {
                 .forEach(arrayOfCaseContactParameter.getCaseContactParameter()::add);
         createCaseParameter.setContacts(objectFactory.createCaseParameterBaseContacts(arrayOfCaseContactParameter));
 
+        ArrayOfRemark arrayOfRemark = objectFactory.createArrayOfRemark();
+        tilskuddFartoy
+                .getMerknad()
+                .stream()
+                .map(this::createCaseRemarkParameter)
+                .forEach(arrayOfRemark.getRemark()::add);
+        createCaseParameter.setRemarks(objectFactory.createCaseParameterBaseRemarks(arrayOfRemark));
+
         /*
         createCaseParameter.setResponsiblePersonIdNumber(
                 objectFactory.createCaseParameterBaseResponsiblePersonIdNumber(
@@ -141,6 +150,24 @@ public class TilskuddFartoyFactory {
         */
 
         return createCaseParameter;
+    }
+
+    private Remark createCaseRemarkParameter(MerknadResource merknadResource) {
+        Remark remark = objectFactory.createRemark();
+        remark.setContent(objectFactory.createRemarkContent(merknadResource.getMerknadstekst()));
+
+        merknadResource
+                .getMerknadstype()
+                .stream()
+                .map(Link::getHref)
+                .filter(StringUtils::isNotBlank)
+                .map(s -> StringUtils.substringAfterLast(s, "/"))
+                .map(s -> StringUtils.prependIfMissing(s, "recno:"))
+                .map(objectFactory::createRemarkRemarkType)
+                .findFirst()
+                .ifPresent(remark::setRemarkType);
+
+        return remark;
     }
 
 
