@@ -133,12 +133,6 @@ public class EventHandlerService {
             }
         } else if (ArkivActions.getActions().contains(event.getAction())) {
             switch (ArkivActions.valueOf(event.getAction())) {
-                case UPDATE_DOKUMENTFIL:
-                    onCreateDokumentfil(response);
-                    break;
-                case GET_DOKUMENTFIL:
-                    onGetDokumentfil(response);
-                    break;
                 case GET_ALL_SAKSSTATUS:
                     onGetSaksstatus(response);
                     break;
@@ -163,6 +157,12 @@ public class EventHandlerService {
                 case GET_ALL_JOURNALPOSTTYPE:
                     onGetAllJournalpostType(response);
                     break;
+                case GET_ALL_TILGANGSRESTRIKSJON:
+                    onGetAllTilgangsrestriksjon(response);
+                    break;
+                case GET_ALL_SKJERMINGSHJEMMEL:
+                    onGetAllSkjermingshjemmel(response);
+                    break;
                 case GET_ALL_MERKNADSTYPE:
                     onGetAllMerknadstype(response);
                     break;
@@ -177,6 +177,12 @@ public class EventHandlerService {
                     break;
                 case GET_PART:
                     onGetPart(event.getQuery(), response);
+                case UPDATE_DOKUMENTFIL:
+                    onCreateDokumentfil(response);
+                    break;
+                case GET_DOKUMENTFIL:
+                    onGetDokumentfil(response);
+                    break;
             }
         }
 
@@ -327,6 +333,16 @@ public class EventHandlerService {
 
     private void onGetSaksstatus(Event<FintLinks> response) {
         kodeverkRepository.getSaksstatus().forEach(response::addData);
+        response.setResponseStatus(ResponseStatus.ACCEPTED);
+    }
+
+    private void onGetAllTilgangsrestriksjon(Event<FintLinks> response) {
+        kodeverkRepository.getTilgangsrestriksjon().forEach(response::addData);
+        response.setResponseStatus(ResponseStatus.ACCEPTED);
+    }
+
+    private void onGetAllSkjermingshjemmel(Event<FintLinks> response) {
+        kodeverkRepository.getSkjermingshjemmel().forEach(response::addData);
         response.setResponseStatus(ResponseStatus.ACCEPTED);
     }
 

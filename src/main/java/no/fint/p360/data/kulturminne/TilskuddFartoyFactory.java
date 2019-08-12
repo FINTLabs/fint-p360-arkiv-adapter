@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import static no.fint.p360.data.utilities.FintUtils.optionalValue;
+import static no.fint.p360.data.utilities.P360Utils.applyParameterFromLink;
 
 @Slf4j
 @Service
@@ -124,8 +125,27 @@ public class TilskuddFartoyFactory {
         createCaseParameter.setExternalId(P360Utils.getExternalIdParameter(tilskuddFartoy.getSoknadsnummer()));
         createCaseParameter.setArchiveCodes(P360Utils.getArchiveCodes(tilskuddFartoy.getFartoyNavn(), kulturminneProps.getArchiveCodetype()));
 
-        ArrayOfCaseContactParameter arrayOfCaseContactParameter = objectFactory.createArrayOfCaseContactParameter();
+        if (tilskuddFartoy.getSkjerming() != null) {
+            applyParameterFromLink(
+                    tilskuddFartoy.getSkjerming().getTilgangsrestriksjon(),
+                    objectFactory::createCaseParameterBaseAccessCode,
+                    createCaseParameter::setAccessCode);
 
+            applyParameterFromLink(
+                    tilskuddFartoy.getSkjerming().getSkjermingshjemmel(),
+                    objectFactory::createCaseParameterBaseParagraph,
+                    createCaseParameter::setParagraph);
+
+            // TODO createCaseParameter.setAccessGroup();
+        }
+
+        // TODO Missing parameters
+        //createCaseParameter.setCategory();
+        //createCaseParameter.setRemarks();
+        //createCaseParameter.setStartDate();
+        //createCaseParameter.setUnofficialTitle();
+
+        ArrayOfCaseContactParameter arrayOfCaseContactParameter = objectFactory.createArrayOfCaseContactParameter();
         tilskuddFartoy
                 .getPart()
                 .stream()
@@ -141,6 +161,7 @@ public class TilskuddFartoyFactory {
                 .forEach(arrayOfRemark.getRemark()::add);
         createCaseParameter.setRemarks(objectFactory.createCaseParameterBaseRemarks(arrayOfRemark));
 
+        // TODO Responsible person
         /*
         createCaseParameter.setResponsiblePersonIdNumber(
                 objectFactory.createCaseParameterBaseResponsiblePersonIdNumber(

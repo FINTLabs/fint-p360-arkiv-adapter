@@ -2,9 +2,13 @@ package no.fint.p360.data.utilities;
 
 import no.fint.arkiv.p360.caze.*;
 import no.fint.model.felles.kompleksedatatyper.Identifikator;
+import no.fint.model.resource.Link;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.xml.bind.JAXBElement;
 import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 public enum P360Utils {
     ;
@@ -41,5 +45,16 @@ public enum P360Utils {
         arrayOfClassCodeParameter.getClassCodeParameter().add(classCodeParameter);
 
         return objectFactory.createCaseParameterBaseArchiveCodes(arrayOfClassCodeParameter);
+    }
+
+    public static <T> void applyParameterFromLink(List<Link> links, Function<String, T> mapper, Consumer<T> consumer) {
+        links.stream()
+                .map(Link::getHref)
+                .filter(StringUtils::isNotBlank)
+                .map(s -> StringUtils.substringAfterLast(s, "/"))
+                .map(s -> StringUtils.prependIfMissing(s, "recno:"))
+                .map(mapper)
+                .findFirst()
+                .ifPresent(consumer);
     }
 }

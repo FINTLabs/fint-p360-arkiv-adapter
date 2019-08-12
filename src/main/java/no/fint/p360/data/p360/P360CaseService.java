@@ -81,7 +81,7 @@ public class P360CaseService extends P360AbstractService {
     public List<CaseResult> getGetCasesQueryByTitle(Map<String, String> params) {
         GetCasesQuery getCasesQuery = new GetCasesQuery();
         getCasesQuery.setTitle(objectFactory.createGetCasesQueryTitle(String.format("%%%s%%", params.get("title"))));
-        getCasesQuery.setMaxReturnedCases(objectFactory.createGetCasesQueryMaxReturnedCases(Integer.valueOf(params.get("maxResult"))));
+        getCasesQuery.setMaxReturnedCases(objectFactory.createGetCasesQueryMaxReturnedCases(Integer.valueOf(params.getOrDefault("maxResult", "10"))));
         getCasesQuery.setIncludeCustomFields(Boolean.TRUE);
         return getCases(getCasesQuery);
     }
