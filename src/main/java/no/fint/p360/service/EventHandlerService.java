@@ -163,6 +163,9 @@ public class EventHandlerService {
                 case GET_ALL_JOURNALPOSTTYPE:
                     onGetAllJournalpostType(response);
                     break;
+                case GET_ALL_MERKNADSTYPE:
+                    onGetAllMerknadstype(response);
+                    break;
                 case GET_SAK:
                     onGetSak(event.getQuery(), response);
                     break;
@@ -324,6 +327,11 @@ public class EventHandlerService {
 
     private void onGetSaksstatus(Event<FintLinks> response) {
         kodeverkRepository.getSaksstatus().forEach(response::addData);
+        response.setResponseStatus(ResponseStatus.ACCEPTED);
+    }
+
+    private void onGetAllMerknadstype(Event<FintLinks> response) {
+        kodeverkRepository.getMerknadstype().forEach(response::addData);
         response.setResponseStatus(ResponseStatus.ACCEPTED);
     }
 

@@ -132,7 +132,7 @@ public class JournalpostFactory {
                 .map(DocumentCategoryResult::getRecno)
                 .map(String::valueOf)
                 .map(Link.apply(JournalpostType.class, "systemid"))
-                .ifPresent(journalpost::addJournalPostType);
+                .ifPresent(journalpost::addJournalposttype);
         optionalValue(documentResult.getStatusCode())
                 .flatMap(code -> kodeverkRepository
                         .getJournalStatus()
@@ -142,22 +142,15 @@ public class JournalpostFactory {
                 .map(JournalStatusResource::getSystemId)
                 .map(Identifikator::getIdentifikatorverdi)
                 .map(Link.apply(JournalStatus.class, "systemid"))
-                .ifPresent(journalpost::addJournalStatus);
+                .ifPresent(journalpost::addJournalstatus);
 
-        Optional.ofNullable(
+        journalpost.setMerknad(
                 optionalValue(documentResult.getRemarks())
                         .map(ArrayOfRemarkInfo::getRemarkInfo)
                         .map(List::stream)
                         .orElse(Stream.empty())
-                        .map(r -> String.format("%s: %s\n%s\n%s",
-                                r.getTypeCode().getValue(),
-                                r.getTypeDescription().getValue(),
-                                r.getTitle().getValue(),
-                                r.getContent().getValue()))
-                        .peek(log::info)
-                        .collect(Collectors.joining("\n\n")))
-                .filter(StringUtils::isNotBlank)
-                .ifPresent(journalpost::setBeskrivelse);
+                        .map(this::createMerknad)
+                        .collect(Collectors.toList()));
 
         List<DocumentFileResult> documentFileResult = documentResult.getFiles().getValue().getDocumentFileResult();
         List<DokumentbeskrivelseResource> dokumentbeskrivelseResourcesList = new ArrayList<>();
@@ -221,6 +214,36 @@ public class JournalpostFactory {
         return journalpost;
     }
 
+    private MerknadResource createMerknad(RemarkInfo remarkInfo) {
+        MerknadResource merknad = new MerknadResource();
+
+        optionalValue(remarkInfo.getTypeCode())
+                .flatMap(type ->
+                        kodeverkRepository
+                                .getMerknadstype()
+                                .stream()
+                                .filter(v -> StringUtils.equalsIgnoreCase(type, v.getKode()))
+                                .findAny())
+                .map(MerknadstypeResource::getSystemId)
+                .map(Identifikator::getIdentifikatorverdi)
+                .map(Link.apply(Merknadstype.class, "systemid"))
+                .ifPresent(merknad::addMerknadstype);
+
+        merknad.setMerknadstekst(
+                Stream.of(optionalValue(remarkInfo.getTitle()), optionalValue(remarkInfo.getContent()))
+                        .filter(Optional::isPresent)
+                        .map(Optional::get)
+                        .collect(Collectors.joining(" - ")));
+
+        optionalValue(remarkInfo.getModifiedDate())
+                .map(FintUtils::parseDate)
+                .ifPresent(merknad::setMerknadsdato);
+
+        // TODO merknad.addMerknadRegistrertAv();
+
+        return merknad;
+    }
+
     public CreateDocumentParameter toP360(JournalpostResource journalpostResource, String caseNumber) {
 
         CreateDocumentParameter createDocumentParameter = objectFactory.createCreateDocumentParameter();
@@ -235,7 +258,7 @@ public class JournalpostFactory {
 //        createDocumentParameter.setAccessGroup(objectFactory.createDocumentParameterBaseAccessGroup("Public"));
 
         journalpostResource
-                .getJournalPostType()
+                .getJournalposttype()
                 .stream()
                 .map(Link::getHref)
                 .filter(StringUtils::isNotBlank)
@@ -246,7 +269,7 @@ public class JournalpostFactory {
                 .ifPresent(createDocumentParameter::setCategory);
 
         journalpostResource
-                .getJournalStatus()
+                .getJournalstatus()
                 .stream()
                 .map(Link::getHref)
                 .filter(StringUtils::isNotBlank)
@@ -271,7 +294,35 @@ public class JournalpostFactory {
                 .flatMap(this::createFiles)
                 .forEach(arrayOfCreateFileParameter.getCreateFileParameter()::add);
         createDocumentParameter.setFiles(objectFactory.createDocumentParameterBaseFiles(arrayOfCreateFileParameter));
+
+        ArrayOfRemark arrayOfRemark = objectFactory.createArrayOfRemark();
+        journalpostResource
+                .getMerknad()
+                .stream()
+                .map(this::createDocumentRemarkParameter)
+                .forEach(arrayOfRemark.getRemark()::add);
+        createDocumentParameter.setRemarks(objectFactory.createDocumentParameterBaseRemarks(arrayOfRemark));
+
+
         return createDocumentParameter;
+    }
+
+    private Remark createDocumentRemarkParameter(MerknadResource merknadResource) {
+        Remark remark = objectFactory.createRemark();
+        remark.setContent(objectFactory.createRemarkContent(merknadResource.getMerknadstekst()));
+
+        merknadResource
+                .getMerknadstype()
+                .stream()
+                .map(Link::getHref)
+                .filter(StringUtils::isNotBlank)
+                .map(s -> StringUtils.substringAfterLast(s, "/"))
+                .map(s -> StringUtils.prependIfMissing(s, "recno:"))
+                .map(objectFactory::createRemarkRemarkType)
+                .findFirst()
+                .ifPresent(remark::setRemarkType);
+
+        return remark;
     }
 
 
