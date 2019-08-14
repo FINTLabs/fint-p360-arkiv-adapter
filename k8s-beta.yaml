@@ -21,7 +21,7 @@ spec:
           emptyDir: {}
       containers:
         - name: adapter-p360-arkiv-ra-no-ra-no
-          image: fintlabs.azurecr.io/p360-arkiv-adapter:build.8
+          image: fintlabs.azurecr.io/p360-arkiv-adapter:build.9
           resources:
             limits:
               memory: "2Gi"
@@ -42,7 +42,7 @@ spec:
               mountPath: /temp
           env:
             - {name: TZ, value: Europe/Oslo}
-            - {name: JAVA_TOOL_OPTIONS, value: '-XX:+ExitOnOutOfMemoryError -Xmx1G -verbose:gc -Dhttps.proxyHost=10.10.10.4 -Dhttps.proxyPort=8888 -Dhttp.nonProxyHosts="localhost|*.felleskomponent.no"'}
+            - {name: JAVA_TOOL_OPTIONS, value: '-XX:+ExitOnOutOfMemoryError -Xmx1G -verbose:gc -Dhttps.proxyHost=10.10.10.4 -Dhttps.proxyPort=8888 -Dhttp.nonProxyHosts="localhost|*.felleskomponent.no" -Dcom.sun.xml.ws.transport.http.client.HttpTransportPipe.dump=true -Dcom.sun.xml.internal.ws.transport.http.client.HttpTransportPipe.dump=true -Dcom.sun.xml.ws.transport.http.HttpAdapter.dump=true -Dcom.sun.xml.internal.ws.transport.http.HttpAdapter.dump=true -Dcom.sun.xml.internal.ws.transport.http.HttpAdapter.dumpTreshold=100000'}
             - {name: springfox.title, value: "Public 360 Adapter for Riksantikvaren"}
             - {name: security.basic.enabled, value: "false"}
             - {name: fint.adapter.organizations, value: ra.no}
