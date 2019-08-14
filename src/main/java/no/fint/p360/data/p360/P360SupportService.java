@@ -4,11 +4,15 @@ import lombok.extern.slf4j.Slf4j;
 import no.fint.arkiv.p360.support.*;
 import no.fint.p360.data.exception.CodeTableNotFound;
 import no.fint.p360.data.utilities.FintUtils;
+import no.fint.p360.data.utilities.P360Utils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import javax.xml.namespace.QName;
 import javax.xml.ws.WebServiceException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -21,13 +25,18 @@ public class P360SupportService extends P360AbstractService {
     private ISupportService supportService;
     private ObjectFactory objectFactory;
 
+    @Value("${fint.p360.wsdl-location:./src/main/resources/wsdl}/SupportService.wsdl")
+    private String wsdlLocation;
+
     public P360SupportService() {
         super("http://software-innovation.com/SI.Data", "SupportService");
     }
 
     @PostConstruct
-    private void init() {
-        supportService = new SupportService(SupportService.WSDL_LOCATION, SERVICE_NAME).getBasicHttpBindingISupportService();
+    private void init() throws MalformedURLException {
+        URL wsdlLocationUrl = P360Utils.getURL(wsdlLocation);
+        log.info("WSDL location: {}", wsdlLocationUrl);
+        supportService = new SupportService(wsdlLocationUrl, SERVICE_NAME).getBasicHttpBindingISupportService();
         super.setup(supportService, "SupportService");
         objectFactory = new ObjectFactory();
     }

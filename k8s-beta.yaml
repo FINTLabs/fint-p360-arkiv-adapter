@@ -54,6 +54,7 @@ spec:
             - {name: fint.oauth.client-secret, valueFrom: {secretKeyRef: {name: ra-p360-adapter, key: client-secret}}}
             - {name: fint.oauth.scope, value: 'fint-client'}
             - {name: fint.adapter.reject-unknown-events, value: 'false'}
+            - {name: fint.p360.wsdl-location, value: '/data'}
             - {name: fint.p360.user, valueFrom: {secretKeyRef: {name: ra-p360-adapter, key: p360-user}}}
             - {name: fint.p360.password, valueFrom: {secretKeyRef: {name: ra-p360-adapter, key: p360-password}}}
             - {name: fint.p360.endpoint-base-url, valueFrom: {secretKeyRef: {name: ra-p360-adapter, key: p360-endpoint-base-url}}}

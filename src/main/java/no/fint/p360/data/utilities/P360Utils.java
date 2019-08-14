@@ -6,6 +6,8 @@ import no.fint.model.resource.Link;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.xml.bind.JAXBElement;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -20,6 +22,13 @@ public enum P360Utils {
         keywords.forEach(keywordArray.getString()::add);
 
         return objectFactory.createCaseParameterBaseKeywords(keywordArray);
+    }
+
+    public static URL getURL(String location) throws MalformedURLException {
+        if (StringUtils.startsWithAny(location, "file:", "http:", "https:")) {
+            return new URL(location);
+        }
+        return new URL("file:" + location);
     }
 
     public static JAXBElement<ExternalIdParameter> getExternalIdParameter(Identifikator id) {
