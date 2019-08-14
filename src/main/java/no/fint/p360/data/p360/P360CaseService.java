@@ -6,10 +6,14 @@ import no.fint.p360.data.exception.CreateCaseException;
 import no.fint.p360.data.exception.GetTilskuddFartoyException;
 import no.fint.p360.data.exception.GetTilskuddFartoyNotFoundException;
 import no.fint.p360.data.utilities.Constants;
+import no.fint.p360.data.utilities.P360Utils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import javax.xml.ws.WebServiceException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.List;
 import java.util.Map;
 
@@ -22,14 +26,18 @@ public class P360CaseService extends P360AbstractService {
 
     private ObjectFactory objectFactory;
 
+    @Value("${fint.p360.wsdl-location:./src/main/resources/wsdl}/CaseService.wsdl")
+    private String wsdlLocation;
 
     public P360CaseService() {
         super("http://software-innovation.com/SI.Data", "CaseService");
     }
 
     @PostConstruct
-    public void init() {
-        caseServicePort = new CaseService(CaseService.WSDL_LOCATION, serviceName).getBasicHttpBindingICaseService();
+    public void init() throws MalformedURLException {
+        URL wsdlLocationUrl = P360Utils.getURL(wsdlLocation);
+        log.info("WSDL location: {}", wsdlLocationUrl);
+        caseServicePort = new CaseService(wsdlLocationUrl, serviceName).getBasicHttpBindingICaseService();
         super.setup(caseServicePort, "CaseService");
 
         objectFactory = new ObjectFactory();

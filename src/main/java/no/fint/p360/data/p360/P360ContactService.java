@@ -6,11 +6,15 @@ import no.fint.p360.data.exception.CreateContactException;
 import no.fint.p360.data.exception.CreateEnterpriseException;
 import no.fint.p360.data.exception.EnterpriseNotFound;
 import no.fint.p360.data.exception.PrivatePersonNotFound;
+import no.fint.p360.data.utilities.P360Utils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import javax.xml.namespace.QName;
 import javax.xml.ws.WebServiceException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Map;
 import java.util.stream.Stream;
 
@@ -23,14 +27,18 @@ public class P360ContactService extends P360AbstractService {
     private IContactService contactService;
     private ObjectFactory objectFactory;
 
+    @Value("${fint.p360.wsdl-location:./src/main/resources/wsdl}/ContactService.wsdl")
+    private String wsdlLocation;
+
     public P360ContactService() {
         super("http://software-innovation.com/SI.Data", "ContactService");
     }
 
     @PostConstruct
-    private void init() {
-
-        contactService = new ContactService(ContactService.WSDL_LOCATION, SERVICE_NAME).getBasicHttpBindingIContactService();
+    private void init() throws MalformedURLException {
+        URL wsdlLocationUrl = P360Utils.getURL(wsdlLocation);
+        log.info("WSDL location: {}", wsdlLocationUrl);
+        contactService = new ContactService(wsdlLocationUrl, SERVICE_NAME).getBasicHttpBindingIContactService();
         super.setup(contactService, "ContactService");
 
         objectFactory = new ObjectFactory();
