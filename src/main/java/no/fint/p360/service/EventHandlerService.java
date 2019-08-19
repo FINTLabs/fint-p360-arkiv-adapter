@@ -442,6 +442,7 @@ public class EventHandlerService {
                 response.setResponseStatus(ResponseStatus.REJECTED);
                 response.setMessage("Payload fails validation!");
                 response.setProblems(problems);
+                log.info("Validation problems!\n{}\n{}\n", tilskuddFartoyResource, problems);
                 return;
             }
             try {
