@@ -4,10 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import no.fint.adapter.event.EventResponseService;
 import no.fint.adapter.event.EventStatusService;
-import no.fint.event.model.Event;
-import no.fint.event.model.Operation;
-import no.fint.event.model.ResponseStatus;
-import no.fint.event.model.Status;
+import no.fint.event.model.*;
 import no.fint.event.model.health.Health;
 import no.fint.event.model.health.HealthStatus;
 import no.fint.model.administrasjon.arkiv.ArkivActions;
@@ -32,9 +29,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 import java.io.IOException;
 import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
 
 import static no.fint.p360.data.utilities.QueryUtils.getQueryParams;
 
@@ -92,6 +93,9 @@ public class EventHandlerService {
 
     @Autowired
     private SakService sakService;
+
+    @Autowired
+    private ValidatorFactory validatorFactory;
 
 
     public void handleEvent(String component, Event event) {
@@ -216,6 +220,15 @@ public class EventHandlerService {
         }
         KorrespondansepartResource korrespondansepartResource = objectMapper.convertValue(response.getData().get(0),
                 KorrespondansepartResource.class);
+
+        List<Problem> problems = getProblems(korrespondansepartResource);
+        if (!problems.isEmpty()) {
+            response.setResponseStatus(ResponseStatus.REJECTED);
+            response.setMessage("Payload fails validation!");
+            response.setProblems(problems);
+            return;
+        }
+
         KorrespondansepartResource result = korrespondansepartService.createKorrespondansepart(korrespondansepartResource);
         response.setData(Collections.singletonList(result));
         response.setResponseStatus(ResponseStatus.ACCEPTED);
@@ -287,6 +300,15 @@ public class EventHandlerService {
             return;
         }
         DokumentfilResource dokumentfilResource = objectMapper.convertValue(response.getData().get(0), DokumentfilResource.class);
+
+        List<Problem> problems = getProblems(dokumentfilResource);
+        if (!problems.isEmpty()) {
+            response.setResponseStatus(ResponseStatus.REJECTED);
+            response.setMessage("Payload fails validation!");
+            response.setProblems(problems);
+            return;
+        }
+
         log.info("Format: {}, data: {}...", dokumentfilResource.getFormat(), StringUtils.substring(dokumentfilResource.getData(), 0, 25));
 
         dokumentfilResource.setSystemId(FintUtils.createIdentifikator(String.format("I_%d", identifier.incrementAndGet())));
@@ -413,7 +435,16 @@ public class EventHandlerService {
 
         TilskuddFartoyResource tilskuddFartoyResource = objectMapper.convertValue(response.getData().get(0), TilskuddFartoyResource.class);
 
+
         if (operation == Operation.CREATE) {
+            List<Problem> problems = getProblems(tilskuddFartoyResource);
+            if (!problems.isEmpty()) {
+                response.setResponseStatus(ResponseStatus.REJECTED);
+                response.setMessage("Payload fails validation!");
+                response.setProblems(problems);
+                log.info("Validation problems!\n{}\n{}\n", tilskuddFartoyResource, problems);
+                return;
+            }
             try {
                 TilskuddFartoyResource tilskuddFartoy = tilskuddfartoyService.createTilskuddFartoyCase(tilskuddFartoyResource);
                 response.setData(Collections.singletonList(tilskuddFartoy));
@@ -426,11 +457,32 @@ public class EventHandlerService {
             if (!StringUtils.startsWithIgnoreCase(query, "mappeid/")) {
                 throw new IllegalArgumentException("Invalid query: " + query);
             }
+            if (tilskuddFartoyResource.getJournalpost().isEmpty()) {
+                throw new IllegalArgumentException("Update must contain at least one Journalpost");
+            }
+            List<Problem> problems = getProblems(tilskuddFartoyResource.getJournalpost());
+            if (!problems.isEmpty()) {
+                response.setResponseStatus(ResponseStatus.REJECTED);
+                response.setMessage("Payload fails validation!");
+                response.setProblems(problems);
+                return;
+            }
             String caseNumber = StringUtils.removeStartIgnoreCase(query, "mappeid/");
             TilskuddFartoyResource result = tilskuddfartoyService.updateTilskuddFartoyCase(caseNumber, tilskuddFartoyResource);
         } else {
             throw new IllegalArgumentException("Invalid operation: " + operation);
         }
+    }
+
+    private List<Problem> getProblems(Object resource) {
+        Validator validator = validatorFactory.getValidator();
+        return validator.validate(resource)
+                .stream()
+                .map(violation -> new Problem() {{
+                    setField(violation.getPropertyPath().toString());
+                    setMessage(violation.getMessage());
+                }})
+                .collect(Collectors.toList());
     }
 
 

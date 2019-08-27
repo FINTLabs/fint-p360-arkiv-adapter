@@ -154,11 +154,13 @@ public class TilskuddFartoyFactory {
         createCaseParameter.setContacts(objectFactory.createCaseParameterBaseContacts(arrayOfCaseContactParameter));
 
         ArrayOfRemark arrayOfRemark = objectFactory.createArrayOfRemark();
-        tilskuddFartoy
-                .getMerknad()
-                .stream()
-                .map(this::createCaseRemarkParameter)
-                .forEach(arrayOfRemark.getRemark()::add);
+        if (tilskuddFartoy.getMerknad() != null) {
+            tilskuddFartoy
+                    .getMerknad()
+                    .stream()
+                    .map(this::createCaseRemarkParameter)
+                    .forEach(arrayOfRemark.getRemark()::add);
+        }
         createCaseParameter.setRemarks(objectFactory.createCaseParameterBaseRemarks(arrayOfRemark));
 
         // TODO Responsible person
