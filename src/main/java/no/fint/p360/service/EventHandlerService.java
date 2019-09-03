@@ -490,12 +490,17 @@ public class EventHandlerService {
         Event<Health> healthCheckEvent = new Event<>(event);
         healthCheckEvent.setStatus(Status.TEMP_UPSTREAM_QUEUE);
 
-        if (healthCheck()) {
-            healthCheckEvent.addData(new Health("adapter", HealthStatus.APPLICATION_HEALTHY));
-            healthCheckEvent.setMessage("Connected to SIF version " + supportService.getSIFVersion());
-        } else {
+        try {
+            if (healthCheck()) {
+                healthCheckEvent.addData(new Health("adapter", HealthStatus.APPLICATION_HEALTHY));
+                healthCheckEvent.setMessage("Connected to SIF version " + supportService.getSIFVersion());
+            } else {
+                healthCheckEvent.addData(new Health("adapter", HealthStatus.APPLICATION_UNHEALTHY));
+                healthCheckEvent.setMessage("The adapter is unable to communicate with the application.");
+            }
+        } catch (Exception e) {
             healthCheckEvent.addData(new Health("adapter", HealthStatus.APPLICATION_UNHEALTHY));
-            healthCheckEvent.setMessage("The adapter is unable to communicate with the application.");
+            healthCheckEvent.setMessage(e.getMessage());
         }
 
         eventResponseService.postResponse(component, healthCheckEvent);
