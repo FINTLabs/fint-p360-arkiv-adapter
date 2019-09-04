@@ -27,15 +27,15 @@ public class TitleParser {
             titleMap = map;
         }
 
-        public String getDimension(Integer dimension) {
+        public String getDimension(Integer dimension) throws NoSuchTitleDimension {
             if (titleMap.containsKey(dimension)) {
                 return titleMap.get(dimension);
             }
-            throw new NoSuchTitleDimension();
+            throw new NoSuchTitleDimension(dimension);
         }
     }
 
-    public static Title parseTitle(String caseTitle) {
+    public static Title parseTitle(String caseTitle) throws UnableToParseTitle {
         AtomicInteger position = new AtomicInteger(0);
         Map<Integer, String> titleMap = Arrays.stream(caseTitle.split(" - "))
                 .collect(Collectors.toMap(i -> position.getAndIncrement(), String::trim));

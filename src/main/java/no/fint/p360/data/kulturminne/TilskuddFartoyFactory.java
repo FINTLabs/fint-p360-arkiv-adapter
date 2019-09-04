@@ -15,6 +15,9 @@ import no.fint.model.resource.administrasjon.arkiv.SaksstatusResource;
 import no.fint.model.resource.kultur.kulturminnevern.TilskuddFartoyResource;
 import no.fint.p360.KulturminneProps;
 import no.fint.p360.data.KodeverkRepository;
+import no.fint.p360.data.exception.GetDocumentException;
+import no.fint.p360.data.exception.IllegalCaseNumberFormat;
+import no.fint.p360.data.exception.NoSuchTitleDimension;
 import no.fint.p360.data.exception.UnableToParseTitle;
 import no.fint.p360.data.noark.common.NoarkFactory;
 import no.fint.p360.data.noark.korrespondansepart.KorrespondansepartFactory;
@@ -24,9 +27,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Stream;
 
 import static no.fint.p360.data.utilities.FintUtils.optionalValue;
 import static no.fint.p360.data.utilities.P360Utils.applyParameterFromLink;
@@ -55,7 +58,7 @@ public class TilskuddFartoyFactory {
         objectFactory = new ObjectFactory();
     }
 
-    public TilskuddFartoyResource toFintResource(CaseResult caseResult) {
+    public TilskuddFartoyResource toFintResource(CaseResult caseResult) throws GetDocumentException, IllegalCaseNumberFormat {
 
         TilskuddFartoyResource tilskuddFartoy = new TilskuddFartoyResource();
         String caseNumber = caseResult.getCaseNumber().getValue();
@@ -69,7 +72,7 @@ public class TilskuddFartoyFactory {
             tilskuddFartoy.setKallesignal(Strings.nullToEmpty(title.getDimension(TitleParser.FARTOY_KALLESIGNAL)));
             tilskuddFartoy.setKulturminneId(Strings.nullToEmpty(title.getDimension(TitleParser.KULTURMINNE_ID)));
             tilskuddFartoy.setSoknadsnummer(FintUtils.createIdentifikator(caseResult.getExternalId().getValue().getId().getValue()));
-        } catch (UnableToParseTitle e) {
+        } catch (UnableToParseTitle | NoSuchTitleDimension e) {
             log.error("{}", e.getMessage(), e);
         }
 
@@ -106,10 +109,12 @@ public class TilskuddFartoyFactory {
     }
 
 
-    public Stream<TilskuddFartoyResource> toFintResourceList(List<CaseResult> caseResult) {
-        return caseResult
-                .stream()
-                .map(this::toFintResource);
+    public List<TilskuddFartoyResource> toFintResourceList(List<CaseResult> caseResults) throws GetDocumentException, IllegalCaseNumberFormat {
+        List<TilskuddFartoyResource> result = new ArrayList<>(caseResults.size());
+        for (CaseResult caseResult : caseResults) {
+            result.add(toFintResource(caseResult));
+        }
+        return result;
     }
 
     public CreateCaseParameter toP360(TilskuddFartoyResource tilskuddFartoy) {

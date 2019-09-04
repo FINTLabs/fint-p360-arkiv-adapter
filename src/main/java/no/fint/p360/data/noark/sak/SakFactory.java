@@ -6,13 +6,15 @@ import no.fint.model.administrasjon.arkiv.Saksstatus;
 import no.fint.model.kultur.kulturminnevern.TilskuddFartoy;
 import no.fint.model.resource.Link;
 import no.fint.model.resource.administrasjon.arkiv.SakResource;
+import no.fint.p360.data.exception.GetDocumentException;
+import no.fint.p360.data.exception.IllegalCaseNumberFormat;
 import no.fint.p360.data.noark.common.NoarkFactory;
 import no.fint.p360.data.utilities.NOARKUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Stream;
 
 @Service
 public class SakFactory {
@@ -20,14 +22,13 @@ public class SakFactory {
     @Autowired
     private NoarkFactory noarkFactory;
 
-    public SakResource toFintResource(CaseResult caseResult) {
+    public SakResource toFintResource(CaseResult caseResult) throws GetDocumentException, IllegalCaseNumberFormat {
 
         SakResource sakResource = new SakResource();
         String caseNumber = caseResult.getCaseNumber().getValue();
 
         String caseYear = NOARKUtils.getCaseYear(caseNumber);
         String sequenceNumber = NOARKUtils.getCaseSequenceNumber(caseNumber);
-
 
         noarkFactory.getSaksmappe(caseResult, sakResource);
 
@@ -38,9 +39,11 @@ public class SakFactory {
         return sakResource;
     }
 
-    public Stream<SakResource> toFintResourceList(List<CaseResult> caseResult) {
-        return caseResult
-                .stream()
-                .map(this::toFintResource);
+    public List<SakResource> toFintResourceList(List<CaseResult> caseResults) throws GetDocumentException, IllegalCaseNumberFormat {
+        List<SakResource> result = new ArrayList<>(caseResults.size());
+        for (CaseResult caseResult : caseResults) {
+            result.add(toFintResource(caseResult));
+        }
+        return result;
     }
 }

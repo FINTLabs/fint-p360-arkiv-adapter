@@ -54,7 +54,7 @@ public class P360CaseService extends P360AbstractService {
     }
 
 
-    public String createCase(CreateCaseParameter createCaseParameter) {
+    public String createCase(CreateCaseParameter createCaseParameter) throws CreateCaseException {
         log.info("Create case: {}", createCaseParameter);
         CaseOperationResult operationResult = caseServicePort.createCase(createCaseParameter);
         log.info("Create case result: {}", operationResult);
@@ -65,19 +65,19 @@ public class P360CaseService extends P360AbstractService {
         }
     }
 
-    public CaseResult getSakByCaseNumber(String caseNumber) {
+    public CaseResult getSakByCaseNumber(String caseNumber) throws GetTilskuddFartoyNotFoundException, GetTilskuddFartoyException {
         GetCasesQuery getCasesQuery = new GetCasesQuery();
         getCasesQuery.setCaseNumber(objectFactory.createGetCasesQueryCaseNumber(caseNumber));
         return getCase(getCasesQuery);
     }
 
-    public CaseResult getSakBySystemId(String systemId) {
+    public CaseResult getSakBySystemId(String systemId) throws GetTilskuddFartoyNotFoundException, GetTilskuddFartoyException {
         GetCasesQuery getCasesQuery = new GetCasesQuery();
         getCasesQuery.setRecno(objectFactory.createGetCasesQueryRecno(Integer.valueOf(systemId)));
         return getCase(getCasesQuery);
     }
 
-    public CaseResult getSakByExternalId(String externalId) {
+    public CaseResult getSakByExternalId(String externalId) throws GetTilskuddFartoyNotFoundException, GetTilskuddFartoyException {
         GetCasesQuery getCasesQuery = objectFactory.createGetCasesQuery();
         ExternalIdParameter externalIdParameter = objectFactory.createExternalIdParameter();
         externalIdParameter.setType(objectFactory.createExternalIdParameterType(Constants.EXTERNAL_ID_TYPE));
@@ -86,7 +86,7 @@ public class P360CaseService extends P360AbstractService {
         return getCase(getCasesQuery);
     }
 
-    public List<CaseResult> getGetCasesQueryByTitle(Map<String, String> params) {
+    public List<CaseResult> getGetCasesQueryByTitle(Map<String, String> params) throws GetTilskuddFartoyNotFoundException, GetTilskuddFartoyException {
         GetCasesQuery getCasesQuery = new GetCasesQuery();
         getCasesQuery.setTitle(objectFactory.createGetCasesQueryTitle(String.format("%%%s%%", params.get("title"))));
         getCasesQuery.setMaxReturnedCases(objectFactory.createGetCasesQueryMaxReturnedCases(Integer.valueOf(params.getOrDefault("maxResult", "10"))));
@@ -94,7 +94,7 @@ public class P360CaseService extends P360AbstractService {
         return getCases(getCasesQuery);
     }
 
-    private List<CaseResult> getCases(GetCasesQuery casesQuery) {
+    private List<CaseResult> getCases(GetCasesQuery casesQuery) throws GetTilskuddFartoyNotFoundException, GetTilskuddFartoyException {
         GetCasesResult cases = caseServicePort.getCases(casesQuery);
 
         if (cases.isSuccessful() && cases.getTotalPageCount().getValue() > 0) {
@@ -106,7 +106,7 @@ public class P360CaseService extends P360AbstractService {
         throw new GetTilskuddFartoyException(cases.getErrorDetails().getValue());
     }
 
-    private CaseResult getCase(GetCasesQuery casesQuery) {
+    private CaseResult getCase(GetCasesQuery casesQuery) throws GetTilskuddFartoyNotFoundException, GetTilskuddFartoyException {
         casesQuery.setIncludeCustomFields(Boolean.TRUE);
         casesQuery.setIncludeCaseContacts(Boolean.TRUE);
         log.info("Query: {}", casesQuery);
