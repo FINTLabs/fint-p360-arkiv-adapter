@@ -14,7 +14,6 @@ import no.fint.p360.data.FileRepository;
 import no.fint.p360.data.KodeverkRepository;
 import no.fint.p360.data.exception.FileNotFound;
 import no.fint.p360.data.utilities.FintUtils;
-import no.fint.p360.data.utilities.P360Utils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,6 +24,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static java.util.Optional.ofNullable;
 import static no.fint.p360.data.utilities.FintUtils.optionalValue;
 import static no.fint.p360.data.utilities.P360Utils.applyParameterFromLink;
 
@@ -283,30 +283,33 @@ public class JournalpostFactory {
                 objectFactory::createDocumentParameterBaseStatus,
                 createDocumentParameter::setStatus);
 
-        ArrayOfDocumentContactParameter arrayOfDocumentContactParameter = objectFactory.createArrayOfDocumentContactParameter();
-        journalpostResource
-                .getKorrespondansepart()
-                .stream()
-                .map(this::createDocumentContact)
-                .forEach(arrayOfDocumentContactParameter.getDocumentContactParameter()::add);
-        createDocumentParameter.setContacts(objectFactory.createDocumentParameterBaseContacts(arrayOfDocumentContactParameter));
+        ofNullable(journalpostResource.getKorrespondansepart()).ifPresent(korrespondanseResources -> {
+            ArrayOfDocumentContactParameter arrayOfDocumentContactParameter = objectFactory.createArrayOfDocumentContactParameter();
+            korrespondanseResources
+                    .stream()
+                    .map(this::createDocumentContact)
+                    .forEach(arrayOfDocumentContactParameter.getDocumentContactParameter()::add);
+            createDocumentParameter.setContacts(objectFactory.createDocumentParameterBaseContacts(arrayOfDocumentContactParameter));
+        });
 
-        ArrayOfCreateFileParameter arrayOfCreateFileParameter = objectFactory.createArrayOfCreateFileParameter();
-        journalpostResource
-                .getDokumentbeskrivelse()
-                .stream()
-                .flatMap(this::createFiles)
-                .forEach(arrayOfCreateFileParameter.getCreateFileParameter()::add);
-        createDocumentParameter.setFiles(objectFactory.createDocumentParameterBaseFiles(arrayOfCreateFileParameter));
+        ofNullable(journalpostResource.getDokumentbeskrivelse()).ifPresent(dokumentbeskrivelseResources -> {
+            ArrayOfCreateFileParameter arrayOfCreateFileParameter = objectFactory.createArrayOfCreateFileParameter();
+            dokumentbeskrivelseResources
+                    .stream()
+                    .peek(r -> log.info("Handling Dokumentbeskrivelse: {}", r))
+                    .flatMap(this::createFiles)
+                    .forEach(arrayOfCreateFileParameter.getCreateFileParameter()::add);
+            createDocumentParameter.setFiles(objectFactory.createDocumentParameterBaseFiles(arrayOfCreateFileParameter));
+        });
 
-        ArrayOfRemark arrayOfRemark = objectFactory.createArrayOfRemark();
-        journalpostResource
-                .getMerknad()
-                .stream()
-                .map(this::createDocumentRemarkParameter)
-                .forEach(arrayOfRemark.getRemark()::add);
-        createDocumentParameter.setRemarks(objectFactory.createDocumentParameterBaseRemarks(arrayOfRemark));
-
+        ofNullable(journalpostResource.getMerknad()).ifPresent(merknadResources -> {
+            ArrayOfRemark arrayOfRemark = objectFactory.createArrayOfRemark();
+            merknadResources
+                    .stream()
+                    .map(this::createDocumentRemarkParameter)
+                    .forEach(arrayOfRemark.getRemark()::add);
+            createDocumentParameter.setRemarks(objectFactory.createDocumentParameterBaseRemarks(arrayOfRemark));
+        });
 
         return createDocumentParameter;
     }
@@ -389,10 +392,12 @@ public class JournalpostFactory {
             // TODO createDocumentParameter.setAccessGroup();
         }
 
+        log.info("Dokumentfil: {}", dokumentobjekt.getReferanseDokumentfil());
         createFileParameter.setData(
                 dokumentobjekt
                         .getReferanseDokumentfil()
                         .stream()
+                        .peek(l -> log.info("Link: {}", l))
                         .map(Link::getHref)
                         .filter(StringUtils::isNotBlank)
                         .map(s -> StringUtils.substringAfterLast(s, "/"))
