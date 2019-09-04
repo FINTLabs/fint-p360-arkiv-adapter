@@ -123,7 +123,7 @@ public class EventHandlerService {
     }
 
 
-    private void createEventResponse(Event event, Event<FintLinks> response) throws IOException {
+    private void createEventResponse(Event event, Event<FintLinks> response) throws IOException, NotTilskuddfartoyException, CreateContactException, CreateEnterpriseException {
 
         if (KulturminnevernActions.getActions().contains(event.getAction())) {
             switch (KulturminnevernActions.valueOf(event.getAction())) {
@@ -197,7 +197,7 @@ public class EventHandlerService {
             if (StringUtils.startsWithIgnoreCase(query, "partid/")) {
                 response.setData(
                         Collections.singletonList(
-                                partService.getPartByPartId(Integer.valueOf(StringUtils.removeStartIgnoreCase(query, "partid/")))
+                                partService.getPartByPartId(Integer.parseInt(StringUtils.removeStartIgnoreCase(query, "partid/")))
                         )
                 );
             } else {
@@ -211,7 +211,7 @@ public class EventHandlerService {
         }
     }
 
-    private void onUpdateKorrespondansepart(String query, Event<FintLinks> response) {
+    private void onUpdateKorrespondansepart(String query, Event<FintLinks> response) throws CreateContactException, CreateEnterpriseException {
         if (response.getOperation() != Operation.CREATE) {
             throw new IllegalArgumentException("Illegal operation: " + response.getOperation());
         }
@@ -239,7 +239,7 @@ public class EventHandlerService {
             if (StringUtils.startsWithIgnoreCase(query, "systemid/")) {
                 response.addData(
                         korrespondansepartService.getKorrespondansepartBySystemId(
-                                Integer.valueOf(
+                                Integer.parseInt(
                                         StringUtils.removeStartIgnoreCase(query, "systemid/"))));
             } else if (StringUtils.startsWith(query, "organisasjonsnummer/")) {
                 response.addData(
@@ -283,12 +283,9 @@ public class EventHandlerService {
             response.setResponseStatus(ResponseStatus.REJECTED);
             response.setStatusCode("NOT_FOUND");
             response.setMessage(e.getMessage());
-        } catch (GetTilskuddFartoyException e) {
-            response.setResponseStatus(ResponseStatus.ERROR);
-            response.setMessage(String.format("Error from application: %s", e.getMessage()));
-        } catch (Exception e) {
-            response.setResponseStatus(ResponseStatus.ERROR);
-            response.setMessage(String.format("Error from adapter: %s", ExceptionUtils.getStackTrace(e)));
+        } catch (GetTilskuddFartoyException | GetDocumentException | IllegalCaseNumberFormat e) {
+            response.setResponseStatus(ResponseStatus.REJECTED);
+            response.setMessage(e.getMessage());
         }
     }
 
@@ -415,17 +412,14 @@ public class EventHandlerService {
             response.setResponseStatus(ResponseStatus.REJECTED);
             response.setStatusCode("NOT_A_TILSKUDDFARTOY_SAK");
             response.setMessage(e.getMessage());
-        } catch (GetTilskuddFartoyException e) {
-            response.setResponseStatus(ResponseStatus.ERROR);
-            response.setMessage(String.format("Error from application: %s", e.getMessage()));
-        } catch (Exception e) {
-            response.setResponseStatus(ResponseStatus.ERROR);
-            response.setMessage(String.format("Error from adapter: %s", ExceptionUtils.getStackTrace(e)));
+        } catch (GetTilskuddFartoyException | GetDocumentException | IllegalCaseNumberFormat e) {
+            response.setResponseStatus(ResponseStatus.REJECTED);
+            response.setMessage(e.getMessage());
         }
 
     }
 
-    private void onUpdateTilskuddFartoy(String query, Operation operation, Event<FintLinks> response) {
+    private void onUpdateTilskuddFartoy(String query, Operation operation, Event<FintLinks> response) throws NotTilskuddfartoyException {
 
         if (response.getData().size() != 1) {
             response.setResponseStatus(ResponseStatus.REJECTED);
@@ -449,8 +443,8 @@ public class EventHandlerService {
                 TilskuddFartoyResource tilskuddFartoy = tilskuddfartoyService.createTilskuddFartoyCase(tilskuddFartoyResource);
                 response.setData(Collections.singletonList(tilskuddFartoy));
                 response.setResponseStatus(ResponseStatus.ACCEPTED);
-            } catch (CreateCaseException e) {
-                response.setResponseStatus(ResponseStatus.ERROR);
+            } catch (CreateCaseException | GetTilskuddFartoyNotFoundException | GetTilskuddFartoyException | CreateDocumentException | GetDocumentException | IllegalCaseNumberFormat e) {
+                response.setResponseStatus(ResponseStatus.REJECTED);
                 response.setMessage(e.getMessage());
             }
         } else if (operation == Operation.UPDATE) {
@@ -467,8 +461,15 @@ public class EventHandlerService {
                 response.setProblems(problems);
                 return;
             }
-            String caseNumber = StringUtils.removeStartIgnoreCase(query, "mappeid/");
-            TilskuddFartoyResource result = tilskuddfartoyService.updateTilskuddFartoyCase(caseNumber, tilskuddFartoyResource);
+            try {
+                String caseNumber = StringUtils.removeStartIgnoreCase(query, "mappeid/");
+                TilskuddFartoyResource result = tilskuddfartoyService.updateTilskuddFartoyCase(caseNumber, tilskuddFartoyResource);
+                response.setData(Collections.singletonList(result));
+                response.setResponseStatus(ResponseStatus.ACCEPTED);
+            } catch (GetTilskuddFartoyNotFoundException | GetTilskuddFartoyException | CreateDocumentException | GetDocumentException | IllegalCaseNumberFormat e) {
+                response.setResponseStatus(ResponseStatus.REJECTED);
+                response.setMessage(e.getMessage());
+            }
         } else {
             throw new IllegalArgumentException("Invalid operation: " + operation);
         }

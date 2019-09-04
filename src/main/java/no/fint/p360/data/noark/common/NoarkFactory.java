@@ -3,10 +3,12 @@ package no.fint.p360.data.noark.common;
 import no.fint.arkiv.p360.caze.*;
 import no.fint.model.administrasjon.arkiv.Part;
 import no.fint.model.administrasjon.arkiv.PartRolle;
-import no.fint.model.administrasjon.organisasjon.Organisasjonselement;
 import no.fint.model.resource.Link;
+import no.fint.model.resource.administrasjon.arkiv.JournalpostResource;
 import no.fint.model.resource.administrasjon.arkiv.PartsinformasjonResource;
 import no.fint.model.resource.administrasjon.arkiv.SaksmappeResource;
+import no.fint.p360.data.exception.GetDocumentException;
+import no.fint.p360.data.exception.IllegalCaseNumberFormat;
 import no.fint.p360.data.noark.journalpost.JournalpostService;
 import no.fint.p360.data.noark.part.PartFactory;
 import no.fint.p360.data.utilities.FintUtils;
@@ -15,6 +17,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -30,7 +33,7 @@ public class NoarkFactory {
     @Autowired
     private PartFactory partFactory;
 
-    public void getSaksmappe(CaseResult caseResult, SaksmappeResource saksmappeResource) {
+    public void getSaksmappe(CaseResult caseResult, SaksmappeResource saksmappeResource) throws GetDocumentException, IllegalCaseNumberFormat {
         String caseNumber = caseResult.getCaseNumber().getValue();
         String caseYear = NOARKUtils.getCaseYear(caseNumber);
         String sequenceNumber = NOARKUtils.getCaseSequenceNumber(caseNumber);
@@ -62,15 +65,19 @@ public class NoarkFactory {
                         .map(this::createPartsinformasjon)
                         .collect(Collectors.toList()));
 
-        saksmappeResource.setJournalpost(
-                optionalValue(caseResult.getDocuments())
-                        .map(ArrayOfCaseDocumentResult::getCaseDocumentResult)
-                        .map(List::parallelStream)
-                        .orElse(Stream.empty())
-                        .map(CaseDocumentResult::getRecno)
-                        .map(String::valueOf)
-                        .map(journalpostService::getJournalPost)
-                        .collect(Collectors.toList()));
+        List<String> journalpostIds = optionalValue(caseResult.getDocuments())
+                .map(ArrayOfCaseDocumentResult::getCaseDocumentResult)
+                .map(List::stream)
+                .orElse(Stream.empty())
+                .map(CaseDocumentResult::getRecno)
+                .map(String::valueOf)
+                .collect(Collectors.toList());
+        List<JournalpostResource> journalpostList = new ArrayList<>(journalpostIds.size());
+        for (String journalpostRecord : journalpostIds) {
+            JournalpostResource journalPost = journalpostService.getJournalPost(journalpostRecord);
+            journalpostList.add(journalPost);
+        }
+        saksmappeResource.setJournalpost(journalpostList);
     }
 
     private PartsinformasjonResource createPartsinformasjon(CaseContactResult caseContactResult) {

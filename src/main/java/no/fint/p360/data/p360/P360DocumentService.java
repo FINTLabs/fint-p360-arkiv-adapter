@@ -37,7 +37,7 @@ public class P360DocumentService extends P360AbstractService {
         objectFactory = new ObjectFactory();
     }
 
-    public void createDocument(CreateDocumentParameter createDocumentParameter) {
+    public void createDocument(CreateDocumentParameter createDocumentParameter) throws CreateDocumentException {
         log.info("Create Document: {}", createDocumentParameter);
         DocumentOperationResult documentOperationResult = documentService.createDocument(createDocumentParameter);
         log.info("Create Document Result: {}", documentOperationResult);
@@ -48,7 +48,7 @@ public class P360DocumentService extends P360AbstractService {
         throw new CreateDocumentException(documentOperationResult.getErrorMessage().getValue());
     }
 
-    public DocumentResult getDocumentBySystemId(String systemId) {
+    public DocumentResult getDocumentBySystemId(String systemId) throws GetDocumentException {
         GetDocumentsQuery documentsQuery = new GetDocumentsQuery();
         documentsQuery.setRecno(objectFactory.createGetDocumentsQueryRecno(Integer.valueOf(systemId)));
         documentsQuery.setIncludeRemarks(Boolean.TRUE);

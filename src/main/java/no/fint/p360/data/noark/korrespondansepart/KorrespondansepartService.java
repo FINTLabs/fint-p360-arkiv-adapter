@@ -2,9 +2,7 @@ package no.fint.p360.data.noark.korrespondansepart;
 
 import lombok.extern.slf4j.Slf4j;
 import no.fint.model.resource.administrasjon.arkiv.KorrespondansepartResource;
-import no.fint.p360.data.exception.EnterpriseNotFound;
-import no.fint.p360.data.exception.KorrespondansepartNotFound;
-import no.fint.p360.data.exception.PrivatePersonNotFound;
+import no.fint.p360.data.exception.*;
 import no.fint.p360.data.p360.P360ContactService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,7 +24,7 @@ public class KorrespondansepartService {
     @Autowired
     private P360ContactService contactService;
 
-    public KorrespondansepartResource getKorrespondansepartBySystemId(int id) {
+    public KorrespondansepartResource getKorrespondansepartBySystemId(int id) throws KorrespondansepartNotFound {
 
         Supplier<KorrespondansepartResource> enterpriseContact = () ->
                 korrespondansepartFactory.toFintResource(contactService.getEnterpriseByRecno(id));
@@ -44,7 +42,7 @@ public class KorrespondansepartService {
 
     }
 
-    public KorrespondansepartResource getKorrespondansepartByFodselsnummer(String fodselsnummer) {
+    public KorrespondansepartResource getKorrespondansepartByFodselsnummer(String fodselsnummer) throws KorrespondansepartNotFound {
         try {
             return  korrespondansepartFactory.toFintResource(
                     contactService.getPrivatePersonByPersonalIdNumber(fodselsnummer)
@@ -55,7 +53,7 @@ public class KorrespondansepartService {
 
     }
 
-    public KorrespondansepartResource getKorrespondansepartByOrganisasjonsnummer(String organisasjonsNummer) {
+    public KorrespondansepartResource getKorrespondansepartByOrganisasjonsnummer(String organisasjonsNummer) throws KorrespondansepartNotFound {
         try {
             return korrespondansepartFactory.toFintResource(
                     contactService.getEnterpriseByEnterpriseNumber(organisasjonsNummer));
@@ -77,7 +75,7 @@ public class KorrespondansepartService {
                 .flatMap(Supplier::get);
     }
 
-    public KorrespondansepartResource createKorrespondansepart(KorrespondansepartResource korrespondansepartResource) {
+    public KorrespondansepartResource createKorrespondansepart(KorrespondansepartResource korrespondansepartResource) throws CreateContactException, CreateEnterpriseException {
         if (validIdentifikator(korrespondansepartResource.getFodselsnummer())) {
             int recNo = contactService.createPrivatePerson(korrespondansepartFactory.toPrivatePerson(korrespondansepartResource));
             return  korrespondansepartFactory.toFintResource(contactService.getPrivatePersonByRecno(recNo));

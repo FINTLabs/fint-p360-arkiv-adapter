@@ -58,7 +58,7 @@ public class P360ContactService extends P360AbstractService {
         return null;
     }
 
-    public PrivatePersonResult getPrivatePersonByPersonalIdNumber(String personalIdNumber) {
+    public PrivatePersonResult getPrivatePersonByPersonalIdNumber(String personalIdNumber) throws PrivatePersonNotFound {
         GetPrivatePersonsParameter getPrivatePersonsParameter = objectFactory.createGetPrivatePersonsParameter();
         getPrivatePersonsParameter.setIncludeCustomFields(Boolean.TRUE);
 
@@ -107,7 +107,7 @@ public class P360ContactService extends P360AbstractService {
         return null;
     }
 
-    public EnterpriseResult getEnterpriseByEnterpriseNumber(String enterpriseNumber) {
+    public EnterpriseResult getEnterpriseByEnterpriseNumber(String enterpriseNumber) throws EnterpriseNotFound {
         GetEnterprisesParameter getEnterprisesParameter = objectFactory.createGetEnterprisesParameter();
         getEnterprisesParameter.setIncludeCustomFields(Boolean.TRUE);
         getEnterprisesParameter.setEnterpriseNumber(objectFactory.createGetEnterprisesParameterEnterpriseNumber(enterpriseNumber));
@@ -198,7 +198,7 @@ public class P360ContactService extends P360AbstractService {
         return result.getContactPersons().getValue().getContactPersonResult().stream();
     }
 
-    public Integer createPrivatePerson(SynchronizePrivatePersonParameter privatePerson) {
+    public Integer createPrivatePerson(SynchronizePrivatePersonParameter privatePerson) throws CreateContactException {
         log.info("Create Private Person: {}", privatePerson);
         SynchronizePrivatePersonResult privatePersonResult = contactService.synchronizePrivatePerson(privatePerson);
         log.info("Private Person Result: {}", privatePersonResult);
@@ -208,7 +208,7 @@ public class P360ContactService extends P360AbstractService {
         throw new CreateContactException(privatePersonResult.getErrorMessage().getValue());
     }
 
-    public Integer createEnterprise(SynchronizeEnterpriseParameter enterprise) {
+    public Integer createEnterprise(SynchronizeEnterpriseParameter enterprise) throws CreateEnterpriseException {
         log.info("Create Enterprise: {}", enterprise);
         SynchronizeEnterpriseResult result = contactService.synchronizeEnterprise(enterprise);
         log.info("Enterprise Result: {}", result);
