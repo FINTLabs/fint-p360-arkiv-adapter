@@ -25,13 +25,13 @@ import no.fint.p360.data.utilities.FintUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
@@ -78,13 +78,12 @@ public class EventHandlerService {
     @Autowired
     private PartService partService;
 
-    @Bean
-    private AtomicLong identifiers(@Value("${fint.arkiv.dokument.seq:9999999999}") Long seq) {
-        return new AtomicLong(seq);
-    }
-
-    @Autowired
-    private AtomicLong identifier;
+    private AtomicLong identifier =
+            new AtomicLong(Long
+                    .parseLong(DateTimeFormatter
+                            .ofPattern("yyyyDDDHH'000'")
+                            .format(LocalDateTime
+                                    .now())));
 
     @Autowired
     private P360ContactService contactService;
