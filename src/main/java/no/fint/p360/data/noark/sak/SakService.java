@@ -21,7 +21,7 @@ public class SakService {
     @Autowired
     private P360CaseService caseService;
 
-    public List<SakResource> searchSakByTitle(Map<String, String> query) throws GetTilskuddFartoyNotFoundException, GetTilskuddFartoyException, GetDocumentException, IllegalCaseNumberFormat {
+    public List<SakResource> searchSakByTitle(Map<String, String> query) throws GetTilskuddFartoyException, GetDocumentException, IllegalCaseNumberFormat {
         return sakFactory.toFintResourceList(caseService.getGetCasesQueryByTitle(query));
     }
 
