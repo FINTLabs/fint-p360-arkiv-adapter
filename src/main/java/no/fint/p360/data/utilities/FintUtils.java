@@ -129,7 +129,7 @@ public enum FintUtils {
         VariantformatResource result = new VariantformatResource();
         result.setNavn(name);
         result.setKode(name.substring(0,1));
-        result.setSystemId(createIdentifikator(Integer.toHexString(name.hashCode())));
+        result.setSystemId(createIdentifikator(name.substring(0,1)));
         return result;
     }
 }
