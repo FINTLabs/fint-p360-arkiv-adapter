@@ -36,7 +36,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static no.fint.p360.data.utilities.QueryUtils.getQueryParams;
 
@@ -194,15 +193,6 @@ public class EventHandlerService {
             }
         }
 
-    }
-
-    private void onGetAllVariantformat(Event<FintLinks> response) {
-        Stream.of("Produksjonsformat",
-                "Arkivformat",
-                "Dokument hvor deler av innholdet er skjermet")
-                .map(FintUtils::createVariantformat)
-                .forEach(response::addData);
-        response.setResponseStatus(ResponseStatus.ACCEPTED);
     }
 
     private void onGetPart(String query, Event<FintLinks> response) {
@@ -382,6 +372,12 @@ public class EventHandlerService {
         kodeverkRepository.getMerknadstype().forEach(response::addData);
         response.setResponseStatus(ResponseStatus.ACCEPTED);
     }
+
+    private void onGetAllVariantformat(Event<FintLinks> response) {
+        kodeverkRepository.getVariantformat().forEach(response::addData);
+        response.setResponseStatus(ResponseStatus.ACCEPTED);
+    }
+
 
     private void onGetDokumentfil(Event<FintLinks> response) {
         try {

@@ -124,12 +124,4 @@ public enum FintUtils {
         return kontaktinformasjon;
     }
 
-
-    public static VariantformatResource createVariantformat(String name) {
-        VariantformatResource result = new VariantformatResource();
-        result.setNavn(name);
-        result.setKode(name.substring(0,1));
-        result.setSystemId(createIdentifikator(name.substring(0,1)));
-        return result;
-    }
 }
