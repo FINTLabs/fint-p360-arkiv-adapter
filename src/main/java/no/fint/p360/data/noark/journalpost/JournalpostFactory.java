@@ -378,6 +378,11 @@ public class JournalpostFactory {
                 objectFactory::createCreateFileParameterStatus,
                 createFileParameter::setStatus);
 
+        applyParameterFromLink(
+                dokumentobjekt.getVariantFormat(),
+                objectFactory::createCreateFileParameterVersionFormat,
+                createFileParameter::setVersionFormat);
+
         // TODO Map from incoming fields
         //createFileParameter.setNote(objectFactory.createCreateFileParameterNote(dokumentbeskrivelse.getBeskrivelse()));
 //        createFileParameter.setVersionFormat(objectFactory.createCreateFileParameterVersionFormat("A"));
@@ -386,8 +391,7 @@ public class JournalpostFactory {
             applyParameterFromLink(
                     dokumentbeskrivelse.getSkjerming().getTilgangsrestriksjon(),
                     objectFactory::createCreateFileParameterAccessCode,
-                    createFileParameter::setAccessCode
-            );
+                    createFileParameter::setAccessCode);
 
             // TODO createDocumentParameter.setAccessGroup();
         }
