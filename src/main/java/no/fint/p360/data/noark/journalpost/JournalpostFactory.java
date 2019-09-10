@@ -208,6 +208,17 @@ public class JournalpostFactory {
                     .map(Link.apply(DokumentType.class, "systemid"))
                     .ifPresent(dokumentbeskrivelseResource::addDokumentType);
 
+            optionalValue(file.getVersionFormatCode())
+                    .flatMap(kode -> kodeverkRepository
+                            .getVariantformat()
+                            .stream()
+                            .filter(it -> StringUtils.equalsIgnoreCase(kode, it.getKode()))
+                            .findAny())
+                    .map(VariantformatResource::getSystemId)
+                    .map(Identifikator::getIdentifikatorverdi)
+                    .map(Link.apply(Variantformat.class, "systemid"))
+                    .ifPresent(dokumentobjektResource::addVariantFormat);
+
             dokumentbeskrivelseResourcesList.add(dokumentbeskrivelseResource);
 
         });
