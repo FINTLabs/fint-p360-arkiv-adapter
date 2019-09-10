@@ -80,7 +80,7 @@ public class EventHandlerService {
     private AtomicLong identifier =
             new AtomicLong(Long
                     .parseLong(DateTimeFormatter
-                            .ofPattern("yyyyDDDHH'000'")
+                            .ofPattern("yyyyDDDHHmm'000'")
                             .format(LocalDateTime
                                     .now())));
 

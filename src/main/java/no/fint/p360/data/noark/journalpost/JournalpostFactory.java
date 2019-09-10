@@ -385,7 +385,6 @@ public class JournalpostFactory {
 
         // TODO Map from incoming fields
         //createFileParameter.setNote(objectFactory.createCreateFileParameterNote(dokumentbeskrivelse.getBeskrivelse()));
-//        createFileParameter.setVersionFormat(objectFactory.createCreateFileParameterVersionFormat("A"));
 
         if (dokumentbeskrivelse.getSkjerming() != null) {
             applyParameterFromLink(
