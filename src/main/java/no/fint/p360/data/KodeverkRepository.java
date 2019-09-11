@@ -14,6 +14,7 @@ import no.fint.p360.data.noark.saksstatus.SaksStatusService;
 import no.fint.p360.data.noark.skjermingshjemmel.SkjermingshjemmelService;
 import no.fint.p360.data.noark.tilgangsrestriksjon.TilgangsrestriksjonService;
 import no.fint.p360.data.noark.tilknyttetregistreringsom.TilknyttetRegistreringSomService;
+import no.fint.p360.data.noark.variantformat.VariantformatService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -58,6 +59,9 @@ public class KodeverkRepository {
     @Autowired
     private MerknadstypeService merknadstypeService;
 
+    @Autowired
+    private VariantformatService variantformatService;
+
     @Getter
     private List<SaksstatusResource> saksstatus;
 
@@ -91,6 +95,9 @@ public class KodeverkRepository {
     @Getter
     private List<MerknadstypeResource> merknadstype;
 
+    @Getter
+    private List<VariantformatResource> variantformat;
+
     @Scheduled(initialDelay = 10000, fixedDelayString = "${fint.kodeverk.refresh-interval:1500000}")
     public void refresh() {
         saksstatus = saksStatusService.getCaseStatusTable().collect(Collectors.toList());
@@ -104,6 +111,7 @@ public class KodeverkRepository {
         merknadstype = merknadstypeService.getMerknadstype().collect(Collectors.toList());
         tilgangsrestriksjon = tilgangsrestriksjonService.getAccessCodeTable().collect(Collectors.toList());
         skjermingshjemmel = skjermingshjemmelService.getLawTable().collect(Collectors.toList());
+        variantformat = variantformatService.getFileStatusTable().collect(Collectors.toList());
         log.info("Refreshed code lists");
     }
 

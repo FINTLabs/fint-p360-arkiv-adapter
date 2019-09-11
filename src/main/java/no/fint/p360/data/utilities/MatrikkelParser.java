@@ -21,7 +21,7 @@ public class MatrikkelParser {
     public static final int FESTENUMMER = 3;
     public static final int SEKSJONSNUMMER = 4;
 
-    public static MatrikkelnummerResource parse(String s) {
+    public static MatrikkelnummerResource parse(String s) throws UnableToParseMatrikkel {
         AtomicInteger position = new AtomicInteger(0);
         Map<Integer, String> matrikkelMap = Arrays.stream(s.split("[/\\-]")).collect(Collectors.toMap(i -> position.getAndIncrement(), i -> i));
 

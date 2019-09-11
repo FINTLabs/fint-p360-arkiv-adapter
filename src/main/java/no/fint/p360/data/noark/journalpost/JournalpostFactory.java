@@ -208,6 +208,17 @@ public class JournalpostFactory {
                     .map(Link.apply(DokumentType.class, "systemid"))
                     .ifPresent(dokumentbeskrivelseResource::addDokumentType);
 
+            optionalValue(file.getVersionFormatCode())
+                    .flatMap(kode -> kodeverkRepository
+                            .getVariantformat()
+                            .stream()
+                            .filter(it -> StringUtils.equalsIgnoreCase(kode, it.getKode()))
+                            .findAny())
+                    .map(VariantformatResource::getSystemId)
+                    .map(Identifikator::getIdentifikatorverdi)
+                    .map(Link.apply(Variantformat.class, "systemid"))
+                    .ifPresent(dokumentobjektResource::addVariantFormat);
+
             dokumentbeskrivelseResourcesList.add(dokumentbeskrivelseResource);
 
         });
@@ -378,16 +389,19 @@ public class JournalpostFactory {
                 objectFactory::createCreateFileParameterStatus,
                 createFileParameter::setStatus);
 
+        applyParameterFromLink(
+                dokumentobjekt.getVariantFormat(),
+                objectFactory::createCreateFileParameterVersionFormat,
+                createFileParameter::setVersionFormat);
+
         // TODO Map from incoming fields
         //createFileParameter.setNote(objectFactory.createCreateFileParameterNote(dokumentbeskrivelse.getBeskrivelse()));
-//        createFileParameter.setVersionFormat(objectFactory.createCreateFileParameterVersionFormat("A"));
 
         if (dokumentbeskrivelse.getSkjerming() != null) {
             applyParameterFromLink(
                     dokumentbeskrivelse.getSkjerming().getTilgangsrestriksjon(),
                     objectFactory::createCreateFileParameterAccessCode,
-                    createFileParameter::setAccessCode
-            );
+                    createFileParameter::setAccessCode);
 
             // TODO createDocumentParameter.setAccessGroup();
         }

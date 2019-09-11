@@ -1,13 +1,11 @@
 package no.fint.p360.data.fint
 
-
 import no.fint.arkiv.p360.caze.ObjectFactory
 import no.fint.model.resource.administrasjon.arkiv.JournalpostResource
-import no.fint.p360.data.kulturminne.TilskuddFartoyFactory
 import no.fint.p360.data.KodeverkRepository
+import no.fint.p360.data.kulturminne.TilskuddFartoyFactory
 import no.fint.p360.data.noark.common.NoarkFactory
 import no.fint.p360.data.noark.journalpost.JournalpostService
-import no.fint.p360.data.p360.P360DocumentService
 import no.fint.p360.data.testutils.P360ObjectFactory
 import spock.lang.Specification
 
@@ -51,7 +49,7 @@ class TilskuddFartoyFactorySpec extends Specification {
 
         when:
         def fartoys = tilskuddFartoyFactory.toFintResourceList(p360ObjectFactory.newP360CaseList())
-        def result = fartoys.count()
+        def result = fartoys.size()
 
         then:
         result == 2

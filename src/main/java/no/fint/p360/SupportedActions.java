@@ -16,23 +16,25 @@ public class SupportedActions extends AbstractSupportedActions {
         add(KulturminnevernActions.UPDATE_TILSKUDDFARTOY);
         add(KulturminnevernActions.GET_TILSKUDDFARTOY);
 
-        add(ArkivActions.GET_DOKUMENTFIL);
-        add(ArkivActions.UPDATE_DOKUMENTFIL);
-        add(ArkivActions.GET_ALL_SAKSSTATUS);
         add(ArkivActions.GET_ALL_DOKUMENTSTATUS);
         add(ArkivActions.GET_ALL_DOKUMENTTYPE);
-        add(ArkivActions.GET_ALL_TILKNYTTETREGISTRERINGSOM);
-        add(ArkivActions.GET_ALL_KORRESPONDANSEPARTTYPE);
-        add(ArkivActions.GET_ALL_JOURNALSTATUS);
         add(ArkivActions.GET_ALL_JOURNALPOSTTYPE);
-        add(ArkivActions.GET_ALL_PARTROLLE);
-        add(ArkivActions.GET_ALL_TILGANGSRESTRIKSJON);
-        add(ArkivActions.GET_ALL_SKJERMINGSHJEMMEL);
+        add(ArkivActions.GET_ALL_JOURNALSTATUS);
+        add(ArkivActions.GET_ALL_KORRESPONDANSEPARTTYPE);
         add(ArkivActions.GET_ALL_MERKNADSTYPE);
+        add(ArkivActions.GET_ALL_PARTROLLE);
+        add(ArkivActions.GET_ALL_SAKSSTATUS);
+        add(ArkivActions.GET_ALL_SKJERMINGSHJEMMEL);
+        add(ArkivActions.GET_ALL_TILGANGSRESTRIKSJON);
+        add(ArkivActions.GET_ALL_TILKNYTTETREGISTRERINGSOM);
+        add(ArkivActions.GET_ALL_VARIANTFORMAT);
+
         add(ArkivActions.GET_SAK);
         add(ArkivActions.GET_KORRESPONDANSEPART);
         add(ArkivActions.UPDATE_KORRESPONDANSEPART);
         add(ArkivActions.GET_PART);
+        add(ArkivActions.GET_DOKUMENTFIL);
+        add(ArkivActions.UPDATE_DOKUMENTFIL);
     }
 
 }
