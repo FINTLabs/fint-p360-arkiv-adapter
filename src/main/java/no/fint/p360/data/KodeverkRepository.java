@@ -111,7 +111,7 @@ public class KodeverkRepository {
         merknadstype = merknadstypeService.getMerknadstype().collect(Collectors.toList());
         tilgangsrestriksjon = tilgangsrestriksjonService.getAccessCodeTable().collect(Collectors.toList());
         skjermingshjemmel = skjermingshjemmelService.getLawTable().collect(Collectors.toList());
-        variantformat = variantformatService.getFileStatusTable().collect(Collectors.toList());
+        variantformat = variantformatService.getVersionFormatTable().collect(Collectors.toList());
         log.info("Refreshed code lists");
     }
 

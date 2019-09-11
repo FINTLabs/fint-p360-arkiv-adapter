@@ -19,11 +19,11 @@ public class VariantformatService {
     @Autowired
     private VariantformatFactory factory;
 
-    @Value("${fint.p360.tables.document-relation:Attribute value: File - ToVersionFormat}")
-    private String fileStatusTable;
+    @Value("${fint.p360.tables.version-format:Attribute value: File - ToVersionFormat}")
+    private String versionFormatTable;
 
-    public Stream<VariantformatResource> getFileStatusTable() {
-        return supportService.getCodeTableRowResultStream(fileStatusTable)
+    public Stream<VariantformatResource> getVersionFormatTable() {
+        return supportService.getCodeTableRowResultStream(versionFormatTable)
                 .map(factory::toFintResource);
     }
 

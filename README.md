@@ -1,7 +1,7 @@
 # FINT P360 adapter
 This adapter connects Tietos Public 360 to FINT.
 
-It uses the `SIF` webservice. At the moment it support the `SOAP` version.
+It uses the `SIF` webservice. At the moment it supports the `SOAP` version.
 
 The adapter uses the following services:
 - CaseService
@@ -34,9 +34,9 @@ The adapter uses the following services:
 | fint.p360.tables.contact-role                         | code table: Activity - Contact role           | KorrespondansepartType    |
 | fint.p360.tables.document-category                    | code table: Document category                 | JournalpostType           |
 | fint.p360.tables.document-relation                    | Attribute value: VersionFile - ToRelationType | TilknyttetRegistreringSom |
-| fint.p360.tables.document-status                      | code table: Document status                   | Dokumentstatus            |
+| fint.p360.tables.document-status                      | code table: FileStatus                        | Dokumentstatus            |
 | fint.p360.tables.document-type                        | code table: File category                     | Dokumenttype              |
 | fint.p360.tables.journal-status                       | code table: Journal status                    | JournalStatus             |
 | fint.p360.tables.law                                  | code table: Law                               | Skjermingshjemmel         |
-
-
+| fint.p360.tables.note-type                            | code table: Note type                         | Merknadstype              |
+| fint.p360.tables.version-format                       | Attribute value: File - ToVersionFormat       | Variantformat             |
