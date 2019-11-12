@@ -1,7 +1,6 @@
 package no.fint.p360.data.testutils;
 
 import no.fint.arkiv.p360.caze.*;
-import no.fint.model.felles.kompleksedatatyper.Identifikator;
 import no.fint.p360.data.utilities.FintUtils;
 import no.fint.p360.data.utilities.P360Utils;
 
@@ -9,7 +8,6 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.GregorianCalendar;
 import java.util.List;
 

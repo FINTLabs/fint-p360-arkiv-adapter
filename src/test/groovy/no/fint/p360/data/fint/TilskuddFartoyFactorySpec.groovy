@@ -1,11 +1,13 @@
 package no.fint.p360.data.fint
 
 import no.fint.arkiv.p360.caze.ObjectFactory
+import no.fint.arkiv.p360.document.DocumentResult
 import no.fint.model.resource.administrasjon.arkiv.JournalpostResource
 import no.fint.p360.data.KodeverkRepository
 import no.fint.p360.data.kulturminne.TilskuddFartoyFactory
 import no.fint.p360.data.noark.common.NoarkFactory
-import no.fint.p360.data.noark.journalpost.JournalpostService
+import no.fint.p360.data.noark.journalpost.JournalpostFactory
+import no.fint.p360.data.p360.P360DocumentService
 import no.fint.p360.data.testutils.P360ObjectFactory
 import spock.lang.Specification
 
@@ -13,16 +15,18 @@ class TilskuddFartoyFactorySpec extends Specification {
 
     private ObjectFactory objectFactory
     private TilskuddFartoyFactory tilskuddFartoyFactory
-    private JournalpostService documentService
+    private JournalpostFactory journalpostFactory
+    private P360DocumentService documentService
     private P360ObjectFactory p360ObjectFactory
     private NoarkFactory noarkFactory
     private KodeverkRepository kodeverkService
 
     void setup() {
         objectFactory = new ObjectFactory()
-        documentService = Mock(JournalpostService)
+        documentService = Mock()
         kodeverkService = Mock()
-        noarkFactory = new NoarkFactory(journalpostService: documentService)
+        journalpostFactory = Mock()
+        noarkFactory = new NoarkFactory(documentService: documentService, journalpostFactory: journalpostFactory)
         tilskuddFartoyFactory = new TilskuddFartoyFactory(
                 noarkFactory: noarkFactory,
                 kodeverkRepository: kodeverkService
@@ -39,7 +43,8 @@ class TilskuddFartoyFactorySpec extends Specification {
         def fint = tilskuddFartoyFactory.toFintResource(caseResult)
 
         then:
-        1 * documentService.getJournalPost(_ as String) >> new JournalpostResource()
+        1 * documentService.getDocumentBySystemId(_ as String) >> new DocumentResult()
+        1 * journalpostFactory.toFintResource(_ as DocumentResult) >> new JournalpostResource()
         1 * kodeverkService.getSaksstatus() >> []
         fint
         fint.getMappeId().identifikatorverdi == "19/12345"

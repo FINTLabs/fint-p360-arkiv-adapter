@@ -1,6 +1,7 @@
 package no.fint.p360.data.noark.common;
 
 import no.fint.arkiv.p360.caze.*;
+import no.fint.arkiv.p360.document.DocumentResult;
 import no.fint.model.administrasjon.arkiv.Part;
 import no.fint.model.administrasjon.arkiv.PartRolle;
 import no.fint.model.resource.Link;
@@ -9,8 +10,9 @@ import no.fint.model.resource.administrasjon.arkiv.PartsinformasjonResource;
 import no.fint.model.resource.administrasjon.arkiv.SaksmappeResource;
 import no.fint.p360.data.exception.GetDocumentException;
 import no.fint.p360.data.exception.IllegalCaseNumberFormat;
-import no.fint.p360.data.noark.journalpost.JournalpostService;
+import no.fint.p360.data.noark.journalpost.JournalpostFactory;
 import no.fint.p360.data.noark.part.PartFactory;
+import no.fint.p360.data.p360.P360DocumentService;
 import no.fint.p360.data.utilities.FintUtils;
 import no.fint.p360.data.utilities.NOARKUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -28,7 +30,10 @@ import static no.fint.p360.data.utilities.FintUtils.optionalValue;
 public class NoarkFactory {
 
     @Autowired
-    private JournalpostService journalpostService;
+    private P360DocumentService documentService;
+
+    @Autowired
+    private JournalpostFactory journalpostFactory;
 
     @Autowired
     private PartFactory partFactory;
@@ -74,8 +79,9 @@ public class NoarkFactory {
                 .collect(Collectors.toList());
         List<JournalpostResource> journalpostList = new ArrayList<>(journalpostIds.size());
         for (String journalpostRecord : journalpostIds) {
-            JournalpostResource journalPost = journalpostService.getJournalPost(journalpostRecord);
-            journalpostList.add(journalPost);
+            DocumentResult documentResult = documentService.getDocumentBySystemId(journalpostRecord);
+            JournalpostResource journalpostResource = journalpostFactory.toFintResource(documentResult);
+            journalpostList.add(journalpostResource);
         }
         saksmappeResource.setJournalpost(journalpostList);
     }

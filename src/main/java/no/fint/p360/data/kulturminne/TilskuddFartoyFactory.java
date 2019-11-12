@@ -3,12 +3,14 @@ package no.fint.p360.data.kulturminne;
 import com.google.common.base.Strings;
 import lombok.extern.slf4j.Slf4j;
 import no.fint.arkiv.p360.caze.*;
+import no.fint.arkiv.p360.document.CreateDocumentParameter;
 import no.fint.model.administrasjon.arkiv.Saksstatus;
 import no.fint.model.administrasjon.organisasjon.Organisasjonselement;
 import no.fint.model.administrasjon.personal.Personalressurs;
 import no.fint.model.felles.kompleksedatatyper.Identifikator;
 import no.fint.model.kultur.kulturminnevern.TilskuddFartoy;
 import no.fint.model.resource.Link;
+import no.fint.model.resource.administrasjon.arkiv.JournalpostResource;
 import no.fint.model.resource.administrasjon.arkiv.MerknadResource;
 import no.fint.model.resource.administrasjon.arkiv.PartsinformasjonResource;
 import no.fint.model.resource.administrasjon.arkiv.SaksstatusResource;
@@ -20,6 +22,7 @@ import no.fint.p360.data.exception.IllegalCaseNumberFormat;
 import no.fint.p360.data.exception.NoSuchTitleDimension;
 import no.fint.p360.data.exception.UnableToParseTitle;
 import no.fint.p360.data.noark.common.NoarkFactory;
+import no.fint.p360.data.noark.journalpost.JournalpostFactory;
 import no.fint.p360.data.noark.korrespondansepart.KorrespondansepartFactory;
 import no.fint.p360.data.utilities.*;
 import org.apache.commons.lang3.StringUtils;
@@ -49,6 +52,9 @@ public class TilskuddFartoyFactory {
 
     @Autowired
     private KorrespondansepartFactory korrespondansepartFactory;
+
+    @Autowired
+    private JournalpostFactory journalpostFactory;
 
     private ObjectFactory objectFactory;
 
@@ -117,7 +123,7 @@ public class TilskuddFartoyFactory {
         return result;
     }
 
-    public CreateCaseParameter toP360(TilskuddFartoyResource tilskuddFartoy) {
+    public CreateCaseParameter convertToCreateCase(TilskuddFartoyResource tilskuddFartoy) {
         CreateCaseParameter createCaseParameter = objectFactory.createCreateCaseParameter();
 
         createCaseParameter.setTitle(objectFactory.createCaseParameterBaseTitle(TitleParser.getTitleString(tilskuddFartoy)));
@@ -227,4 +233,7 @@ public class TilskuddFartoyFactory {
         return caseContactParameter;
     }
 
+    public CreateDocumentParameter convertToCreateDocument(JournalpostResource journalpostResource, String caseNumber) {
+        return journalpostFactory.toP360(journalpostResource, caseNumber);
+    }
 }
