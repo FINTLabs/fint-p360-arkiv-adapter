@@ -41,7 +41,7 @@ public enum P360Utils {
         return objectFactory.createCaseParameterBaseExternalId(externalIdParameter);
     }
 
-    public static JAXBElement<ArrayOfClassCodeParameter> getArchiveCodes(String code, String type) {
+    public static JAXBElement<ArrayOfClassCodeParameter> getArchiveCodes(String type, String code) {
         ObjectFactory objectFactory = new ObjectFactory();
 
         ArrayOfClassCodeParameter arrayOfClassCodeParameter = objectFactory.createArrayOfClassCodeParameter();

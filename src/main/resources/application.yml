@@ -6,6 +6,21 @@ springfox:
   version: '@version@'
 
 fint:
+  p360:
+    defaults:
+      casetype:
+        tilskudd-fartoy:
+          responsibleUnit: 100072
+          subArchive: 100007
+          keywords:
+          archiveCodeType: Fartøy
+          initialCaseStatus: B
+          contactRole: 5
+          documentCategory: 110
+          documentStatus: 3
+          fileStatus: 1
+          fileCategory: 1
+          relationType: 1
   adapter:
     endpoints:
       sse: /sse/%s
@@ -24,12 +39,6 @@ fint:
   #    client-secret:
   #    access-token-uri:
   #    scope:
-
-  kulturminne:
-    tilskudd-fartoy:
-      arkivdel: 100072
-      sub-archive: 100007
-      keywords:
 
 security:
   basic:
