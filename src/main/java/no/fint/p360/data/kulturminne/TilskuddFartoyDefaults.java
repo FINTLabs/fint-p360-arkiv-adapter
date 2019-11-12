@@ -36,14 +36,14 @@ public class TilskuddFartoyDefaults {
             tilskuddFartoy.addSaksstatus(Link.with(
                     Saksstatus.class,
                     "systemid",
-                    properties.getInitialCaseStatus()
+                    properties.getSaksstatus()
             ));
         }
         if (tilskuddFartoy.getArkivdel().isEmpty()) {
             tilskuddFartoy.addArkivdel(Link.with(
                     Arkivdel.class,
                     "systemid",
-                    properties.getSubArchive()
+                    properties.getArkivdel()
             ));
         }
         applyDefaultsForUpdate(tilskuddFartoy);
@@ -56,7 +56,7 @@ public class TilskuddFartoyDefaults {
                     korrespondanse.addKorrespondanseparttype(Link.with(
                             KorrespondansepartType.class,
                             "systemid",
-                            properties.getContactRole()));
+                            properties.getKorrespondansepartType()));
                 }
             });
             journalpost.getDokumentbeskrivelse().forEach(dokumentbeskrivelse -> {
@@ -64,21 +64,21 @@ public class TilskuddFartoyDefaults {
                     dokumentbeskrivelse.addDokumentstatus(Link.with(
                             DokumentStatus.class,
                             "systemid",
-                            properties.getFileStatus()
+                            properties.getDokumentstatus()
                     ));
                 }
                 if (dokumentbeskrivelse.getDokumentType().isEmpty()) {
                     dokumentbeskrivelse.addDokumentType(Link.with(
                             DokumentType.class,
                             "systemid",
-                            properties.getFileCategory()
+                            properties.getDokumentType()
                     ));
                 }
                 if (dokumentbeskrivelse.getTilknyttetRegistreringSom().isEmpty()) {
                     dokumentbeskrivelse.addTilknyttetRegistreringSom(Link.with(
                             TilknyttetRegistreringSom.class,
                             "systemid",
-                            properties.getRelationType()
+                            properties.getTilknyttetRegistreringSom()
                     ));
                 }
             });
@@ -86,42 +86,42 @@ public class TilskuddFartoyDefaults {
                 journalpost.addJournalposttype(Link.with(
                         JournalpostType.class,
                         "systemid",
-                        properties.getDocumentCategory()));
+                        properties.getJournalpostType()));
             }
             if (journalpost.getJournalstatus().isEmpty()) {
                 journalpost.addJournalstatus(Link.with(
                         JournalStatus.class,
                         "systemid",
-                        properties.getDocumentStatus()));
+                        properties.getJournalstatus()));
             }
             if (journalpost.getJournalenhet().isEmpty()) {
                 journalpost.addJournalenhet(Link.with(
                         AdministrativEnhet.class,
                         "systemid",
-                        properties.getResponsibleUnit()
+                        properties.getAdministrativEnhet()
                 ));
             }
             if (journalpost.getAdministrativEnhet().isEmpty()) {
                 journalpost.addAdministrativEnhet(Link.with(
                         AdministrativEnhet.class,
                         "systemid",
-                        properties.getResponsibleUnit()
+                        properties.getAdministrativEnhet()
                 ));
             }
             if (journalpost.getArkivdel().isEmpty()) {
                 journalpost.addArkivdel(Link.with(
                         Arkivdel.class,
                         "systemid",
-                        properties.getSubArchive()
+                        properties.getArkivdel()
                 ));
             }
         });
     }
 
     public void applyDefaultsToCreateCase(TilskuddFartoyResource tilskuddFartoy, CreateCaseParameter createCaseParameter) {
-        createCaseParameter.setKeywords(P360Utils.getKeywords(Arrays.asList(properties.getKeywords())));
+        createCaseParameter.setKeywords(P360Utils.getKeywords(Arrays.asList(properties.getNoekkelord())));
         createCaseParameter.setFiledOnPaper(objectFactory.createCaseParameterBaseFiledOnPaper(false));
         createCaseParameter.setCaseType(objectFactory.createCreateCaseParameterCaseType(Constants.CASE_TYPE_NOARK));
-        createCaseParameter.setArchiveCodes(P360Utils.getArchiveCodes(properties.getArchiveCodeType(), tilskuddFartoy.getFartoyNavn()));
+        createCaseParameter.setArchiveCodes(P360Utils.getArchiveCodes(properties.getKlassifikasjon(), tilskuddFartoy.getFartoyNavn()));
     }
 }

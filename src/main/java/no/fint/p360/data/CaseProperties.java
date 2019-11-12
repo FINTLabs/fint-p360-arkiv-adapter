@@ -4,15 +4,15 @@ import lombok.Getter;
 
 @Getter
 public class CaseProperties {
-    private String responsibleUnit;
-    private String subArchive;
-    private String[] keywords;
-    private String archiveCodeType;
-    private String initialCaseStatus;
-    private String contactRole;
-    private String documentCategory;
-    private String documentStatus;
-    private String fileStatus;
-    private String fileCategory;
-    private String relationType;
+    private String administrativEnhet;
+    private String arkivdel;
+    private String[] noekkelord;
+    private String klassifikasjon;
+    private String saksstatus;
+    private String korrespondansepartType;
+    private String journalpostType;
+    private String journalstatus;
+    private String dokumentstatus;
+    private String dokumentType;
+    private String tilknyttetRegistreringSom;
 }

@@ -10,17 +10,17 @@ fint:
     defaults:
       casetype:
         tilskudd-fartoy:
-          responsibleUnit: 100072
-          subArchive: 100007
-          keywords:
-          archiveCodeType: Fartøy
-          initialCaseStatus: B
-          contactRole: 5
-          documentCategory: 110
-          documentStatus: 3
-          fileStatus: 1
-          fileCategory: 1
-          relationType: 1
+          administrativEnhet: 100072
+          arkivdel: 100007
+          noekkelord:
+          klassifikasjon: Fartøy
+          saksstatus: B
+          korrespondansepartType: 5
+          journalpostType: 110
+          journalstatus: 3
+          dokumentstatus: 1
+          dokumentType: 1
+          tilknyttetRegistreringSom: 1
   adapter:
     endpoints:
       sse: /sse/%s
