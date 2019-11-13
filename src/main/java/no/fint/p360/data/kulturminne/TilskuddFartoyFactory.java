@@ -3,32 +3,36 @@ package no.fint.p360.data.kulturminne;
 import com.google.common.base.Strings;
 import lombok.extern.slf4j.Slf4j;
 import no.fint.arkiv.p360.caze.*;
+import no.fint.arkiv.p360.document.CreateDocumentParameter;
 import no.fint.model.administrasjon.arkiv.Saksstatus;
 import no.fint.model.administrasjon.organisasjon.Organisasjonselement;
 import no.fint.model.administrasjon.personal.Personalressurs;
 import no.fint.model.felles.kompleksedatatyper.Identifikator;
 import no.fint.model.kultur.kulturminnevern.TilskuddFartoy;
 import no.fint.model.resource.Link;
+import no.fint.model.resource.administrasjon.arkiv.JournalpostResource;
 import no.fint.model.resource.administrasjon.arkiv.MerknadResource;
 import no.fint.model.resource.administrasjon.arkiv.PartsinformasjonResource;
 import no.fint.model.resource.administrasjon.arkiv.SaksstatusResource;
 import no.fint.model.resource.kultur.kulturminnevern.TilskuddFartoyResource;
-import no.fint.p360.KulturminneProps;
 import no.fint.p360.data.KodeverkRepository;
 import no.fint.p360.data.exception.GetDocumentException;
 import no.fint.p360.data.exception.IllegalCaseNumberFormat;
 import no.fint.p360.data.exception.NoSuchTitleDimension;
 import no.fint.p360.data.exception.UnableToParseTitle;
 import no.fint.p360.data.noark.common.NoarkFactory;
+import no.fint.p360.data.noark.journalpost.JournalpostFactory;
 import no.fint.p360.data.noark.korrespondansepart.KorrespondansepartFactory;
-import no.fint.p360.data.utilities.*;
+import no.fint.p360.data.utilities.FintUtils;
+import no.fint.p360.data.utilities.NOARKUtils;
+import no.fint.p360.data.utilities.P360Utils;
+import no.fint.p360.data.utilities.TitleParser;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static no.fint.p360.data.utilities.FintUtils.optionalValue;
@@ -45,10 +49,13 @@ public class TilskuddFartoyFactory {
     private NoarkFactory noarkFactory;
 
     @Autowired
-    private KulturminneProps kulturminneProps;
+    private KorrespondansepartFactory korrespondansepartFactory;
 
     @Autowired
-    private KorrespondansepartFactory korrespondansepartFactory;
+    private JournalpostFactory journalpostFactory;
+
+    @Autowired
+    private TilskuddFartoyDefaults tilskuddFartoyDefaults;
 
     private ObjectFactory objectFactory;
 
@@ -117,18 +124,31 @@ public class TilskuddFartoyFactory {
         return result;
     }
 
-    public CreateCaseParameter toP360(TilskuddFartoyResource tilskuddFartoy) {
+    public CreateCaseParameter convertToCreateCase(TilskuddFartoyResource tilskuddFartoy) {
         CreateCaseParameter createCaseParameter = objectFactory.createCreateCaseParameter();
 
+        tilskuddFartoyDefaults.applyDefaultsToCreateCase(tilskuddFartoy, createCaseParameter);
+
         createCaseParameter.setTitle(objectFactory.createCaseParameterBaseTitle(TitleParser.getTitleString(tilskuddFartoy)));
-        createCaseParameter.setStatus(objectFactory.createCaseParameterBaseStatus(kulturminneProps.getInitialCaseStatus()));
-        createCaseParameter.setFiledOnPaper(objectFactory.createCaseParameterBaseFiledOnPaper(false));
-        createCaseParameter.setKeywords(P360Utils.getKeywords(Arrays.asList(kulturminneProps.getKeywords())));
-        createCaseParameter.setCaseType(objectFactory.createCreateCaseParameterCaseType(Constants.CASE_TYPE_NOARK));
-        createCaseParameter.setResponsibleEnterpriseRecno(objectFactory.createCaseParameterBaseResponsibleEnterpriseRecno(kulturminneProps.getResponsibleUnit()));
-        createCaseParameter.setSubArchive(objectFactory.createCaseParameterBaseSubArchive(kulturminneProps.getSubArchive()));
         createCaseParameter.setExternalId(P360Utils.getExternalIdParameter(tilskuddFartoy.getSoknadsnummer()));
-        createCaseParameter.setArchiveCodes(P360Utils.getArchiveCodes(tilskuddFartoy.getFartoyNavn(), kulturminneProps.getArchiveCodetype()));
+
+        applyParameterFromLink(
+                tilskuddFartoy.getAdministrativEnhet(),
+                s -> objectFactory.createCaseParameterBaseResponsibleEnterpriseRecno(Integer.valueOf(s)),
+                createCaseParameter::setResponsibleEnterpriseRecno
+        );
+
+        applyParameterFromLink(
+                tilskuddFartoy.getArkivdel(),
+                objectFactory::createCaseParameterBaseSubArchive,
+                createCaseParameter::setSubArchive
+        );
+
+        applyParameterFromLink(
+                tilskuddFartoy.getSaksstatus(),
+                objectFactory::createCaseParameterBaseStatus,
+                createCaseParameter::setStatus
+        );
 
         if (tilskuddFartoy.getSkjerming() != null) {
             applyParameterFromLink(
@@ -227,4 +247,8 @@ public class TilskuddFartoyFactory {
         return caseContactParameter;
     }
 
+    public CreateDocumentParameter convertToCreateDocument(JournalpostResource journalpostResource, String caseNumber) {
+        CreateDocumentParameter createDocumentParameter = journalpostFactory.toP360(journalpostResource, caseNumber);
+        return createDocumentParameter;
+    }
 }

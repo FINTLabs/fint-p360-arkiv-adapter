@@ -1,6 +1,7 @@
 package no.fint.p360.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.ImmutableList;
 import lombok.extern.slf4j.Slf4j;
 import no.fint.adapter.event.EventResponseService;
 import no.fint.adapter.event.EventStatusService;
@@ -16,6 +17,7 @@ import no.fint.model.resource.kultur.kulturminnevern.TilskuddFartoyResource;
 import no.fint.p360.data.FileRepository;
 import no.fint.p360.data.KodeverkRepository;
 import no.fint.p360.data.exception.*;
+import no.fint.p360.data.kulturminne.TilskuddFartoyDefaults;
 import no.fint.p360.data.kulturminne.TilskuddfartoyService;
 import no.fint.p360.data.noark.korrespondansepart.KorrespondansepartService;
 import no.fint.p360.data.noark.part.PartService;
@@ -76,6 +78,9 @@ public class EventHandlerService {
 
     @Autowired
     private PartService partService;
+
+    @Autowired
+    private TilskuddFartoyDefaults tilskuddFartoyDefaults;
 
     private AtomicLong identifier =
             new AtomicLong(Long
@@ -438,19 +443,19 @@ public class EventHandlerService {
 
         TilskuddFartoyResource tilskuddFartoyResource = objectMapper.convertValue(response.getData().get(0), TilskuddFartoyResource.class);
 
-
         if (operation == Operation.CREATE) {
-            List<Problem> problems = getProblems(tilskuddFartoyResource);
-            if (!problems.isEmpty()) {
-                response.setResponseStatus(ResponseStatus.REJECTED);
-                response.setMessage("Payload fails validation!");
-                response.setProblems(problems);
-                log.info("Validation problems!\n{}\n{}\n", tilskuddFartoyResource, problems);
-                return;
-            }
             try {
+                tilskuddFartoyDefaults.applyDefaultsForCreation(tilskuddFartoyResource);
+                List<Problem> problems = getProblems(tilskuddFartoyResource);
+                if (!problems.isEmpty()) {
+                    response.setResponseStatus(ResponseStatus.REJECTED);
+                    response.setMessage("Payload fails validation!");
+                    response.setProblems(problems);
+                    log.info("Validation problems!\n{}\n{}\n", tilskuddFartoyResource, problems);
+                    return;
+                }
                 TilskuddFartoyResource tilskuddFartoy = tilskuddfartoyService.createTilskuddFartoyCase(tilskuddFartoyResource);
-                response.setData(Collections.singletonList(tilskuddFartoy));
+                response.setData(ImmutableList.of(tilskuddFartoy));
                 response.setResponseStatus(ResponseStatus.ACCEPTED);
             } catch (CreateCaseException | GetTilskuddFartoyNotFoundException | GetTilskuddFartoyException | CreateDocumentException | GetDocumentException | IllegalCaseNumberFormat e) {
                 response.setResponseStatus(ResponseStatus.REJECTED);
@@ -463,17 +468,19 @@ public class EventHandlerService {
             if (tilskuddFartoyResource.getJournalpost().isEmpty()) {
                 throw new IllegalArgumentException("Update must contain at least one Journalpost");
             }
+            tilskuddFartoyDefaults.applyDefaultsForUpdate(tilskuddFartoyResource);
             List<Problem> problems = getProblems(tilskuddFartoyResource.getJournalpost());
             if (!problems.isEmpty()) {
                 response.setResponseStatus(ResponseStatus.REJECTED);
                 response.setMessage("Payload fails validation!");
                 response.setProblems(problems);
+                log.info("Validation problems!\n{}\n{}\n", tilskuddFartoyResource, problems);
                 return;
             }
             try {
                 String caseNumber = StringUtils.removeStartIgnoreCase(query, "mappeid/");
                 TilskuddFartoyResource result = tilskuddfartoyService.updateTilskuddFartoyCase(caseNumber, tilskuddFartoyResource);
-                response.setData(Collections.singletonList(result));
+                response.setData(ImmutableList.of(result));
                 response.setResponseStatus(ResponseStatus.ACCEPTED);
             } catch (GetTilskuddFartoyNotFoundException | GetTilskuddFartoyException | CreateDocumentException | GetDocumentException | IllegalCaseNumberFormat e) {
                 response.setResponseStatus(ResponseStatus.REJECTED);

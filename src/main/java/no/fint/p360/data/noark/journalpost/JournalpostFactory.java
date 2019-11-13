@@ -9,7 +9,6 @@ import no.fint.model.felles.kompleksedatatyper.Identifikator;
 import no.fint.model.resource.Link;
 import no.fint.model.resource.administrasjon.arkiv.*;
 import no.fint.p360.AdapterProps;
-import no.fint.p360.KulturminneProps;
 import no.fint.p360.data.FileRepository;
 import no.fint.p360.data.KodeverkRepository;
 import no.fint.p360.data.exception.FileNotFound;
@@ -41,11 +40,7 @@ public class JournalpostFactory {
     @Autowired
     private AdapterProps adapterProps;
 
-    @Autowired
-    private KulturminneProps kulturminneProps;
-
     private ObjectFactory objectFactory;
-
 
     @PostConstruct
     public void init() {
