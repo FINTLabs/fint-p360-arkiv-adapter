@@ -30,11 +30,7 @@ public class TilskuddfartoyService {
     @Autowired
     private TilskuddFartoyFactory tilskuddFartoyFactory;
 
-    @Autowired
-    private TilskuddFartoyDefaults tilskuddFartoyDefaults;
-
     public TilskuddFartoyResource createTilskuddFartoyCase(TilskuddFartoyResource tilskuddFartoy) throws NotTilskuddfartoyException, CreateCaseException, GetTilskuddFartoyNotFoundException, GetTilskuddFartoyException, CreateDocumentException, GetDocumentException, IllegalCaseNumberFormat {
-        tilskuddFartoyDefaults.applyDefaultsForCreation(tilskuddFartoy);
         String caseNumber = caseService.createCase(tilskuddFartoyFactory.convertToCreateCase(tilskuddFartoy));
         for (JournalpostResource journalpostResource : tilskuddFartoy.getJournalpost()) {
             CreateDocumentParameter tilskuddFartoyDocument = tilskuddFartoyFactory.convertToCreateDocument(journalpostResource, caseNumber);
@@ -44,7 +40,6 @@ public class TilskuddfartoyService {
     }
 
     public TilskuddFartoyResource updateTilskuddFartoyCase(String caseNumber, TilskuddFartoyResource tilskuddFartoyResource) throws NotTilskuddfartoyException, GetTilskuddFartoyNotFoundException, GetTilskuddFartoyException, CreateDocumentException, GetDocumentException, IllegalCaseNumberFormat {
-        tilskuddFartoyDefaults.applyDefaultsForUpdate(tilskuddFartoyResource);
         CaseResult sakByCaseNumber = caseService.getSakByCaseNumber(caseNumber);
         if (!isTilskuddFartoy(sakByCaseNumber)) {
             throw new NotTilskuddfartoyException("Ikke en Tilskuddfartøy sak: " + caseNumber);
