@@ -27,6 +27,7 @@ public class TilskuddFartoyDefaults {
 
     @PostConstruct
     public void init() {
+        log.info("Case Defaults: {}", caseDefaults);
         properties = caseDefaults.getCasetype().get("tilskudd-fartoy");
         objectFactory = new ObjectFactory();
         log.info("Defaults for TilskuddFartoy: {}", properties);
