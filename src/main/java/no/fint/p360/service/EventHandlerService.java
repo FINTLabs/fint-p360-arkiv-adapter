@@ -446,6 +446,7 @@ public class EventHandlerService {
         if (operation == Operation.CREATE) {
             try {
                 tilskuddFartoyDefaults.applyDefaultsForCreation(tilskuddFartoyResource);
+                log.info("Complete document for creation: {}", tilskuddFartoyResource);
                 List<Problem> problems = getProblems(tilskuddFartoyResource);
                 if (!problems.isEmpty()) {
                     response.setResponseStatus(ResponseStatus.REJECTED);
@@ -469,6 +470,7 @@ public class EventHandlerService {
                 throw new IllegalArgumentException("Update must contain at least one Journalpost");
             }
             tilskuddFartoyDefaults.applyDefaultsForUpdate(tilskuddFartoyResource);
+            log.info("Complete document for update: {}", tilskuddFartoyResource);
             List<Problem> problems = getProblems(tilskuddFartoyResource.getJournalpost());
             if (!problems.isEmpty()) {
                 response.setResponseStatus(ResponseStatus.REJECTED);
