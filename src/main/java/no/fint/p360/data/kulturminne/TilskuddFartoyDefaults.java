@@ -29,6 +29,7 @@ public class TilskuddFartoyDefaults {
     public void init() {
         properties = caseDefaults.getCasetype().get("tilskudd-fartoy");
         objectFactory = new ObjectFactory();
+        log.info("Defaults for TilskuddFartoy: {}", properties);
     }
 
     public void applyDefaultsForCreation(TilskuddFartoyResource tilskuddFartoy) {

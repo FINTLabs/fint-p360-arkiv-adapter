@@ -1,8 +1,10 @@
 package no.fint.p360.data;
 
 import lombok.Getter;
+import lombok.ToString;
 
 @Getter
+@ToString
 public class CaseProperties {
     private String administrativEnhet;
     private String arkivdel;

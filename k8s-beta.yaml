@@ -21,7 +21,7 @@ spec:
           emptyDir: {}
       containers:
         - name: adapter-p360-arkiv-ra-no-ra-no
-          image: fintlabs.azurecr.io/p360-arkiv-adapter:build.19
+          image: fintlabs.azurecr.io/p360-arkiv-adapter:build.20
           resources:
             limits:
               memory: "2Gi"
@@ -65,6 +65,16 @@ spec:
             - {name: fint.oauth.client-secret, valueFrom: {secretKeyRef: {name: ra-p360-adapter, key: client-secret}}}
             - {name: fint.oauth.scope, value: 'fint-client'}
             - {name: fint.adapter.reject-unknown-events, value: 'false'}
+            - {name: fint.p360.defaults.casetype.tilskudd-fartoy.administrativEnhet, value: '100072'}
+            - {name: fint.p360.defaults.casetype.tilskudd-fartoy.arkivdel, value: '100007'}
+            - {name: fint.p360.defaults.casetype.tilskudd-fartoy.klassifikasjon, value: 'Fartøy'}
+            - {name: fint.p360.defaults.casetype.tilskudd-fartoy.saksstatus, value: 'B'}
+            - {name: fint.p360.defaults.casetype.tilskudd-fartoy.korrespondansepartType, value: '5'}
+            - {name: fint.p360.defaults.casetype.tilskudd-fartoy.journalpostType, value: '110'}
+            - {name: fint.p360.defaults.casetype.tilskudd-fartoy.journalstatus, value: '3'}
+            - {name: fint.p360.defaults.casetype.tilskudd-fartoy.dokumentstatus, value: '1'}
+            - {name: fint.p360.defaults.casetype.tilskudd-fartoy.dokumentType, value: '1'}
+            - {name: fint.p360.defaults.casetype.tilskudd-fartoy.tilknyttetRegistreringSom, value: '1'}
             - {name: fint.p360.wsdl-location, value: '/data'}
             - {name: fint.p360.user, valueFrom: {secretKeyRef: {name: ra-p360-adapter, key: p360-user}}}
             - {name: fint.p360.password, valueFrom: {secretKeyRef: {name: ra-p360-adapter, key: p360-password}}}
