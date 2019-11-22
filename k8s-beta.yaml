@@ -21,7 +21,7 @@ spec:
           emptyDir: {}
       containers:
         - name: adapter-p360-arkiv-ra-no-ra-no
-          image: fintlabs.azurecr.io/p360-arkiv-adapter:build.22
+          image: fintlabs.azurecr.io/p360-arkiv-adapter:build.23
           resources:
             limits:
               memory: "2Gi"
@@ -67,8 +67,7 @@ spec:
             - {name: fint.adapter.reject-unknown-events, value: 'false'}
             - {name: fint.p360.defaults.casetype.tilskudd-fartoy.administrativEnhet, value: '100072'}
             - {name: fint.p360.defaults.casetype.tilskudd-fartoy.arkivdel, value: '100007'}
-            - {name: fint.p360.defaults.casetype.tilskudd-fartoy.klassifikasjon, value: 'Fartøy'}
-            - {name: fint.p360.defaults.casetype.tilskudd-fartoy.saksstatus, value: 'B'}
+            - {name: fint.p360.defaults.casetype.tilskudd-fartoy.saksstatus, value: '5'}
             - {name: fint.p360.defaults.casetype.tilskudd-fartoy.korrespondansepartType, value: '5'}
             - {name: fint.p360.defaults.casetype.tilskudd-fartoy.journalpostType, value: '110'}
             - {name: fint.p360.defaults.casetype.tilskudd-fartoy.journalstatus, value: '3'}
