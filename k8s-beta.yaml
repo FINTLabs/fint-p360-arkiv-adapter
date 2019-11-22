@@ -21,7 +21,7 @@ spec:
           emptyDir: {}
       containers:
         - name: adapter-p360-arkiv-ra-no-ra-no
-          image: fintlabs.azurecr.io/p360-arkiv-adapter:build.23
+          image: fintlabs.azurecr.io/p360-arkiv-adapter:build.25
           resources:
             limits:
               memory: "2Gi"
@@ -46,6 +46,7 @@ spec:
               value: >-
                 -Xmx1G -verbose:gc
                 -XX:+ExitOnOutOfMemoryError
+                -Dfile.encoding=UTF-8
                 -Dhttps.proxyHost=10.10.10.4
                 -Dhttps.proxyPort=8888
                 -Dhttp.nonProxyHosts="localhost|*.felleskomponent.no"

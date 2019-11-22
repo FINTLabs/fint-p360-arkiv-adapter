@@ -6,6 +6,13 @@ springfox:
   version: '@version@'
 
 fint:
+  p360:
+    defaults:
+      casetype:
+        tilskudd-fartoy:
+          noekkelord:
+          klassifikasjon: Fartøy
+
   adapter:
     endpoints:
       sse: /sse/%s
@@ -15,12 +22,6 @@ fint:
         arkiv: https://beta.felleskomponent.no/administrasjon/arkiv/provider
         kulturminne: https://beta.felleskomponent.no/kultur/kulturminnevern/provider
     organizations: ra.no
-
-  p360:
-    defaults:
-      casetype:
-        tilskudd-fartoy:
-          klassifikasjon: Fartøy
 
   oauth:
     enabled: true
