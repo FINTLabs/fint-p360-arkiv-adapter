@@ -21,7 +21,7 @@ spec:
           emptyDir: {}
       containers:
         - name: adapter-p360-arkiv-ra-no-ra-no
-          image: fintlabs.azurecr.io/p360-arkiv-adapter:build.26
+          image: fintlabs.azurecr.io/p360-arkiv-adapter:build.27
           resources:
             limits:
               memory: "2Gi"
