@@ -3,6 +3,7 @@ package no.fint.p360.data;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import no.fint.model.resource.administrasjon.arkiv.*;
+import no.fint.p360.data.noark.codes.CaseCategoryService;
 import no.fint.p360.data.noark.codes.dokumentstatus.DokumentstatusService;
 import no.fint.p360.data.noark.codes.dokumenttype.DokumenttypeService;
 import no.fint.p360.data.noark.codes.journalposttype.JournalpostTypeService;
@@ -62,6 +63,9 @@ public class KodeverkRepository {
     @Autowired
     private VariantformatService variantformatService;
 
+    @Autowired
+    private CaseCategoryService caseCategoryService;
+
     @Getter
     private List<SaksstatusResource> saksstatus;
 
@@ -113,6 +117,7 @@ public class KodeverkRepository {
         skjermingshjemmel = skjermingshjemmelService.getLawTable().collect(Collectors.toList());
         variantformat = variantformatService.getVersionFormatTable().collect(Collectors.toList());
         log.info("Refreshed code lists");
+        log.info("Case Category Table: {}", caseCategoryService.getCaseCategoryTable().collect(Collectors.joining(", ")));
     }
 
 }

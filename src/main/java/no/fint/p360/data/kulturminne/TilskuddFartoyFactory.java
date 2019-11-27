@@ -164,8 +164,8 @@ public class TilskuddFartoyFactory {
             // TODO createCaseParameter.setAccessGroup();
         }
 
+        // TODO createCaseParameter.setCategory(objectFactory.createCaseParameterBaseCategory("recno:99999"));
         // TODO Missing parameters
-        createCaseParameter.setCategory(objectFactory.createCaseParameterBaseCategory("recno:99999"));
         //createCaseParameter.setRemarks();
         //createCaseParameter.setStartDate();
         //createCaseParameter.setUnofficialTitle();
