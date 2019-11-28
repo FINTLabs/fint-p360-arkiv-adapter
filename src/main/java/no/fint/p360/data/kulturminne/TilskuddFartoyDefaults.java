@@ -52,6 +52,9 @@ public class TilskuddFartoyDefaults {
     }
 
     public void applyDefaultsForUpdate(TilskuddFartoyResource tilskuddFartoy) {
+        if (tilskuddFartoy.getJournalpost() == null || tilskuddFartoy.getJournalpost().isEmpty()) {
+            return;
+        }
         tilskuddFartoy.getJournalpost().forEach(journalpost -> {
             journalpost.getKorrespondansepart().forEach(korrespondanse -> {
                 if (korrespondanse.getKorrespondanseparttype().isEmpty()) {
