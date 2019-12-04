@@ -14,6 +14,7 @@ import no.fint.model.resource.FintLinks;
 import no.fint.model.resource.administrasjon.arkiv.DokumentfilResource;
 import no.fint.model.resource.administrasjon.arkiv.KorrespondansepartResource;
 import no.fint.model.resource.kultur.kulturminnevern.TilskuddFartoyResource;
+import no.fint.p360.SupportedActions;
 import no.fint.p360.data.FileRepository;
 import no.fint.p360.data.KodeverkRepository;
 import no.fint.p360.data.exception.*;
@@ -24,18 +25,19 @@ import no.fint.p360.data.noark.part.PartService;
 import no.fint.p360.data.noark.sak.SakService;
 import no.fint.p360.data.p360.*;
 import no.fint.p360.data.utilities.FintUtils;
+import no.fint.p360.handler.Handler;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
@@ -51,6 +53,14 @@ public class EventHandlerService {
 
     @Autowired
     private EventStatusService eventStatusService;
+
+    @Autowired
+    private SupportedActions supportedActions;
+
+    @Autowired
+    private Collection<Handler> handlers;
+
+    private Map<String, Handler> actionsHandlerMap;
 
     @Autowired
     private P360DocumentService documentService;
@@ -527,10 +537,22 @@ public class EventHandlerService {
 
 
     private boolean healthCheck() {
-        return caseService.ping()
+        return handlers.stream().allMatch(Handler::health)
+                && caseService.ping()
                 && documentService.ping()
                 && fileService.ping()
                 && supportService.ping()
                 && contactService.ping();
     }
+
+    @PostConstruct
+    void init() {
+        actionsHandlerMap = new HashMap<>();
+        handlers.forEach(h -> h.actions().forEach(a -> {
+            actionsHandlerMap.put(a, h);
+            supportedActions.add(a);
+        }));
+        log.info("Registered {} handlers, supporting actions: {}", handlers.size(), supportedActions.getActions());
+    }
+
 }
