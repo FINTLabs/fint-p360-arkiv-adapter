@@ -87,4 +87,7 @@ public class KorrespondansepartService {
         }
     }
 
+    public boolean health() {
+        return  contactService.ping();
+    }
 }

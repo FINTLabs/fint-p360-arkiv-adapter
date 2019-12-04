@@ -8,22 +8,31 @@ import no.fint.p360.data.p360.P360CaseService
 import no.fint.p360.data.p360.P360DocumentService
 import spock.lang.Specification
 
+import java.util.concurrent.Executor
+
 class EventHandlerServiceSpec extends Specification {
     private EventHandlerService eventHandlerService
     private EventStatusService eventStatusService
     private EventResponseService eventResponseService
     private P360DocumentService documentService
     private P360CaseService caseService
+    private Executor executor
 
     void setup() {
+        executor = new Executor() {
+            @Override
+            void execute(Runnable command) {
+                command.run()
+            }
+        }
         eventStatusService = Mock(EventStatusService)
         eventResponseService = Mock(EventResponseService)
         caseService = Mock(P360CaseService)
         documentService = Mock(P360DocumentService)
-        eventHandlerService = new EventHandlerService(eventStatusService: eventStatusService,
-                eventResponseService: eventResponseService,
-                caseService: caseService,
-                documentService: documentService
+        eventHandlerService = new EventHandlerService(
+                executor: executor,
+                eventStatusService: eventStatusService,
+                eventResponseService: eventResponseService
         )
     }
 

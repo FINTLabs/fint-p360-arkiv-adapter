@@ -1,5 +1,6 @@
-package no.fint.p360.data;
+package no.fint.p360.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.cache.*;
 import lombok.extern.slf4j.Slf4j;
 import no.fint.arkiv.p360.file.FileResult;
@@ -10,13 +11,11 @@ import no.fint.p360.data.p360.P360FileService;
 import no.fint.p360.data.utilities.FintUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.tika.Tika;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.PostConstruct;
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -24,7 +23,7 @@ import java.util.concurrent.ExecutionException;
 
 @Slf4j
 @Repository
-public class FileRepository extends CacheLoader<String, Path> implements RemovalListener<String, Path> {
+public class CachedFileService extends CacheLoader<String, Path> implements RemovalListener<String, Path> {
 
     @Autowired
     private AdapterProps props;
@@ -32,6 +31,7 @@ public class FileRepository extends CacheLoader<String, Path> implements Removal
     @Autowired
     private P360FileService fileService;
 
+    @Autowired
     private ObjectMapper objectMapper;
 
     private LoadingCache<String, Path> files;
@@ -39,28 +39,26 @@ public class FileRepository extends CacheLoader<String, Path> implements Removal
     @PostConstruct
     public void init() throws IOException {
         files = CacheBuilder.from(props.getCacheSpec()).removalListener(this).build(this);
-        if (!Files.exists(props.getFileCacheDirectory())) {
-            Files.createDirectories(props.getFileCacheDirectory());
+        if (!Files.exists(props.getCacheDirectory())) {
+            Files.createDirectories(props.getCacheDirectory());
         }
-        if (!Files.isDirectory(props.getFileCacheDirectory())) {
-            throw new IllegalArgumentException("Not a directory: " + props.getFileCacheDirectory());
+        if (!Files.isDirectory(props.getCacheDirectory())) {
+            throw new IllegalArgumentException("Not a directory: " + props.getCacheDirectory());
         }
-
-        objectMapper = new ObjectMapper();
     }
 
-    @Scheduled(initialDelay = 10000, fixedDelayString = "${fint.file-repository.scan-interval:1500000}")
+    @Scheduled(initialDelay = 10000, fixedDelayString = "${fint.file-cache.scan-interval:1500000}")
     public void scan() {
         try {
             log.info("Start scanning cache directory for files.");
-            Files.walk(props.getFileCacheDirectory()).filter(Files::isRegularFile).map(Path::toAbsolutePath).forEach(this::addFile); 
+            Files.walk(props.getCacheDirectory()).filter(Files::isRegularFile).map(Path::toAbsolutePath).forEach(this::addFile);
             log.info("Finished scanning cache directory. {} file(s) in repository", files.size());
         } catch (IOException e) {
             log.error("During scan", e);
         }
     }
 
-    @Scheduled(initialDelay = 20000, fixedDelayString = "${fint.file-repository.clean-interval:150000}")
+    @Scheduled(initialDelay = 20000, fixedDelayString = "${fint.file-cache.clean-interval:150000}")
     public void cleanUp() {
         files.cleanUp();
     }
@@ -84,11 +82,6 @@ public class FileRepository extends CacheLoader<String, Path> implements Removal
 
     }
 
-    public void putFile(DokumentfilResource resource) throws IOException {
-        Path path = saveFile(resource);
-        files.put(getId(path), path);
-        log.info("File saved as {}", path);
-    }
 
     private String getContentType(String format) {
         Tika tika = new Tika();
@@ -100,7 +93,7 @@ public class FileRepository extends CacheLoader<String, Path> implements Removal
     }
 
     private Path saveFile(DokumentfilResource dokumentfilResource) throws IOException {
-        Path path = props.getFileCacheDirectory().resolve(dokumentfilResource.getSystemId().getIdentifikatorverdi() + ".json");
+        Path path = props.getCacheDirectory().resolve(dokumentfilResource.getSystemId().getIdentifikatorverdi() + ".json");
         objectMapper.writeValue(Files.newOutputStream(path), dokumentfilResource);
         return path;
     }
@@ -109,11 +102,6 @@ public class FileRepository extends CacheLoader<String, Path> implements Removal
     public void onRemoval(RemovalNotification<String, Path> removal) {
         if (removal.wasEvicted()) {
             Path path = removal.getValue();
-            if (StringUtils.startsWith(path.getFileName().toString(), "I_")) {
-                log.info("Not removing {}", path);
-                return;
-            }
-            log.info("Removing {}", path);
             try {
                 Files.delete(path);
             } catch (IOException e) {
@@ -125,23 +113,17 @@ public class FileRepository extends CacheLoader<String, Path> implements Removal
     @Override
     public Path load(String recNo) throws Exception {
         log.info("Loading {} ...", recNo);
+        FileResult fileResult = fileService.getFileByRecNo(recNo);
 
-        if (StringUtils.startsWith(recNo, "I_")) {
-            Path path = props.getFileCacheDirectory().resolve(recNo + ".json");
-            if (Files.exists(path)) {
-                return path;
-            }
-            throw new FileNotFound(recNo);
+        DokumentfilResource dokumentfilResource = new DokumentfilResource();
+        dokumentfilResource.setSystemId(FintUtils.createIdentifikator(recNo));
+        dokumentfilResource.setData(fileResult.getBase64Data().getValue());
+        dokumentfilResource.setFormat(getContentType(fileResult.getFormat().getValue()));
 
-        } else {
-            FileResult fileResult = fileService.getFileByRecNo(recNo);
+        return saveFile(dokumentfilResource);
+    }
 
-            DokumentfilResource dokumentfilResource = new DokumentfilResource();
-            dokumentfilResource.setSystemId(FintUtils.createIdentifikator(recNo));
-            dokumentfilResource.setData(fileResult.getBase64Data().getValue());
-            dokumentfilResource.setFormat(getContentType(fileResult.getFormat().getValue()));
-
-            return saveFile(dokumentfilResource);
-        }
+    public boolean health() {
+        return fileService.ping();
     }
 }
