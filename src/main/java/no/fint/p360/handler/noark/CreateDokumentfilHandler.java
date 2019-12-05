@@ -10,7 +10,7 @@ import no.fint.model.administrasjon.arkiv.ArkivActions;
 import no.fint.model.resource.FintLinks;
 import no.fint.model.resource.administrasjon.arkiv.DokumentfilResource;
 import no.fint.p360.handler.Handler;
-import no.fint.p360.repository.InternalFileRepository;
+import no.fint.p360.repository.InternalRepository;
 import no.fint.p360.service.ValidationService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +31,7 @@ public class CreateDokumentfilHandler implements Handler {
     private ValidationService validationService;
 
     @Autowired
-    private InternalFileRepository internalFileRepository;
+    private InternalRepository internalRepository;
 
     @Override
     public void accept(Event<FintLinks> response) {
@@ -55,7 +55,7 @@ public class CreateDokumentfilHandler implements Handler {
 
         response.getData().clear();
         try {
-            internalFileRepository.putFile(dokumentfilResource);
+            internalRepository.putFile(dokumentfilResource);
             response.addData(dokumentfilResource);
             response.setResponseStatus(ResponseStatus.ACCEPTED);
         } catch (IOException e) {
@@ -72,6 +72,6 @@ public class CreateDokumentfilHandler implements Handler {
 
     @Override
     public boolean health() {
-        return internalFileRepository.health();
+        return internalRepository.health();
     }
 }

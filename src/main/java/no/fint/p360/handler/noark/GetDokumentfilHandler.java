@@ -8,7 +8,7 @@ import no.fint.model.resource.FintLinks;
 import no.fint.model.resource.administrasjon.arkiv.DokumentfilResource;
 import no.fint.p360.data.exception.FileNotFound;
 import no.fint.p360.handler.Handler;
-import no.fint.p360.repository.InternalFileRepository;
+import no.fint.p360.repository.InternalRepository;
 import no.fint.p360.service.CachedFileService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +25,7 @@ public class GetDokumentfilHandler implements Handler {
     private CachedFileService cachedFileService;
 
     @Autowired
-    private InternalFileRepository internalFileRepository;
+    private InternalRepository internalRepository;
 
     @Override
     public void accept(Event<FintLinks> response) {
@@ -38,7 +38,7 @@ public class GetDokumentfilHandler implements Handler {
             }
             String systemId = StringUtils.removeStartIgnoreCase(response.getQuery(), "systemid/");
             if (StringUtils.startsWith(systemId, "I_")) {
-                DokumentfilResource dokumentfilResource = internalFileRepository.getFile(systemId);
+                DokumentfilResource dokumentfilResource = internalRepository.getFile(systemId);
                 response.addData(dokumentfilResource);
                 response.setResponseStatus(ResponseStatus.ACCEPTED);
             } else {

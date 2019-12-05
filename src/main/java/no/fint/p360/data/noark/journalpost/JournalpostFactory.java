@@ -10,7 +10,7 @@ import no.fint.model.resource.Link;
 import no.fint.model.resource.administrasjon.arkiv.*;
 import no.fint.p360.data.exception.FileNotFound;
 import no.fint.p360.data.utilities.FintUtils;
-import no.fint.p360.repository.InternalFileRepository;
+import no.fint.p360.repository.InternalRepository;
 import no.fint.p360.repository.KodeverkRepository;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +34,7 @@ public class JournalpostFactory {
     private KodeverkRepository kodeverkRepository;
 
     @Autowired
-    private InternalFileRepository internalFileRepository;
+    private InternalRepository internalRepository;
 
     private ObjectFactory objectFactory;
 
@@ -406,8 +406,8 @@ public class JournalpostFactory {
                         .map(Link::getHref)
                         .filter(StringUtils::isNotBlank)
                         .map(s -> StringUtils.substringAfterLast(s, "/"))
-                        .filter(internalFileRepository::exists)
-                        .map(internalFileRepository::silentGetFile)
+                        .filter(internalRepository::exists)
+                        .map(internalRepository::silentGetFile)
                         .map(DokumentfilResource::getData)
                         .filter(StringUtils::isNotBlank)
                         .map(Base64.getDecoder()::decode)
