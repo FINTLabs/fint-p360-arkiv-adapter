@@ -64,7 +64,8 @@ public class UpdateTilskuddFartoyHandler implements Handler {
         if (!StringUtils.startsWithIgnoreCase(query, "mappeid/")) {
             throw new IllegalArgumentException("Invalid query: " + query);
         }
-        if (tilskuddFartoyResource.getJournalpost().isEmpty()) {
+        if (tilskuddFartoyResource.getJournalpost() == null ||
+                tilskuddFartoyResource.getJournalpost().isEmpty()) {
             throw new IllegalArgumentException("Update must contain at least one Journalpost");
         }
         tilskuddFartoyDefaults.applyDefaultsForUpdate(tilskuddFartoyResource);
