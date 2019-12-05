@@ -21,7 +21,7 @@ spec:
           emptyDir: {}
       containers:
         - name: adapter-p360-arkiv-ra-no-ra-no
-          image: fintlabs.azurecr.io/p360-arkiv-adapter:build.29
+          image: fintlabs.azurecr.io/p360-arkiv-adapter:build.31
           resources:
             limits:
               memory: "2Gi"
@@ -81,4 +81,8 @@ spec:
             - {name: fint.p360.endpoint-base-url, valueFrom: {secretKeyRef: {name: ra-p360-adapter, key: p360-endpoint-base-url}}}
             - {name: fint.kulturminne.tilskudd-fartoy.arkivdel, value: '100072'}
             - {name: fint.kulturminne.tilskudd-fartoy.sub-archive, value: '100007'}
-            - {name: fint.file-repository.cache-directory, value: '/temp'}
+            - {name: fint.file-cache.directory, value: '/temp'}
+            - {name: fint.internal-files.type, value: 'FILE'}
+            - {name: fint.internal-files.directory, value: '/temp'}
+            - {name: fint.internal-files.connection-string, valueFrom: {secretKeyRef: {name: fintdockervolumes, key: connection-string}}}
+            - {name: fint.internal-files.container-name, value: fint-blobs}
