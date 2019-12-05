@@ -1,4 +1,4 @@
-package no.fint.p360.data;
+package no.fint.p360.repository;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -102,6 +102,8 @@ public class KodeverkRepository {
     @Getter
     private List<VariantformatResource> variantformat;
 
+    private transient boolean healthy = false;
+
     @Scheduled(initialDelay = 10000, fixedDelayString = "${fint.kodeverk.refresh-interval:1500000}")
     public void refresh() {
         saksstatus = saksStatusService.getCaseStatusTable().collect(Collectors.toList());
@@ -118,6 +120,10 @@ public class KodeverkRepository {
         variantformat = variantformatService.getVersionFormatTable().collect(Collectors.toList());
         log.info("Refreshed code lists");
         log.info("Case Category Table: {}", caseCategoryService.getCaseCategoryTable().collect(Collectors.joining(", ")));
+        healthy = true;
     }
 
+    public boolean health() {
+        return healthy;
+    }
 }

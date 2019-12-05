@@ -10,4 +10,5 @@ generated-sources
 .DS_Store
 /data/
 /file-cache/
+/internal-files/
 /adapter.log*

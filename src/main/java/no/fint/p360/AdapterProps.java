@@ -19,10 +19,10 @@ public class AdapterProps {
     @Value("${fint.p360.endpoint-base-url}")
     private String endpointBaseUrl;
 
-    @Value("${fint.file-repository.cache-directory:file-cache}")
-    private Path fileCacheDirectory;
+    @Value("${fint.file-cache.directory:file-cache}")
+    private Path cacheDirectory;
 
-    @Value("${fint.file-repository.cache-spec:expireAfterAccess=5m,expireAfterWrite=7m}")
+    @Value("${fint.file-cache.spec:expireAfterAccess=5m,expireAfterWrite=7m}")
     private String cacheSpec;
 
 }

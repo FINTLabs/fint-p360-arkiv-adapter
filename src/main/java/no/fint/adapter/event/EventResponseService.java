@@ -5,10 +5,7 @@ import no.fint.adapter.FintAdapterEndpoints;
 import no.fint.event.model.Event;
 import no.fint.event.model.HeaderConstants;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
@@ -36,6 +33,7 @@ public class EventResponseService {
         try {
             HttpHeaders headers = new HttpHeaders();
             headers.add(HeaderConstants.ORG_ID, event.getOrgId());
+            headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_UTF8_VALUE);
             String url = endpoints.getProviders().get(component) + endpoints.getResponse();
             log.info("{}: Posting response for {} ...", component, event.getAction());
             ResponseEntity<Void> response = restTemplate.exchange(url, HttpMethod.POST, new HttpEntity<>(event, headers), Void.class);

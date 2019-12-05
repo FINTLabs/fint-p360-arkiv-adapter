@@ -46,4 +46,8 @@ public class SakFactory {
         }
         return result;
     }
+
+    public boolean health() {
+        return noarkFactory.health();
+    }
 }

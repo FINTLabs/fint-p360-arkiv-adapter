@@ -8,11 +8,10 @@ import no.fint.model.administrasjon.personal.Personalressurs;
 import no.fint.model.felles.kompleksedatatyper.Identifikator;
 import no.fint.model.resource.Link;
 import no.fint.model.resource.administrasjon.arkiv.*;
-import no.fint.p360.AdapterProps;
-import no.fint.p360.data.FileRepository;
-import no.fint.p360.data.KodeverkRepository;
 import no.fint.p360.data.exception.FileNotFound;
 import no.fint.p360.data.utilities.FintUtils;
+import no.fint.p360.repository.InternalFileRepository;
+import no.fint.p360.repository.KodeverkRepository;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -35,10 +34,7 @@ public class JournalpostFactory {
     private KodeverkRepository kodeverkRepository;
 
     @Autowired
-    private FileRepository fileRepository;
-
-    @Autowired
-    private AdapterProps adapterProps;
+    private InternalFileRepository internalFileRepository;
 
     private ObjectFactory objectFactory;
 
@@ -410,8 +406,10 @@ public class JournalpostFactory {
                         .map(Link::getHref)
                         .filter(StringUtils::isNotBlank)
                         .map(s -> StringUtils.substringAfterLast(s, "/"))
-                        .map(fileRepository::getFile)
+                        .filter(internalFileRepository::exists)
+                        .map(internalFileRepository::silentGetFile)
                         .map(DokumentfilResource::getData)
+                        .filter(StringUtils::isNotBlank)
                         .map(Base64.getDecoder()::decode)
                         .map(objectFactory::createCreateFileParameterData)
                         .findAny()

@@ -102,4 +102,7 @@ public class NoarkFactory {
     }
 
 
+    public boolean health() {
+        return documentService.ping();
+    }
 }

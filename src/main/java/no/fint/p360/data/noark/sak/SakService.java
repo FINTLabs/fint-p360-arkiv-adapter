@@ -32,4 +32,8 @@ public class SakService {
     public SakResource getSakBySystemId(String systemId) throws GetTilskuddFartoyNotFoundException, GetTilskuddFartoyException, GetDocumentException, IllegalCaseNumberFormat {
         return sakFactory.toFintResource(caseService.getSakBySystemId(systemId));
     }
+
+    public boolean health() {
+        return caseService.ping() && sakFactory.health();
+    }
 }
