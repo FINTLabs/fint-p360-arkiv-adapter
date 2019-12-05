@@ -6,25 +6,17 @@ import no.fint.model.resource.administrasjon.arkiv.DokumentfilResource;
 import no.fint.p360.data.utilities.FintUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Repository;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.concurrent.atomic.AtomicLong;
 
 @Repository
 @Slf4j
-public class InternalFileRepository {
-
-    private AtomicLong identifier =
-            new AtomicLong(Long
-                    .parseLong(DateTimeFormatter
-                            .ofPattern("yyyyDDDHHmm'000'")
-                            .format(LocalDateTime
-                                    .now())));
+@ConditionalOnProperty(name = "fint.internal-files.type", havingValue = "FILE")
+public class InternalFileRepository extends InternalRepository {
 
     @Value("${fint.internal-files.directory}")
     private Path rootDirectory;
@@ -32,19 +24,22 @@ public class InternalFileRepository {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Override
     public void putFile(DokumentfilResource resource) throws IOException {
-        String systemId = String.format("I_%d", identifier.incrementAndGet());
+        String systemId = getNextSystemId();
         resource.setSystemId(FintUtils.createIdentifikator(systemId));
         Path path = rootDirectory.resolve(systemId + ".json");
         objectMapper.writeValue(Files.newOutputStream(path), resource);
         log.info("File saved as {}", path);
     }
 
+    @Override
     public DokumentfilResource getFile(String recNo) throws IOException {
         Path path = rootDirectory.resolve(recNo + ".json");
         return objectMapper.readValue(Files.newInputStream(path), DokumentfilResource.class);
     }
 
+    @Override
     public DokumentfilResource silentGetFile(String recNo) {
         try {
             return getFile(recNo);
@@ -53,10 +48,12 @@ public class InternalFileRepository {
         }
     }
 
+    @Override
     public boolean health() {
         return Files.isDirectory(rootDirectory);
     }
 
+    @Override
     public boolean exists(String recNo) {
         return Files.isReadable(rootDirectory.resolve(recNo + ".json"));
     }
