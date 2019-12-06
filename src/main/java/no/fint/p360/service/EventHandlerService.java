@@ -61,7 +61,7 @@ public class EventHandlerService {
     private void handleResponse(String component, String action, Event<FintLinks> response) {
         try {
             actionsHandlerMap.getOrDefault(action, e -> {
-                log.warn("No handler found for {}", action);
+                log.warn("No handler found for {}", e.getAction());
                 e.setStatus(Status.ADAPTER_REJECTED);
                 e.setResponseStatus(ResponseStatus.REJECTED);
                 e.setMessage("Unsupported action");

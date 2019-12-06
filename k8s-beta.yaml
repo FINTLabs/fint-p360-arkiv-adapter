@@ -82,7 +82,7 @@ spec:
             - {name: fint.kulturminne.tilskudd-fartoy.arkivdel, value: '100072'}
             - {name: fint.kulturminne.tilskudd-fartoy.sub-archive, value: '100007'}
             - {name: fint.file-cache.directory, value: '/temp'}
-            - {name: fint.internal-files.type, value: 'FILE'}
+            - {name: fint.internal-files.type, value: 'BLOB'}
             - {name: fint.internal-files.directory, value: '/temp'}
             - {name: fint.internal-files.connection-string, valueFrom: {secretKeyRef: {name: fintdockervolumes, key: connection-string}}}
             - {name: fint.internal-files.container-name, value: fint-blobs}

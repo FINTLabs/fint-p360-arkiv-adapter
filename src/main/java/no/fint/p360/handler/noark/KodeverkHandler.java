@@ -3,6 +3,7 @@ package no.fint.p360.handler.noark;
 import lombok.extern.slf4j.Slf4j;
 import no.fint.event.model.Event;
 import no.fint.event.model.ResponseStatus;
+import no.fint.event.model.Status;
 import no.fint.model.administrasjon.arkiv.ArkivActions;
 import no.fint.model.resource.FintLinks;
 import no.fint.p360.handler.Handler;
@@ -45,10 +46,15 @@ public class KodeverkHandler implements Handler {
 
     @Override
     public void accept(Event<FintLinks> response) {
+        if (!health()) {
+            response.setStatus(Status.ADAPTER_REJECTED);
+            response.setMessage("Health test failed");
+            return;
+        }
         response.setResponseStatus(ResponseStatus.ACCEPTED);
         actionsMap.getOrDefault(ArkivActions.valueOf(response.getAction()),
                 event -> {
-                    event.setResponseStatus(ResponseStatus.REJECTED);
+                    event.setStatus(Status.ADAPTER_REJECTED);
                     event.setMessage("Unsupported action " + event.getAction());
                 }).accept(response);
     }
