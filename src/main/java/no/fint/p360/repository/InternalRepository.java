@@ -1,5 +1,7 @@
 package no.fint.p360.repository;
 
+import no.fint.event.model.Event;
+import no.fint.model.resource.FintLinks;
 import no.fint.model.resource.administrasjon.arkiv.DokumentfilResource;
 
 import java.io.IOException;
@@ -15,7 +17,7 @@ public abstract class InternalRepository {
                             .format(LocalDateTime
                                     .now())));
 
-    public abstract void putFile(DokumentfilResource resource) throws IOException;
+    public abstract void putFile(Event<FintLinks> event, DokumentfilResource resource) throws IOException;
 
     protected String getNextSystemId() {
         return String.format("I_%d", identifier.incrementAndGet());

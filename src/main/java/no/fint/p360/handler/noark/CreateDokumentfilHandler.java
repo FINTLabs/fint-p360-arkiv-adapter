@@ -55,7 +55,7 @@ public class CreateDokumentfilHandler implements Handler {
 
         response.getData().clear();
         try {
-            internalRepository.putFile(dokumentfilResource);
+            internalRepository.putFile(response, dokumentfilResource);
             response.addData(dokumentfilResource);
             response.setResponseStatus(ResponseStatus.ACCEPTED);
         } catch (IOException e) {

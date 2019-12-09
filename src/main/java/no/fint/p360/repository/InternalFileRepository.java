@@ -2,6 +2,8 @@ package no.fint.p360.repository;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import no.fint.event.model.Event;
+import no.fint.model.resource.FintLinks;
 import no.fint.model.resource.administrasjon.arkiv.DokumentfilResource;
 import no.fint.p360.data.utilities.FintUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +27,7 @@ public class InternalFileRepository extends InternalRepository {
     private ObjectMapper objectMapper;
 
     @Override
-    public void putFile(DokumentfilResource resource) throws IOException {
+    public void putFile(Event<FintLinks> orgId, DokumentfilResource resource) throws IOException {
         String systemId = getNextSystemId();
         resource.setSystemId(FintUtils.createIdentifikator(systemId));
         Path path = rootDirectory.resolve(systemId + ".json");
