@@ -7,6 +7,8 @@ import com.azure.storage.blob.BlobServiceClientBuilder;
 import com.azure.storage.blob.specialized.BlobOutputStream;
 import com.google.common.collect.ImmutableMap;
 import lombok.extern.slf4j.Slf4j;
+import no.fint.event.model.Event;
+import no.fint.model.resource.FintLinks;
 import no.fint.model.resource.administrasjon.arkiv.DokumentfilResource;
 import no.fint.p360.data.utilities.FintUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -45,7 +47,7 @@ public class AzureBlobRepository extends InternalRepository {
     }
 
     @Override
-    public void putFile(DokumentfilResource resource) throws IOException {
+    public void putFile(Event<FintLinks> event, DokumentfilResource resource) throws IOException {
         String systemId = getNextSystemId();
         resource.setSystemId(FintUtils.createIdentifikator(systemId));
         BlobClient blobClient = blobContainerClient.getBlobClient(systemId);
@@ -55,6 +57,9 @@ public class AzureBlobRepository extends InternalRepository {
         blobClient.setMetadata(ImmutableMap.<String, String>builder()
                 .put("format", resource.getFormat())
                 .put("date", LocalDateTime.now().toString())
+                .put("orgId", event.getOrgId())
+                .put("client", event.getClient())
+                .put("corrId", event.getCorrId())
                 .build());
     }
 

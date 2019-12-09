@@ -1,6 +1,8 @@
 package no.fint.p360.repository
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import no.fint.event.model.Event
+import no.fint.model.resource.FintLinks
 import no.fint.model.resource.administrasjon.arkiv.DokumentfilResource
 import no.fint.p360.data.utilities.FintUtils
 import spock.lang.Specification
@@ -27,7 +29,7 @@ class InternalFileRepositorySpec extends Specification {
     def "Save file to local file system"() {
 
         when:
-        fileRepository.putFile(dokumentfilResource)
+        fileRepository.putFile(new Event<FintLinks>(), dokumentfilResource)
 
         then:
         Files.list(path).anyMatch(Files.&isRegularFile)
@@ -36,7 +38,7 @@ class InternalFileRepositorySpec extends Specification {
 
     def "Read file from local file system"() {
         given:
-        fileRepository.putFile(dokumentfilResource)
+        fileRepository.putFile(new Event<FintLinks>(), dokumentfilResource)
         def id = dokumentfilResource.systemId.identifikatorverdi
 
         when:
