@@ -7,9 +7,8 @@ import no.fint.model.administrasjon.arkiv.ArkivActions;
 import no.fint.model.resource.FintLinks;
 import no.fint.model.resource.administrasjon.arkiv.DokumentfilResource;
 import no.fint.p360.data.exception.FileNotFound;
+import no.fint.p360.data.noark.dokument.DokumentfilService;
 import no.fint.p360.handler.Handler;
-import no.fint.p360.repository.InternalRepository;
-import no.fint.p360.service.CachedFileService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,10 +21,7 @@ import java.util.Set;
 @Service
 public class GetDokumentfilHandler implements Handler {
     @Autowired
-    private CachedFileService cachedFileService;
-
-    @Autowired
-    private InternalRepository internalRepository;
+    private DokumentfilService dokumentfilService;
 
     @Override
     public void accept(Event<FintLinks> response) {
@@ -37,15 +33,9 @@ public class GetDokumentfilHandler implements Handler {
                 return;
             }
             String systemId = StringUtils.removeStartIgnoreCase(response.getQuery(), "systemid/");
-            if (StringUtils.startsWith(systemId, "I_")) {
-                DokumentfilResource dokumentfilResource = internalRepository.getFile(systemId);
-                response.addData(dokumentfilResource);
-                response.setResponseStatus(ResponseStatus.ACCEPTED);
-            } else {
-                DokumentfilResource dokumentfilResource = cachedFileService.getFile(systemId);
-                response.addData(dokumentfilResource);
-                response.setResponseStatus(ResponseStatus.ACCEPTED);
-            }
+            DokumentfilResource dokumentfilResource = dokumentfilService.getDokumentfil(systemId);
+            response.addData(dokumentfilResource);
+            response.setResponseStatus(ResponseStatus.ACCEPTED);
         } catch (FileNotFound | IOException e) {
             response.setResponseStatus(ResponseStatus.REJECTED);
             response.setStatusCode("NOT_FOUND");
@@ -61,6 +51,6 @@ public class GetDokumentfilHandler implements Handler {
 
     @Override
     public boolean health() {
-        return cachedFileService.health();
+        return dokumentfilService.health();
     }
 }

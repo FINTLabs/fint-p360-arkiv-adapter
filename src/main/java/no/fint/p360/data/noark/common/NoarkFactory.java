@@ -67,7 +67,7 @@ public class NoarkFactory {
                         .map(ArrayOfCaseContactResult::getCaseContactResult)
                         .map(List::stream)
                         .orElseGet(Stream::empty)
-                        .map(this::createPartsinformasjon)
+                        .map(partFactory::getPartsinformasjon)
                         .collect(Collectors.toList()));
 
         List<String> journalpostIds = optionalValue(caseResult.getDocuments())

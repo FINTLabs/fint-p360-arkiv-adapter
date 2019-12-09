@@ -22,7 +22,7 @@ import static no.fint.p360.data.utilities.QueryUtils.getQueryParams;
 
 @Slf4j
 @Service
-public class GetSakService implements Handler {
+public class GetSakHandler implements Handler {
     @Autowired
     private SakService sakService;
 
