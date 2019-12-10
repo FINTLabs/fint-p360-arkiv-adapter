@@ -66,9 +66,10 @@ dependencies {
     compile('org.projectlombok:lombok:1.18.10')
 
     // Spring adds validation-api 1.x and hibernate-validator 5.x by default, all three dependencies needed to override.
+    // Version 6.1.0 does not work :(
     compile 'javax.validation:validation-api:2.0.1.Final'
-    compile 'org.hibernate.validator:hibernate-validator:6.1.0.Final'
-    compile 'org.hibernate.validator:hibernate-validator-annotation-processor:6.1.0.Final'
+    compile 'org.hibernate.validator:hibernate-validator:6.0.17.Final'
+    compile 'org.hibernate.validator:hibernate-validator-annotation-processor:6.0.17.Final'
 
     compile('no.fint:fint-sse:1.4.0')
     compile('no.fint:fint-event-model:3.0.0')
