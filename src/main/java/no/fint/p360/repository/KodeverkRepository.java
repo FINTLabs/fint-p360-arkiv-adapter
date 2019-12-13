@@ -8,6 +8,8 @@ import no.fint.p360.data.noark.codes.dokumentstatus.DokumentstatusService;
 import no.fint.p360.data.noark.codes.dokumenttype.DokumenttypeService;
 import no.fint.p360.data.noark.codes.journalposttype.JournalpostTypeService;
 import no.fint.p360.data.noark.codes.journalstatus.JournalStatusService;
+import no.fint.p360.data.noark.codes.klasse.KlasseService;
+import no.fint.p360.data.noark.codes.klassifikasjonssystem.KlassifikasjonssystemService;
 import no.fint.p360.data.noark.codes.korrespondanseparttype.KorrespondansepartTypeService;
 import no.fint.p360.data.noark.codes.merknadstype.MerknadstypeService;
 import no.fint.p360.data.noark.codes.partrolle.PartRolleService;
@@ -66,6 +68,12 @@ public class KodeverkRepository {
     @Autowired
     private CaseCategoryService caseCategoryService;
 
+    @Autowired
+    private KlassifikasjonssystemService klassifikasjonssystemService;
+
+    @Autowired
+    private KlasseService klasseService;
+
     @Getter
     private List<SaksstatusResource> saksstatus;
 
@@ -102,6 +110,12 @@ public class KodeverkRepository {
     @Getter
     private List<VariantformatResource> variantformat;
 
+    @Getter
+    private List<KlassifikasjonssystemResource> klassifikasjonssystem;
+
+    @Getter
+    private List<KlasseResource> klasse;
+
     private transient boolean healthy = false;
 
     @Scheduled(initialDelay = 10000, fixedDelayString = "${fint.kodeverk.refresh-interval:1500000}")
@@ -118,6 +132,8 @@ public class KodeverkRepository {
         tilgangsrestriksjon = tilgangsrestriksjonService.getAccessCodeTable().collect(Collectors.toList());
         skjermingshjemmel = skjermingshjemmelService.getLawTable().collect(Collectors.toList());
         variantformat = variantformatService.getVersionFormatTable().collect(Collectors.toList());
+        klassifikasjonssystem = klassifikasjonssystemService.getKlassifikasjonssystem().collect(Collectors.toList());
+        klasse = klasseService.getKlasse().collect(Collectors.toList());
         log.info("Refreshed code lists");
         log.info("Case Category Table: {}", caseCategoryService.getCaseCategoryTable().collect(Collectors.joining(", ")));
         healthy = true;
