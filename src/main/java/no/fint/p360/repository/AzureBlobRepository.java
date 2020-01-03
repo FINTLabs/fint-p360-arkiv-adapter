@@ -56,6 +56,7 @@ public class AzureBlobRepository extends InternalRepository {
         }
         blobClient.setMetadata(ImmutableMap.<String, String>builder()
                 .put("format", resource.getFormat())
+                .put("filename", resource.getFilnavn())
                 .put("date", LocalDateTime.now().toString())
                 .put("orgId", event.getOrgId())
                 .put("client", event.getClient())
@@ -79,6 +80,7 @@ public class AzureBlobRepository extends InternalRepository {
         resource.setSystemId(FintUtils.createIdentifikator(recNo));
         Map<String, String> metadata = blobClient.getProperties().getMetadata();
         resource.setFormat(metadata.get("format"));
+        resource.setFilnavn(metadata.get("filename"));
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         blobClient.download(out);
         resource.setData(Base64.getEncoder().encodeToString(out.toByteArray()));
