@@ -119,6 +119,7 @@ public class CachedFileService extends CacheLoader<String, Path> implements Remo
         dokumentfilResource.setSystemId(FintUtils.createIdentifikator(recNo));
         dokumentfilResource.setData(fileResult.getBase64Data().getValue());
         dokumentfilResource.setFormat(getContentType(fileResult.getFormat().getValue()));
+        dokumentfilResource.setFilnavn(String.format("%s.%s", fileResult.getTitle().getValue(), fileResult.getFormat().getValue()));
 
         return saveFile(dokumentfilResource);
     }
