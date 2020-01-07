@@ -9,6 +9,7 @@ import no.fint.model.felles.kompleksedatatyper.Identifikator;
 import no.fint.model.resource.Link;
 import no.fint.model.resource.administrasjon.arkiv.*;
 import no.fint.p360.data.exception.FileNotFound;
+import no.fint.p360.data.noark.codes.filformat.FilformatResource;
 import no.fint.p360.repository.InternalRepository;
 import no.fint.p360.repository.KodeverkRepository;
 import org.apache.commons.lang3.StringUtils;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.PostConstruct;
 import java.util.Base64;
 import java.util.Collections;
+import java.util.Comparator;
 
 import static no.fint.p360.data.utilities.FintUtils.optionalValue;
 import static no.fint.p360.data.utilities.P360Utils.applyParameterFromLink;
@@ -108,7 +110,19 @@ public class DokumentbeskrivelseFactory {
         CreateFileParameter createFileParameter = objectFactory.createCreateFileParameter();
 
         createFileParameter.setTitle(objectFactory.createCreateFileParameterTitle(dokumentbeskrivelse.getTittel()));
-        createFileParameter.setFormat(objectFactory.createCreateFileParameterFormat(dokumentobjekt.getFormat()));
+
+        kodeverkRepository
+                .getFilformat()
+                .stream()
+                .filter(it -> StringUtils.equalsIgnoreCase(it.getKode(), dokumentobjekt.getFormat()))
+                .map(FilformatResource::getSystemId)
+                .map(Identifikator::getIdentifikatorverdi)
+                .min(Comparator.comparingInt(Integer::parseInt))
+                .map(s -> StringUtils.prependIfMissing(s, "recno:"))
+                .map(objectFactory::createCreateFileParameterFormat)
+                .ifPresent(createFileParameter::setFormat);
+
+        //createFileParameter.setFormat(objectFactory.createCreateFileParameterFormat(dokumentobjekt.getFormat()));
 
         applyParameterFromLink(
                 dokumentbeskrivelse.getTilknyttetRegistreringSom(),
