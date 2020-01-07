@@ -15,8 +15,8 @@ public class KlassifikasjonssystemFactory {
         KlassifikasjonssystemResource klassifikasjonssystemResource = new KlassifikasjonssystemResource();
 
         klassifikasjonssystemResource.setSystemId(FintUtils.createIdentifikator(codeTableRow.getRecno().toString()));
-        klassifikasjonssystemResource.setKode(codeTableRow.getCode().getValue());
-        klassifikasjonssystemResource.setNavn(codeTableRow.getDescription().getValue());
+        klassifikasjonssystemResource.setTittel(codeTableRow.getCode().getValue());
+        klassifikasjonssystemResource.setBeskrivelse(codeTableRow.getDescription().getValue());
 
         return klassifikasjonssystemResource;
 
