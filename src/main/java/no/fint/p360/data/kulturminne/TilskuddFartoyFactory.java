@@ -43,9 +43,6 @@ import static no.fint.p360.data.utilities.P360Utils.applyParameterFromLink;
 public class TilskuddFartoyFactory {
 
     @Autowired
-    private KodeverkRepository kodeverkRepository;
-
-    @Autowired
     private NoarkFactory noarkFactory;
 
     @Autowired
@@ -84,29 +81,6 @@ public class TilskuddFartoyFactory {
         }
 
         noarkFactory.getSaksmappe(caseResult, tilskuddFartoy);
-
-        optionalValue(caseResult.getStatus())
-                .flatMap(kode -> kodeverkRepository
-                        .getSaksstatus()
-                        .stream()
-                        .filter(it -> StringUtils.equalsIgnoreCase(kode, it.getNavn()))
-                        .findAny())
-                .map(SaksstatusResource::getSystemId)
-                .map(Identifikator::getIdentifikatorverdi)
-                .map(Link.apply(Saksstatus.class, "systemid"))
-                .ifPresent(tilskuddFartoy::addSaksstatus);
-
-        optionalValue(caseResult.getResponsibleEnterprise())
-                .map(ResponsibleEnterprise::getRecno)
-                .map(String::valueOf)
-                .map(Link.apply(Organisasjonselement.class, "organisasjonsid"))
-                .ifPresent(tilskuddFartoy::addAdministrativEnhet);
-
-        optionalValue(caseResult.getResponsiblePerson())
-                .map(ResponsiblePerson::getRecno)
-                .map(String::valueOf)
-                .map(Link.apply(Personalressurs.class, "ansattnummer"))
-                .ifPresent(tilskuddFartoy::addSaksansvarlig);
 
         tilskuddFartoy.addSelf(Link.with(TilskuddFartoy.class, "mappeid", caseYear, sequenceNumber));
         tilskuddFartoy.addSelf(Link.with(TilskuddFartoy.class, "systemid", caseResult.getRecno().toString()));
