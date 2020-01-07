@@ -6,6 +6,8 @@ import no.fint.model.resource.administrasjon.arkiv.*;
 import no.fint.p360.data.noark.codes.CaseCategoryService;
 import no.fint.p360.data.noark.codes.dokumentstatus.DokumentstatusService;
 import no.fint.p360.data.noark.codes.dokumenttype.DokumenttypeService;
+import no.fint.p360.data.noark.codes.filformat.FilformatResource;
+import no.fint.p360.data.noark.codes.filformat.FilformatService;
 import no.fint.p360.data.noark.codes.journalposttype.JournalpostTypeService;
 import no.fint.p360.data.noark.codes.journalstatus.JournalStatusService;
 import no.fint.p360.data.noark.codes.korrespondanseparttype.KorrespondansepartTypeService;
@@ -66,6 +68,9 @@ public class KodeverkRepository {
     @Autowired
     private CaseCategoryService caseCategoryService;
 
+    @Autowired
+    private FilformatService filformatService;
+
     @Getter
     private List<SaksstatusResource> saksstatus;
 
@@ -102,6 +107,9 @@ public class KodeverkRepository {
     @Getter
     private List<VariantformatResource> variantformat;
 
+    @Getter
+    private List<FilformatResource> filformat;
+
     private transient boolean healthy = false;
 
     @Scheduled(initialDelay = 10000, fixedDelayString = "${fint.kodeverk.refresh-interval:1500000}")
@@ -118,6 +126,7 @@ public class KodeverkRepository {
         tilgangsrestriksjon = tilgangsrestriksjonService.getAccessCodeTable().collect(Collectors.toList());
         skjermingshjemmel = skjermingshjemmelService.getLawTable().collect(Collectors.toList());
         variantformat = variantformatService.getVersionFormatTable().collect(Collectors.toList());
+        filformat = filformatService.getFilformatTable().collect(Collectors.toList());
         log.info("Refreshed code lists");
         log.info("Case Category Table: {}", caseCategoryService.getCaseCategoryTable().collect(Collectors.joining(", ")));
         healthy = true;
