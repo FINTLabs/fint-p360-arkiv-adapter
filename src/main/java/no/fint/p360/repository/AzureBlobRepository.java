@@ -19,6 +19,10 @@ import javax.annotation.PostConstruct;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.Map;
@@ -56,7 +60,7 @@ public class AzureBlobRepository extends InternalRepository {
         }
         blobClient.setMetadata(ImmutableMap.<String, String>builder()
                 .put("format", resource.getFormat())
-                .put("filename", resource.getFilnavn())
+                .put("filename", URLEncoder.encode(resource.getFilnavn(), StandardCharsets.UTF_8.name()))
                 .put("date", LocalDateTime.now().toString())
                 .put("orgId", event.getOrgId())
                 .put("client", event.getClient())
@@ -80,7 +84,11 @@ public class AzureBlobRepository extends InternalRepository {
         resource.setSystemId(FintUtils.createIdentifikator(recNo));
         Map<String, String> metadata = blobClient.getProperties().getMetadata();
         resource.setFormat(metadata.get("format"));
-        resource.setFilnavn(metadata.get("filename"));
+        try {
+            resource.setFilnavn(URLDecoder.decode(metadata.get("filename"), StandardCharsets.UTF_8.name()));
+        } catch (UnsupportedEncodingException e) {
+            resource.setFilnavn(metadata.get("filename"));
+        }
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         blobClient.download(out);
         resource.setData(Base64.getEncoder().encodeToString(out.toByteArray()));
