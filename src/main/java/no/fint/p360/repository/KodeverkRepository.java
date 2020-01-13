@@ -10,6 +10,8 @@ import no.fint.p360.data.noark.codes.filformat.FilformatResource;
 import no.fint.p360.data.noark.codes.filformat.FilformatService;
 import no.fint.p360.data.noark.codes.journalposttype.JournalpostTypeService;
 import no.fint.p360.data.noark.codes.journalstatus.JournalStatusService;
+import no.fint.p360.data.noark.codes.klasse.KlasseService;
+import no.fint.p360.data.noark.codes.klassifikasjonssystem.KlassifikasjonssystemService;
 import no.fint.p360.data.noark.codes.korrespondanseparttype.KorrespondansepartTypeService;
 import no.fint.p360.data.noark.codes.merknadstype.MerknadstypeService;
 import no.fint.p360.data.noark.codes.partrolle.PartRolleService;
@@ -69,6 +71,12 @@ public class KodeverkRepository {
     private CaseCategoryService caseCategoryService;
 
     @Autowired
+    private KlassifikasjonssystemService klassifikasjonssystemService;
+
+    @Autowired
+    private KlasseService klasseService;
+
+    @Autowired
     private FilformatService filformatService;
 
     @Getter
@@ -108,6 +116,12 @@ public class KodeverkRepository {
     private List<VariantformatResource> variantformat;
 
     @Getter
+    private List<KlassifikasjonssystemResource> klassifikasjonssystem;
+
+    @Getter
+    private List<KlasseResource> klasse;
+
+    @Getter
     private List<FilformatResource> filformat;
 
     private transient boolean healthy = false;
@@ -126,6 +140,8 @@ public class KodeverkRepository {
         tilgangsrestriksjon = tilgangsrestriksjonService.getAccessCodeTable().collect(Collectors.toList());
         skjermingshjemmel = skjermingshjemmelService.getLawTable().collect(Collectors.toList());
         variantformat = variantformatService.getVersionFormatTable().collect(Collectors.toList());
+        klassifikasjonssystem = klassifikasjonssystemService.getKlassifikasjonssystem().collect(Collectors.toList());
+        klasse = klasseService.getKlasse().collect(Collectors.toList());
         filformat = filformatService.getFilformatTable().collect(Collectors.toList());
         log.info("Refreshed code lists");
         log.info("Case Category Table: {}", caseCategoryService.getCaseCategoryTable().collect(Collectors.joining(", ")));

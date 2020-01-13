@@ -4,10 +4,12 @@ import no.fint.arkiv.p360.caze.*;
 import no.fint.arkiv.p360.document.DocumentResult;
 import no.fint.model.administrasjon.arkiv.Part;
 import no.fint.model.administrasjon.arkiv.PartRolle;
+import no.fint.model.administrasjon.arkiv.Saksstatus;
+import no.fint.model.administrasjon.organisasjon.Organisasjonselement;
+import no.fint.model.administrasjon.personal.Personalressurs;
+import no.fint.model.felles.kompleksedatatyper.Identifikator;
 import no.fint.model.resource.Link;
-import no.fint.model.resource.administrasjon.arkiv.JournalpostResource;
-import no.fint.model.resource.administrasjon.arkiv.PartsinformasjonResource;
-import no.fint.model.resource.administrasjon.arkiv.SaksmappeResource;
+import no.fint.model.resource.administrasjon.arkiv.*;
 import no.fint.p360.data.exception.GetDocumentException;
 import no.fint.p360.data.exception.IllegalCaseNumberFormat;
 import no.fint.p360.data.noark.journalpost.JournalpostFactory;
@@ -15,10 +17,12 @@ import no.fint.p360.data.noark.part.PartFactory;
 import no.fint.p360.data.p360.P360DocumentService;
 import no.fint.p360.data.utilities.FintUtils;
 import no.fint.p360.data.utilities.NOARKUtils;
+import no.fint.p360.repository.KodeverkRepository;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.xml.bind.JAXBElement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -31,6 +35,9 @@ public class NoarkFactory {
 
     @Autowired
     private P360DocumentService documentService;
+
+    @Autowired
+    private KodeverkRepository kodeverkRepository;
 
     @Autowired
     private JournalpostFactory journalpostFactory;
@@ -84,6 +91,45 @@ public class NoarkFactory {
             journalpostList.add(journalpostResource);
         }
         saksmappeResource.setJournalpost(journalpostList);
+
+        optionalValue(caseResult.getStatus())
+                .flatMap(kode -> kodeverkRepository
+                        .getSaksstatus()
+                        .stream()
+                        .filter(it -> StringUtils.equalsIgnoreCase(kode, it.getNavn()))
+                        .findAny())
+                .map(SaksstatusResource::getSystemId)
+                .map(Identifikator::getIdentifikatorverdi)
+                .map(Link.apply(Saksstatus.class, "systemid"))
+                .ifPresent(saksmappeResource::addSaksstatus);
+
+        optionalValue(caseResult.getResponsibleEnterprise())
+                .map(ResponsibleEnterprise::getRecno)
+                .map(String::valueOf)
+                .map(Link.apply(Organisasjonselement.class, "organisasjonsid"))
+                .ifPresent(saksmappeResource::addAdministrativEnhet);
+
+        optionalValue(caseResult.getResponsiblePerson())
+                .map(ResponsiblePerson::getRecno)
+                .map(String::valueOf)
+                .map(Link.apply(Personalressurs.class, "ansattnummer"))
+                .ifPresent(saksmappeResource::addSaksansvarlig);
+
+        caseResult
+                .getArchiveCodes()
+                .getValue()
+                .getArchiveCodeResult()
+                .stream()
+                .map(ArchiveCodeResult::getArchiveCode)
+                .map(JAXBElement::getValue)
+                .flatMap(code -> kodeverkRepository
+                        .getKlasse()
+                        .stream()
+                        .filter(it -> StringUtils.equals(code, it.getTittel())))
+                .map(KlasseResource::getSystemId)
+                .map(Identifikator::getIdentifikatorverdi)
+                .map(Link.apply(KlasseResource.class, "systemid"))
+                .forEach(saksmappeResource::addKlasse);
     }
 
     private PartsinformasjonResource createPartsinformasjon(CaseContactResult caseContactResult) {
