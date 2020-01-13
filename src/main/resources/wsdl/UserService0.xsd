@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema elementFormDefault="unqualified" targetNamespace="http://software-innovation.com/SI.Data" 
+    xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+    xmlns:tns="http://software-innovation.com/SI.Data">
+    <xs:import schemaLocation="UserService2.xsd" namespace="http://schemas.datacontract.org/2004/07/SI.Data.Contracts.WS"/>
+    <xs:element name="Ping">
+        <xs:complexType>
+            <xs:sequence/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="PingResponse">
+        <xs:complexType>
+            <xs:sequence/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="SynchronizeUser">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" name="parameter" nillable="true" type="tns:SynchronizeUserParameter"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:complexType name="SynchronizeUserParameter">
+        <xs:complexContent mixed="false">
+            <xs:extension base="tns:UserBase">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="ADContextUser" nillable="true" type="xs:string"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:element name="SynchronizeUserParameter" nillable="true" type="tns:SynchronizeUserParameter"/>
+    <xs:complexType name="UserBase">
+        <xs:sequence>
+            <xs:element minOccurs="0" name="AccessGroups" nillable="true" type="tns:ArrayOfAccessGroupMembership"/>
+            <xs:element minOccurs="0" name="ContactExternalId" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="IsActive" nillable="true" type="xs:boolean"/>
+            <xs:element minOccurs="0" name="Login" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="Profiles" nillable="true" type="tns:ArrayOfUserProfile"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="UserBase" nillable="true" type="tns:UserBase"/>
+    <xs:complexType name="ArrayOfAccessGroupMembership">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="AccessGroupMembership" nillable="true" type="tns:AccessGroupMembership"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="ArrayOfAccessGroupMembership" nillable="true" type="tns:ArrayOfAccessGroupMembership"/>
+    <xs:complexType name="AccessGroupMembership">
+        <xs:sequence>
+            <xs:element minOccurs="0" name="AccessGroup" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="FromDate" nillable="true" type="xs:dateTime"/>
+            <xs:element minOccurs="0" name="ToDate" nillable="true" type="xs:dateTime"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="AccessGroupMembership" nillable="true" type="tns:AccessGroupMembership"/>
+    <xs:complexType name="ArrayOfUserProfile">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="UserProfile" nillable="true" type="tns:UserProfile"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="ArrayOfUserProfile" nillable="true" type="tns:ArrayOfUserProfile"/>
+    <xs:complexType name="UserProfile">
+        <xs:sequence>
+            <xs:element minOccurs="0" name="EnterpriseId" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="FromDate" nillable="true" type="xs:dateTime"/>
+            <xs:element minOccurs="0" name="Role" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="ToDate" nillable="true" type="xs:dateTime"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="UserProfile" nillable="true" type="tns:UserProfile"/>
+    <xs:element name="SynchronizeUserResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" name="SynchronizeUserResult" nillable="true" type="q1:SynchronizeUserResult" 
+                    xmlns:q1="http://schemas.datacontract.org/2004/07/SI.Data.Contracts.WS"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:complexType name="WSOperationResult">
+        <xs:sequence>
+            <xs:element minOccurs="0" name="ErrorDetails" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="ErrorMessage" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="Successful" type="xs:boolean"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="WSOperationResult" nillable="true" type="tns:WSOperationResult"/>
+    <xs:element name="GetUsers">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" name="parameter" nillable="true" type="tns:GetUsersParameter"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:complexType name="GetUsersParameter">
+        <xs:sequence>
+            <xs:element minOccurs="0" name="ADContextUser" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="ContactExternalId" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="UserId" nillable="true" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="GetUsersParameter" nillable="true" type="tns:GetUsersParameter"/>
+    <xs:element name="GetUsersResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" name="GetUsersResult" nillable="true" type="tns:GetUsersResult"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:complexType name="GetUsersResult">
+        <xs:complexContent mixed="false">
+            <xs:extension base="tns:WSOperationResult">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="Users" nillable="true" type="tns:ArrayOfUserBase"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:element name="GetUsersResult" nillable="true" type="tns:GetUsersResult"/>
+    <xs:complexType name="ArrayOfUserBase">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="UserBase" nillable="true" type="tns:UserBase"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="ArrayOfUserBase" nillable="true" type="tns:ArrayOfUserBase"/>
+</xs:schema>
