@@ -2,10 +2,7 @@ package no.fint.p360.data.p360;
 
 import lombok.extern.slf4j.Slf4j;
 import no.fint.arkiv.p360.contact.*;
-import no.fint.p360.data.exception.CreateContactException;
-import no.fint.p360.data.exception.CreateEnterpriseException;
-import no.fint.p360.data.exception.EnterpriseNotFound;
-import no.fint.p360.data.exception.PrivatePersonNotFound;
+import no.fint.p360.data.exception.*;
 import no.fint.p360.data.utilities.P360Utils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -15,6 +12,7 @@ import javax.xml.namespace.QName;
 import javax.xml.ws.WebServiceException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Stream;
 
@@ -218,5 +216,16 @@ public class P360ContactService extends P360AbstractService {
         throw new CreateEnterpriseException(result.getErrorMessage().getValue());
     }
 
+    public ArrayOfEnterpriseResult getEnterprisesByCategories(String... categories) {
+        GetEnterprisesParameter parameter = objectFactory.createGetEnterprisesParameter();
+        ArrayOfstring arrayOfstring = objectFactory.createArrayOfstring();
+        arrayOfstring.getString().addAll(Arrays.asList(categories));
+        parameter.setCategories(objectFactory.createEnterpriseBaseCategories(arrayOfstring));
+        GetEnterprisesResult getEnterprisesResult = contactService.getEnterprises(parameter);
+        if (getEnterprisesResult.isSuccessful()) {
+            return getEnterprisesResult.getEnterprises().getValue();
+        }
+        throw new GetContactException(getEnterprisesResult.getErrorMessage().getValue());
+    }
 }
 
