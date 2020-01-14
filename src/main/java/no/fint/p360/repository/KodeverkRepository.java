@@ -15,6 +15,7 @@ import no.fint.p360.data.noark.codes.klassifikasjonssystem.Klassifikasjonssystem
 import no.fint.p360.data.noark.codes.korrespondanseparttype.KorrespondansepartTypeService;
 import no.fint.p360.data.noark.codes.merknadstype.MerknadstypeService;
 import no.fint.p360.data.noark.codes.partrolle.PartRolleService;
+import no.fint.p360.data.noark.codes.rolle.RolleService;
 import no.fint.p360.data.noark.codes.saksstatus.SaksStatusService;
 import no.fint.p360.data.noark.codes.skjermingshjemmel.SkjermingshjemmelService;
 import no.fint.p360.data.noark.codes.tilgangsrestriksjon.TilgangsrestriksjonService;
@@ -79,6 +80,9 @@ public class KodeverkRepository {
     @Autowired
     private FilformatService filformatService;
 
+    @Autowired
+    private RolleService rolleService;
+
     @Getter
     private List<SaksstatusResource> saksstatus;
 
@@ -124,6 +128,9 @@ public class KodeverkRepository {
     @Getter
     private List<FilformatResource> filformat;
 
+    @Getter
+    private List<RolleResource> rolle;
+
     private transient boolean healthy = false;
 
     @Scheduled(initialDelay = 10000, fixedDelayString = "${fint.kodeverk.refresh-interval:1500000}")
@@ -143,6 +150,7 @@ public class KodeverkRepository {
         klassifikasjonssystem = klassifikasjonssystemService.getKlassifikasjonssystem().collect(Collectors.toList());
         klasse = klasseService.getKlasse().collect(Collectors.toList());
         filformat = filformatService.getFilformatTable().collect(Collectors.toList());
+        rolle = rolleService.getRolle().collect(Collectors.toList());
         log.info("Refreshed code lists");
         log.info("Case Category Table: {}", caseCategoryService.getCaseCategoryTable().collect(Collectors.joining(", ")));
         healthy = true;

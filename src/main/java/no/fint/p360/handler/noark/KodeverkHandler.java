@@ -43,6 +43,7 @@ public class KodeverkHandler implements Handler {
         suppliers.put(GET_ALL_VARIANTFORMAT, kodeverkRepository::getVariantformat);
         suppliers.put(GET_ALL_KLASSIFIKASJONSSYSTEM, kodeverkRepository::getKlassifikasjonssystem);
         suppliers.put(GET_ALL_KLASSE, kodeverkRepository::getKlasse);
+        suppliers.put(GET_ALL_ROLLE, kodeverkRepository::getRolle);
     }
 
     @Autowired
