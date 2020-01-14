@@ -3,17 +3,22 @@ package no.fint.p360;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import no.fint.arkiv.p360.accessgroup.GetAccessGroupsQuery;
-import no.fint.arkiv.p360.user.GetUsersParameter;
+import no.fint.arkiv.p360.user.ArrayOfUserProfile;
+import no.fint.arkiv.p360.user.ObjectFactory;
+import no.fint.arkiv.p360.user.SynchronizeUserParameter;
+import no.fint.arkiv.p360.user.UserProfile;
+import no.fint.event.model.Event;
+import no.fint.event.model.ResponseStatus;
+import no.fint.model.resource.FintLinks;
 import no.fint.model.resource.administrasjon.arkiv.ArkivressursResource;
 import no.fint.p360.data.p360.P360AccessGroupService;
 import no.fint.p360.data.p360.P360SupportService;
 import no.fint.p360.data.p360.P360UserService;
 import no.fint.p360.data.users.ArkivressursService;
+import no.fint.p360.service.EventHandlerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -28,7 +33,23 @@ public class TestController {
     private P360AccessGroupService accessGroupService;
 
     @Autowired
+    private P360UserService userService;
+
+    @Autowired
     private ArkivressursService arkivressursService;
+
+    @Autowired
+    private AdapterProps adapterProps;
+
+    @Autowired
+    private EventHandlerService eventHandlerService;
+
+    @PostMapping
+    public Event<FintLinks> handleEvent(@RequestBody Event<FintLinks> input) {
+        Event<FintLinks> response = new Event<>(input);
+        eventHandlerService.getActionsHandlerMap().getOrDefault(input.getAction(), r -> r.setResponseStatus(ResponseStatus.REJECTED)).accept(response);
+        return response;
+    }
 
     @GetMapping(value = "codelist", produces = MediaType.APPLICATION_JSON_VALUE)
     public String getCodelist(@RequestParam String id) throws JsonProcessingException {
@@ -43,8 +64,27 @@ public class TestController {
     }
 
     @GetMapping(value = "users", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<ArkivressursResource> getUsers(@RequestParam(required = false) String id) throws JsonProcessingException {
+    public List<ArkivressursResource> getUsers(@RequestParam(required = false) String id) {
         return arkivressursService.getArkivressursBySystemId(id).collect(Collectors.toList());
     }
 
+    @PostMapping(value = "synchronizeuser", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Integer synchronizeUser() {
+        ObjectFactory factory = new ObjectFactory();
+        SynchronizeUserParameter parameter = factory.createSynchronizeUserParameter();
+        parameter.setLogin(factory.createUserBaseLogin(adapterProps.getP360User()));
+        parameter.setContactExternalId(factory.createUserBaseContactExternalId("recno:225958"));
+        ArrayOfUserProfile profiles = factory.createArrayOfUserProfile();
+        profiles.getUserProfile().add(createUserProfile(factory,"recno:1", "recno:100001"));
+        profiles.getUserProfile().add(createUserProfile(factory, "recno:4", "recno:100001"));
+        parameter.setProfiles(factory.createUserBaseProfiles(profiles));
+        return userService.synchronizeUser(parameter);
+    }
+
+    private UserProfile createUserProfile(ObjectFactory factory, String role, String enterpriseId) {
+        UserProfile userProfile = factory.createUserProfile();
+        userProfile.setRole(factory.createUserProfileRole(role));
+        userProfile.setEnterpriseId(factory.createUserProfileEnterpriseId(enterpriseId));
+        return userProfile;
+    }
 }
