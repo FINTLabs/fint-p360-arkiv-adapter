@@ -1,4 +1,4 @@
-package no.fint.p360.data.users;
+package no.fint.p360.data.noark.arkivressurs;
 
 import lombok.extern.slf4j.Slf4j;
 import no.fint.arkiv.p360.user.ArrayOfUserBase;
@@ -20,10 +20,12 @@ public class ArkivressursService {
     @Autowired
     private ArkivressursFactory arkivressursFactory;
 
-
-    public Stream<ArkivressursResource> getArkivressursBySystemId(String systemId) {
-        GetUsersParameter getUsersParameter = arkivressursFactory.createGetUsersParameterFromSystemId(systemId);
-        ArrayOfUserBase users = userService.getUsers(getUsersParameter);
+    public Stream<ArkivressursResource> getArkivressurs() {
+        ArrayOfUserBase users = userService.getUsers();
         return users.getUserBase().stream().map(arkivressursFactory::toFintResource);
+    }
+
+    public boolean health() {
+        return userService.ping();
     }
 }

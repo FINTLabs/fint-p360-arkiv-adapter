@@ -10,18 +10,13 @@ import no.fint.arkiv.p360.user.UserProfile;
 import no.fint.event.model.Event;
 import no.fint.event.model.ResponseStatus;
 import no.fint.model.resource.FintLinks;
-import no.fint.model.resource.administrasjon.arkiv.ArkivressursResource;
 import no.fint.p360.data.p360.P360AccessGroupService;
 import no.fint.p360.data.p360.P360SupportService;
 import no.fint.p360.data.p360.P360UserService;
-import no.fint.p360.data.users.ArkivressursService;
 import no.fint.p360.service.EventHandlerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 public class TestController {
@@ -34,9 +29,6 @@ public class TestController {
 
     @Autowired
     private P360UserService userService;
-
-    @Autowired
-    private ArkivressursService arkivressursService;
 
     @Autowired
     private AdapterProps adapterProps;
@@ -61,11 +53,6 @@ public class TestController {
         final no.fint.arkiv.p360.accessgroup.ObjectFactory factory = new no.fint.arkiv.p360.accessgroup.ObjectFactory();
         GetAccessGroupsQuery parameter = factory.createGetAccessGroupsQuery();
         return new ObjectMapper().writeValueAsString(accessGroupService.getAccessGroups(parameter));
-    }
-
-    @GetMapping(value = "users", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<ArkivressursResource> getUsers(@RequestParam(required = false) String id) {
-        return arkivressursService.getArkivressursBySystemId(id).collect(Collectors.toList());
     }
 
     @PostMapping(value = "synchronizeuser", produces = MediaType.APPLICATION_JSON_VALUE)

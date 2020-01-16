@@ -16,15 +16,22 @@ import javax.xml.bind.JAXBElement;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.regex.Pattern;
 
 @Slf4j
 public enum FintUtils {
     ;
 
+    public static Pattern URL_UNSAFE = Pattern.compile("[^-_.*A-Za-z0-9]+");
+
     public static Identifikator createIdentifikator(String value) {
         Identifikator identifikator = new Identifikator();
-        identifikator.setIdentifikatorverdi(value);
+        identifikator.setIdentifikatorverdi(identifikatorverdi(value));
         return identifikator;
+    }
+
+    public static String identifikatorverdi(String value) {
+        return URL_UNSAFE.matcher(value).replaceAll("-");
     }
 
     public static boolean validIdentifikator(Identifikator input) {

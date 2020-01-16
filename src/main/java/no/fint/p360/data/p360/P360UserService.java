@@ -48,7 +48,8 @@ public class P360UserService extends P360AbstractService {
         throw new UserException(synchronizeUserResult.getErrorMessage().getValue());
     }
 
-    public ArrayOfUserBase getUsers(GetUsersParameter parameter) {
+    public ArrayOfUserBase getUsers() {
+        GetUsersParameter parameter = objectFactory.createGetUsersParameter();
         GetUsersResult getUsersResult = userService.getUsers(parameter);
         if (getUsersResult.isSuccessful()) {
             return getUsersResult.getUsers().getValue();
