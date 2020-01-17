@@ -2,6 +2,7 @@ package no.fint.p360.data.p360;
 
 import lombok.extern.slf4j.Slf4j;
 import no.fint.arkiv.p360.accessgroup.*;
+import no.fint.p360.data.exception.GetAccessGroupsException;
 import no.fint.p360.data.utilities.P360Utils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -37,8 +38,13 @@ public class P360AccessGroupService extends P360AbstractService {
         objectFactory = new ObjectFactory();
     }
 
-    public GetAccessGroupsResult getAccessGroups(GetAccessGroupsQuery parameter) {
-        return accessGroupService.getAccessGroups(parameter);
+    public ArrayOfAccessGroupResult getAccessGroups() {
+        GetAccessGroupsQuery parameter = objectFactory.createGetAccessGroupsQuery();
+        GetAccessGroupsResult getAccessGroupsResult = accessGroupService.getAccessGroups(parameter);
+        if (getAccessGroupsResult.isSuccessful()) {
+            return getAccessGroupsResult.getAccessGroups().getValue();
+        }
+        throw new GetAccessGroupsException(getAccessGroupsResult.getErrorMessage().getValue());
     }
 
     public boolean ping() {

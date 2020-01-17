@@ -1,8 +1,7 @@
 package no.fint.p360.data.noark.arkivressurs;
 
-import no.fint.arkiv.p360.user.ArrayOfUserProfile;
-import no.fint.arkiv.p360.user.UserBase;
-import no.fint.arkiv.p360.user.UserProfile;
+import no.fint.arkiv.p360.user.*;
+import no.fint.model.administrasjon.arkiv.Autorisasjon;
 import no.fint.model.administrasjon.arkiv.Tilgang;
 import no.fint.model.resource.Link;
 import no.fint.model.resource.administrasjon.arkiv.ArkivressursResource;
@@ -12,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import javax.xml.bind.JAXBElement;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -51,6 +51,16 @@ public class ArkivressursFactory {
                 })
                 .map(Link.apply(Tilgang.class, "systemid"))
                 .forEach(arkivressurs::addTilgang);
+
+        optionalValue(userBase.getAccessGroups())
+                .map(ArrayOfAccessGroupMembership::getAccessGroupMembership)
+                .map(List::stream)
+                .orElseGet(Stream::empty)
+                .map(AccessGroupMembership::getAccessGroup)
+                .map(JAXBElement::getValue)
+                .filter(StringUtils::isNotBlank)
+                .map(Link.apply(Autorisasjon.class, "systemid"))
+                .forEach(arkivressurs::addAutorisasjon);
 
         return arkivressurs;
     }

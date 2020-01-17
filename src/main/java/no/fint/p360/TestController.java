@@ -2,7 +2,6 @@ package no.fint.p360;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import no.fint.arkiv.p360.accessgroup.GetAccessGroupsQuery;
 import no.fint.arkiv.p360.user.ArrayOfUserProfile;
 import no.fint.arkiv.p360.user.ObjectFactory;
 import no.fint.arkiv.p360.user.SynchronizeUserParameter;
@@ -50,9 +49,7 @@ public class TestController {
 
     @GetMapping(value = "accessgroup", produces = MediaType.APPLICATION_JSON_VALUE)
     public String getAccessGroup() throws JsonProcessingException {
-        final no.fint.arkiv.p360.accessgroup.ObjectFactory factory = new no.fint.arkiv.p360.accessgroup.ObjectFactory();
-        GetAccessGroupsQuery parameter = factory.createGetAccessGroupsQuery();
-        return new ObjectMapper().writeValueAsString(accessGroupService.getAccessGroups(parameter));
+        return new ObjectMapper().writeValueAsString(accessGroupService.getAccessGroups());
     }
 
     @PostMapping(value = "synchronizeuser", produces = MediaType.APPLICATION_JSON_VALUE)
