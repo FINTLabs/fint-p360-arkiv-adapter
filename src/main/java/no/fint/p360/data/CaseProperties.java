@@ -8,6 +8,7 @@ public class CaseProperties {
     private String arkivdel;
     private String[] noekkelord;
     private String klassifikasjon;
+    private String klasse;
     private String saksstatus;
     private String korrespondansepartType;
     private String journalpostType;
