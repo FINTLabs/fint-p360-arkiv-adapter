@@ -127,6 +127,6 @@ public class TilskuddFartoyDefaults {
         createCaseParameter.setKeywords(P360Utils.getKeywords(Arrays.asList(properties.getNoekkelord())));
         createCaseParameter.setFiledOnPaper(objectFactory.createCaseParameterBaseFiledOnPaper(false));
         createCaseParameter.setCaseType(objectFactory.createCreateCaseParameterCaseType(Constants.CASE_TYPE_NOARK));
-        createCaseParameter.setArchiveCodes(P360Utils.getArchiveCodes(properties.getKlassifikasjon(), tilskuddFartoy.getFartoyNavn()));
+        createCaseParameter.setArchiveCodes(P360Utils.getArchiveCodes(properties.getKlassifikasjon(), properties.getKlasse()));
     }
 }

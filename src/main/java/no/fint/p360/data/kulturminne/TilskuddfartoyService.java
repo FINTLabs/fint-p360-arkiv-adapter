@@ -64,6 +64,7 @@ public class TilskuddfartoyService {
     public TilskuddFartoyResource getTilskuddFartoyCaseByExternalId(String externalId) throws NotTilskuddfartoyException, GetTilskuddFartoyNotFoundException, GetTilskuddFartoyException, GetDocumentException, IllegalCaseNumberFormat {
         CaseResult caseResult = caseService.getSakByExternalId(externalId);
 
+        // TODO Delegate this to tilskuddFartoyFactory
         if (isTilskuddFartoy(caseResult)) {
             return tilskuddFartoyFactory.toFintResource(caseResult);
         }
@@ -74,6 +75,7 @@ public class TilskuddfartoyService {
     public TilskuddFartoyResource getTilskuddFartoyCaseBySystemId(String systemId) throws NotTilskuddfartoyException, GetTilskuddFartoyNotFoundException, GetTilskuddFartoyException, GetDocumentException, IllegalCaseNumberFormat {
         CaseResult sakBySystemId = caseService.getSakBySystemId(systemId);
 
+        // TODO Delegate this to tilskuddFartoyFactory
         if (isTilskuddFartoy(sakBySystemId)) {
             return tilskuddFartoyFactory.toFintResource(sakBySystemId);
         }
@@ -90,11 +92,11 @@ public class TilskuddfartoyService {
     }
 
     // TODO: 2019-05-11 Should we check for both archive classification and external id (is it a digisak)
+    // TODO Compare with CaseProperties
     private boolean isTilskuddFartoy(CaseResult caseResult) {
 
         if (FintUtils.optionalValue(caseResult.getExternalId()).isPresent() && FintUtils.optionalValue(caseResult.getArchiveCodes()).isPresent()) {
-            return caseResult.getExternalId().getValue().getType().getValue().equals(Constants.EXTERNAL_ID_TYPE)
-                    && caseResult.getArchiveCodes().getValue().getArchiveCodeResult().stream().anyMatch(code -> code.getArchiveType().getValue().equals("Fartøy"));
+            return caseResult.getExternalId().getValue().getType().getValue().equals(Constants.EXTERNAL_ID_TYPE);
         }
 
         return false;
