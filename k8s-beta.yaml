@@ -21,7 +21,7 @@ spec:
           emptyDir: {}
       containers:
         - name: adapter-p360-arkiv-ra-no-ra-no
-          image: fintlabs.azurecr.io/p360-arkiv-adapter:build.39
+          image: fintlabs.azurecr.io/p360-arkiv-adapter:build.48
           resources:
             limits:
               memory: "2Gi"
@@ -66,9 +66,12 @@ spec:
             - {name: fint.oauth.client-secret, valueFrom: {secretKeyRef: {name: ra-p360-adapter, key: client-secret}}}
             - {name: fint.oauth.scope, value: 'fint-client'}
             - {name: fint.adapter.reject-unknown-events, value: 'false'}
+            - {name: fint.p360.title.format.tilskuddfartoy, value: '${kallesignal} - ${fartoyNavn} - Tilskudd - ${kulturminneId} - ${soknadsnummer.identifikatorverdi}'}
             - {name: fint.p360.defaults.casetype.tilskudd-fartoy.administrativEnhet, value: '100072'}
-            - {name: fint.p360.defaults.casetype.tilskudd-fartoy.arkivdel, value: '100007'}
+            - {name: fint.p360.defaults.casetype.tilskudd-fartoy.arkivdel, value: '205461'}
             - {name: fint.p360.defaults.casetype.tilskudd-fartoy.saksstatus, value: '5'}
+            - {name: fint.p360.defaults.casetype.tilskudd-fartoy.klasse, value: 'recno:209823'}
+            - {name: fint.p360.defaults.casetype.tilskudd-fartoy.klassifikasjon, value: 'recno:205465'}
             - {name: fint.p360.defaults.casetype.tilskudd-fartoy.korrespondansepartType, value: '5'}
             - {name: fint.p360.defaults.casetype.tilskudd-fartoy.journalpostType, value: '110'}
             - {name: fint.p360.defaults.casetype.tilskudd-fartoy.journalstatus, value: '3'}
@@ -79,8 +82,6 @@ spec:
             - {name: fint.p360.user, valueFrom: {secretKeyRef: {name: ra-p360-adapter, key: p360-user}}}
             - {name: fint.p360.password, valueFrom: {secretKeyRef: {name: ra-p360-adapter, key: p360-password}}}
             - {name: fint.p360.endpoint-base-url, valueFrom: {secretKeyRef: {name: ra-p360-adapter, key: p360-endpoint-base-url}}}
-            - {name: fint.kulturminne.tilskudd-fartoy.arkivdel, value: '100072'}
-            - {name: fint.kulturminne.tilskudd-fartoy.sub-archive, value: '100007'}
             - {name: fint.file-cache.directory, value: '/temp'}
             - {name: fint.internal-files.type, value: 'BLOB'}
             - {name: fint.internal-files.directory, value: '/temp'}
