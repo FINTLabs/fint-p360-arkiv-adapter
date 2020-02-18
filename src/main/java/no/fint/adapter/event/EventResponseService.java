@@ -7,6 +7,7 @@ import no.fint.event.model.HeaderConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
@@ -38,8 +39,8 @@ public class EventResponseService {
             log.info("{}: Posting response for {} ...", component, event.getAction());
             ResponseEntity<Void> response = restTemplate.exchange(url, HttpMethod.POST, new HttpEntity<>(event, headers), Void.class);
             log.info("{}: Provider POST response: {}", component, response.getStatusCode());
-        } catch (RestClientException e) {
-            log.warn("{}: Provider POST response error: {}", component, e.getMessage());
+        } catch (HttpStatusCodeException e) {
+            log.warn("{}: Provider POST response error: {}", component, e.getStatusCode());
         }
     }
 }
