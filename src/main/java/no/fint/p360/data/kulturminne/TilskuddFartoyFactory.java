@@ -32,13 +32,10 @@ public class TilskuddFartoyFactory {
     private NoarkFactory noarkFactory;
 
     @Autowired
-    private KorrespondansepartFactory korrespondansepartFactory;
-
-    @Autowired
     private JournalpostFactory journalpostFactory;
 
     @Autowired
-    private TilskuddFartoyDefaults tilskuddFartoyDefaults;
+    private CaseDefaultsService caseDefaultsService;
 
     private ObjectFactory objectFactory;
 
@@ -54,16 +51,8 @@ public class TilskuddFartoyFactory {
         tilskuddFartoy.setSoknadsnummer(new Identifikator());
         tilskuddFartoy.setMappeId(new Identifikator());
         tilskuddFartoy.setSystemId(new Identifikator());
-        String caseNumber = caseResult.getCaseNumber().getValue();
-
-        String caseYear = NOARKUtils.getCaseYear(caseNumber);
-        String sequenceNumber = NOARKUtils.getCaseSequenceNumber(caseNumber);
 
         noarkFactory.getSaksmappe(caseResult, tilskuddFartoy);
-
-        tilskuddFartoy.addSelf(Link.with(TilskuddFartoy.class, "mappeid", caseYear, sequenceNumber));
-        tilskuddFartoy.addSelf(Link.with(TilskuddFartoy.class, "systemid", caseResult.getRecno().toString()));
-        tilskuddFartoy.addSelf(Link.with(TilskuddFartoy.class, "soknadsnummer", caseResult.getExternalId().getValue().getId().getValue()));
 
         return tilskuddFartoy;
     }
@@ -80,7 +69,7 @@ public class TilskuddFartoyFactory {
     public CreateCaseParameter convertToCreateCase(TilskuddFartoyResource tilskuddFartoy) {
         CreateCaseParameter createCaseParameter = objectFactory.createCreateCaseParameter();
 
-        tilskuddFartoyDefaults.applyDefaultsToCreateCase(tilskuddFartoy, createCaseParameter);
+        caseDefaultsService.applyDefaultsToCreateCase("tilskudd-fartoy", createCaseParameter);
 
         createCaseParameter.setExternalId(P360Utils.getExternalIdParameter(tilskuddFartoy.getSoknadsnummer()));
 

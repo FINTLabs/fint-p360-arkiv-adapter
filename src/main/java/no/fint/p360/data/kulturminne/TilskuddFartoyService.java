@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
-public class TilskuddfartoyService {
+public class TilskuddFartoyService {
 
     @Autowired
     private P360CaseService caseService;
@@ -82,6 +82,7 @@ public class TilskuddfartoyService {
         throw new NotTilskuddfartoyException(String.format("SystemId %s er ikke en Tilskuddfartøy sak", systemId));
     }
 
+    // TODO Filter query based on case type?
     public List<TilskuddFartoyResource> searchTilskuddFartoyCaseByTitle(Map<String, String> query) throws GetTilskuddFartoyNotFoundException, GetTilskuddFartoyException, GetDocumentException, IllegalCaseNumberFormat {
         return tilskuddFartoyFactory.toFintResourceList(
                 caseService.getGetCasesQueryByTitle(query)

@@ -5,7 +5,7 @@ import no.fint.arkiv.p360.caze.CreateCaseParameter;
 import no.fint.arkiv.p360.caze.ObjectFactory;
 import no.fint.model.administrasjon.arkiv.*;
 import no.fint.model.resource.Link;
-import no.fint.model.resource.kultur.kulturminnevern.TilskuddFartoyResource;
+import no.fint.model.resource.administrasjon.arkiv.SakResource;
 import no.fint.p360.CaseDefaults;
 import no.fint.p360.data.CaseProperties;
 import no.fint.p360.data.utilities.Constants;
@@ -18,44 +18,43 @@ import java.util.Arrays;
 
 @Service
 @Slf4j
-public class TilskuddFartoyDefaults {
+public class CaseDefaultsService {
     @Autowired
     private CaseDefaults caseDefaults;
 
-    private CaseProperties properties;
     private ObjectFactory objectFactory;
 
     @PostConstruct
     public void init() {
         log.info("Case Defaults: {}", caseDefaults);
-        properties = caseDefaults.getCasetype().get("tilskudd-fartoy");
         objectFactory = new ObjectFactory();
-        log.info("Defaults for TilskuddFartoy: {}", properties);
     }
 
-    public void applyDefaultsForCreation(TilskuddFartoyResource tilskuddFartoy) {
-        if (tilskuddFartoy.getSaksstatus().isEmpty()) {
-            tilskuddFartoy.addSaksstatus(Link.with(
+    public void applyDefaultsForCreation(String caseType, SakResource resource) {
+        CaseProperties properties = caseDefaults.getCasetype().get(caseType);
+        if (resource.getSaksstatus().isEmpty()) {
+            resource.addSaksstatus(Link.with(
                     Saksstatus.class,
                     "systemid",
                     properties.getSaksstatus()
             ));
         }
-        if (tilskuddFartoy.getArkivdel().isEmpty()) {
-            tilskuddFartoy.addArkivdel(Link.with(
+        if (resource.getArkivdel().isEmpty()) {
+            resource.addArkivdel(Link.with(
                     Arkivdel.class,
                     "systemid",
                     properties.getArkivdel()
             ));
         }
-        applyDefaultsForUpdate(tilskuddFartoy);
+        applyDefaultsForUpdate(caseType, resource);
     }
 
-    public void applyDefaultsForUpdate(TilskuddFartoyResource tilskuddFartoy) {
-        if (tilskuddFartoy.getJournalpost() == null || tilskuddFartoy.getJournalpost().isEmpty()) {
+    public void applyDefaultsForUpdate(String caseType, SakResource resource) {
+        CaseProperties properties = caseDefaults.getCasetype().get(caseType);
+        if (resource.getJournalpost() == null || resource.getJournalpost().isEmpty()) {
             return;
         }
-        tilskuddFartoy.getJournalpost().forEach(journalpost -> {
+        resource.getJournalpost().forEach(journalpost -> {
             journalpost.getKorrespondansepart().forEach(korrespondanse -> {
                 if (korrespondanse.getKorrespondanseparttype().isEmpty()) {
                     korrespondanse.addKorrespondanseparttype(Link.with(
@@ -123,7 +122,8 @@ public class TilskuddFartoyDefaults {
         });
     }
 
-    public void applyDefaultsToCreateCase(TilskuddFartoyResource tilskuddFartoy, CreateCaseParameter createCaseParameter) {
+    public void applyDefaultsToCreateCase(String caseType, CreateCaseParameter createCaseParameter) {
+        CaseProperties properties = caseDefaults.getCasetype().get(caseType);
         createCaseParameter.setKeywords(P360Utils.getKeywords(Arrays.asList(properties.getNoekkelord())));
         createCaseParameter.setFiledOnPaper(objectFactory.createCaseParameterBaseFiledOnPaper(false));
         createCaseParameter.setCaseType(objectFactory.createCreateCaseParameterCaseType(Constants.CASE_TYPE_NOARK));
