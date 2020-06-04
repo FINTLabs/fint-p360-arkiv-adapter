@@ -5,7 +5,7 @@ import no.fint.arkiv.p360.caze.CreateCaseParameter;
 import no.fint.arkiv.p360.caze.ObjectFactory;
 import no.fint.model.administrasjon.arkiv.*;
 import no.fint.model.resource.Link;
-import no.fint.model.resource.administrasjon.arkiv.SakResource;
+import no.fint.model.resource.administrasjon.arkiv.SaksmappeResource;
 import no.fint.p360.CaseDefaults;
 import no.fint.p360.data.CaseProperties;
 import no.fint.p360.data.utilities.Constants;
@@ -30,7 +30,7 @@ public class CaseDefaultsService {
         objectFactory = new ObjectFactory();
     }
 
-    public void applyDefaultsForCreation(String caseType, SakResource resource) {
+    public void applyDefaultsForCreation(String caseType, SaksmappeResource resource) {
         CaseProperties properties = caseDefaults.getCasetype().get(caseType);
         if (resource.getSaksstatus().isEmpty()) {
             resource.addSaksstatus(Link.with(
@@ -49,7 +49,7 @@ public class CaseDefaultsService {
         applyDefaultsForUpdate(caseType, resource);
     }
 
-    public void applyDefaultsForUpdate(String caseType, SakResource resource) {
+    public void applyDefaultsForUpdate(String caseType, SaksmappeResource resource) {
         CaseProperties properties = caseDefaults.getCasetype().get(caseType);
         if (resource.getJournalpost() == null || resource.getJournalpost().isEmpty()) {
             return;
