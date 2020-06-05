@@ -40,7 +40,7 @@ public class GetTilskuddFartoyHandler implements Handler {
                 throw new IllegalArgumentException("Invalid query: " + query);
             }
             response.setResponseStatus(ResponseStatus.ACCEPTED);
-        } catch (GetTilskuddFartoyNotFoundException e) {
+        } catch (CaseNotFound e) {
             response.setResponseStatus(ResponseStatus.REJECTED);
             response.setStatusCode("NOT_FOUND");
             response.setMessage(e.getMessage());
@@ -48,7 +48,7 @@ public class GetTilskuddFartoyHandler implements Handler {
             response.setResponseStatus(ResponseStatus.REJECTED);
             response.setStatusCode("NOT_A_TILSKUDDFARTOY_SAK");
             response.setMessage(e.getMessage());
-        } catch (GetTilskuddFartoyException | GetDocumentException | IllegalCaseNumberFormat e) {
+        } catch (GetCaseException | GetDocumentException | IllegalCaseNumberFormat e) {
             response.setResponseStatus(ResponseStatus.REJECTED);
             response.setMessage(e.getMessage());
         }
