@@ -32,6 +32,9 @@ public class CaseDefaultsService {
 
     public void applyDefaultsForCreation(String caseType, SaksmappeResource resource) {
         CaseProperties properties = caseDefaults.getCasetype().get(caseType);
+        if (properties == null) {
+            return;
+        }
         if (resource.getSaksstatus().isEmpty()) {
             resource.addSaksstatus(Link.with(
                     Saksstatus.class,
@@ -51,6 +54,9 @@ public class CaseDefaultsService {
 
     public void applyDefaultsForUpdate(String caseType, SaksmappeResource resource) {
         CaseProperties properties = caseDefaults.getCasetype().get(caseType);
+        if (properties == null) {
+            return;
+        }
         if (resource.getJournalpost() == null || resource.getJournalpost().isEmpty()) {
             return;
         }
@@ -124,6 +130,9 @@ public class CaseDefaultsService {
 
     public void applyDefaultsToCreateCase(String caseType, CreateCaseParameter createCaseParameter) {
         CaseProperties properties = caseDefaults.getCasetype().get(caseType);
+        if (properties == null) {
+            return;
+        }
         createCaseParameter.setKeywords(P360Utils.getKeywords(Arrays.asList(properties.getNoekkelord())));
         createCaseParameter.setFiledOnPaper(objectFactory.createCaseParameterBaseFiledOnPaper(false));
         createCaseParameter.setCaseType(objectFactory.createCreateCaseParameterCaseType(Constants.CASE_TYPE_NOARK));

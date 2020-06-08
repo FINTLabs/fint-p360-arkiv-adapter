@@ -125,6 +125,7 @@ public class UpdateTilskuddFredaHusPrivatEieHandler implements Handler {
             response.setResponseStatus(ResponseStatus.ACCEPTED);
         } catch (CreateCaseException | CaseNotFound | GetCaseException | CreateDocumentException | GetDocumentException | IllegalCaseNumberFormat e) {
             response.setResponseStatus(ResponseStatus.REJECTED);
+            response.setStatusCode(e.getClass().getSimpleName());
             response.setMessage(e.getMessage());
         }
     }
