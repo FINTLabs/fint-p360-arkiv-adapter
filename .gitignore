@@ -17,3 +17,5 @@ generated-sources
 /.settings/
 /bin/
 /.vscode/
+.run/Application.run.xml
+props.xsl
