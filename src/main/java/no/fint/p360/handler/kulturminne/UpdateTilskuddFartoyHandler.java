@@ -11,8 +11,8 @@ import no.fint.model.kultur.kulturminnevern.KulturminnevernActions;
 import no.fint.model.resource.FintLinks;
 import no.fint.model.resource.kultur.kulturminnevern.TilskuddFartoyResource;
 import no.fint.p360.data.exception.*;
-import no.fint.p360.data.kulturminne.TilskuddFartoyDefaults;
-import no.fint.p360.data.kulturminne.TilskuddfartoyService;
+import no.fint.p360.data.kulturminne.CaseDefaultsService;
+import no.fint.p360.data.kulturminne.TilskuddFartoyService;
 import no.fint.p360.handler.Handler;
 import no.fint.p360.service.ValidationService;
 import org.apache.commons.lang3.StringUtils;
@@ -33,10 +33,10 @@ public class UpdateTilskuddFartoyHandler implements Handler {
     private ValidationService validationService;
 
     @Autowired
-    private TilskuddFartoyDefaults tilskuddFartoyDefaults;
+    private CaseDefaultsService caseDefaultsService;
 
     @Autowired
-    private TilskuddfartoyService tilskuddfartoyService;
+    private TilskuddFartoyService tilskuddfartoyService;
 
     @Override
     public void accept(Event<FintLinks> response) {
@@ -68,7 +68,7 @@ public class UpdateTilskuddFartoyHandler implements Handler {
                 tilskuddFartoyResource.getJournalpost().isEmpty()) {
             throw new IllegalArgumentException("Update must contain at least one Journalpost");
         }
-        tilskuddFartoyDefaults.applyDefaultsForUpdate(tilskuddFartoyResource);
+        caseDefaultsService.applyDefaultsForUpdate("tilskudd-fartoy", tilskuddFartoyResource);
         log.info("Complete document for update: {}", tilskuddFartoyResource);
         List<Problem> problems = validationService.getProblems(tilskuddFartoyResource.getJournalpost());
         if (!problems.isEmpty()) {
@@ -83,7 +83,7 @@ public class UpdateTilskuddFartoyHandler implements Handler {
             TilskuddFartoyResource result = tilskuddfartoyService.updateTilskuddFartoyCase(caseNumber, tilskuddFartoyResource);
             response.setData(ImmutableList.of(result));
             response.setResponseStatus(ResponseStatus.ACCEPTED);
-        } catch (GetTilskuddFartoyNotFoundException | GetTilskuddFartoyException | CreateDocumentException | GetDocumentException | IllegalCaseNumberFormat | NotTilskuddfartoyException e) {
+        } catch (CaseNotFound | GetCaseException | CreateDocumentException | GetDocumentException | IllegalCaseNumberFormat | NotTilskuddfartoyException e) {
             response.setResponseStatus(ResponseStatus.REJECTED);
             response.setMessage(e.getMessage());
         }
@@ -91,7 +91,7 @@ public class UpdateTilskuddFartoyHandler implements Handler {
 
     private void createCase(Event<FintLinks> response, TilskuddFartoyResource tilskuddFartoyResource) {
         try {
-            tilskuddFartoyDefaults.applyDefaultsForCreation(tilskuddFartoyResource);
+            caseDefaultsService.applyDefaultsForCreation("tilskudd-fartoy", tilskuddFartoyResource);
             log.info("Complete document for creation: {}", tilskuddFartoyResource);
             List<Problem> problems = validationService.getProblems(tilskuddFartoyResource);
             if (!problems.isEmpty()) {
@@ -104,7 +104,7 @@ public class UpdateTilskuddFartoyHandler implements Handler {
             TilskuddFartoyResource tilskuddFartoy = tilskuddfartoyService.createTilskuddFartoyCase(tilskuddFartoyResource);
             response.setData(ImmutableList.of(tilskuddFartoy));
             response.setResponseStatus(ResponseStatus.ACCEPTED);
-        } catch (CreateCaseException | GetTilskuddFartoyNotFoundException | GetTilskuddFartoyException | CreateDocumentException | GetDocumentException | IllegalCaseNumberFormat | NotTilskuddfartoyException e) {
+        } catch (CreateCaseException | CaseNotFound | GetCaseException | CreateDocumentException | GetDocumentException | IllegalCaseNumberFormat | NotTilskuddfartoyException e) {
             response.setResponseStatus(ResponseStatus.REJECTED);
             response.setMessage(e.getMessage());
         }

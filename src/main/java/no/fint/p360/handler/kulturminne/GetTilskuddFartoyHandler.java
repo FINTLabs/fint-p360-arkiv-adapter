@@ -6,7 +6,7 @@ import no.fint.event.model.ResponseStatus;
 import no.fint.model.kultur.kulturminnevern.KulturminnevernActions;
 import no.fint.model.resource.FintLinks;
 import no.fint.p360.data.exception.*;
-import no.fint.p360.data.kulturminne.TilskuddfartoyService;
+import no.fint.p360.data.kulturminne.TilskuddFartoyService;
 import no.fint.p360.handler.Handler;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +21,7 @@ import static no.fint.p360.data.utilities.QueryUtils.getQueryParams;
 @Slf4j
 public class GetTilskuddFartoyHandler implements Handler {
     @Autowired
-    private TilskuddfartoyService tilskuddfartoyService;
+    private TilskuddFartoyService tilskuddfartoyService;
 
     @Override
     public void accept(Event<FintLinks> response) {
@@ -40,7 +40,7 @@ public class GetTilskuddFartoyHandler implements Handler {
                 throw new IllegalArgumentException("Invalid query: " + query);
             }
             response.setResponseStatus(ResponseStatus.ACCEPTED);
-        } catch (GetTilskuddFartoyNotFoundException e) {
+        } catch (CaseNotFound e) {
             response.setResponseStatus(ResponseStatus.REJECTED);
             response.setStatusCode("NOT_FOUND");
             response.setMessage(e.getMessage());
@@ -48,7 +48,7 @@ public class GetTilskuddFartoyHandler implements Handler {
             response.setResponseStatus(ResponseStatus.REJECTED);
             response.setStatusCode("NOT_A_TILSKUDDFARTOY_SAK");
             response.setMessage(e.getMessage());
-        } catch (GetTilskuddFartoyException | GetDocumentException | IllegalCaseNumberFormat e) {
+        } catch (GetCaseException | GetDocumentException | IllegalCaseNumberFormat e) {
             response.setResponseStatus(ResponseStatus.REJECTED);
             response.setMessage(e.getMessage());
         }

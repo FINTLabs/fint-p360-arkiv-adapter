@@ -6,16 +6,12 @@ import no.fint.arkiv.p360.caze.CreateCaseParameter;
 import no.fint.arkiv.p360.caze.ObjectFactory;
 import no.fint.arkiv.p360.document.CreateDocumentParameter;
 import no.fint.model.felles.kompleksedatatyper.Identifikator;
-import no.fint.model.kultur.kulturminnevern.TilskuddFartoy;
-import no.fint.model.resource.Link;
 import no.fint.model.resource.administrasjon.arkiv.JournalpostResource;
-import no.fint.model.resource.kultur.kulturminnevern.TilskuddFartoyResource;
+import no.fint.model.resource.kultur.kulturminnevern.TilskuddFredaHusPrivatEieResource;
 import no.fint.p360.data.exception.GetDocumentException;
 import no.fint.p360.data.exception.IllegalCaseNumberFormat;
 import no.fint.p360.data.noark.common.NoarkFactory;
 import no.fint.p360.data.noark.journalpost.JournalpostFactory;
-import no.fint.p360.data.noark.korrespondansepart.KorrespondansepartFactory;
-import no.fint.p360.data.utilities.NOARKUtils;
 import no.fint.p360.data.utilities.P360Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,7 +22,7 @@ import java.util.List;
 
 @Slf4j
 @Service
-public class TilskuddFartoyFactory {
+public class TilskuddFripFactory {
 
     @Autowired
     private NoarkFactory noarkFactory;
@@ -45,35 +41,35 @@ public class TilskuddFartoyFactory {
         objectFactory = new ObjectFactory();
     }
 
-    public TilskuddFartoyResource toFintResource(CaseResult caseResult) throws GetDocumentException, IllegalCaseNumberFormat {
+    public TilskuddFredaHusPrivatEieResource toFintResource(CaseResult caseResult) throws GetDocumentException, IllegalCaseNumberFormat {
 
-        TilskuddFartoyResource tilskuddFartoy = new TilskuddFartoyResource();
-        tilskuddFartoy.setSoknadsnummer(new Identifikator());
-        tilskuddFartoy.setMappeId(new Identifikator());
-        tilskuddFartoy.setSystemId(new Identifikator());
+        TilskuddFredaHusPrivatEieResource tilskuddFredaHusPrivatEie = new TilskuddFredaHusPrivatEieResource();
+        tilskuddFredaHusPrivatEie.setSoknadsnummer(new Identifikator());
+        tilskuddFredaHusPrivatEie.setMappeId(new Identifikator());
+        tilskuddFredaHusPrivatEie.setSystemId(new Identifikator());
 
-        noarkFactory.getSaksmappe(caseResult, tilskuddFartoy);
+        noarkFactory.getSaksmappe(caseResult, tilskuddFredaHusPrivatEie);
 
-        return tilskuddFartoy;
+        return tilskuddFredaHusPrivatEie;
     }
 
 
-    public List<TilskuddFartoyResource> toFintResourceList(List<CaseResult> caseResults) throws GetDocumentException, IllegalCaseNumberFormat {
-        List<TilskuddFartoyResource> result = new ArrayList<>(caseResults.size());
+    public List<TilskuddFredaHusPrivatEieResource> toFintResourceList(List<CaseResult> caseResults) throws GetDocumentException, IllegalCaseNumberFormat {
+        List<TilskuddFredaHusPrivatEieResource> result = new ArrayList<>(caseResults.size());
         for (CaseResult caseResult : caseResults) {
             result.add(toFintResource(caseResult));
         }
         return result;
     }
 
-    public CreateCaseParameter convertToCreateCase(TilskuddFartoyResource tilskuddFartoy) {
+    public CreateCaseParameter convertToCreateCase(TilskuddFredaHusPrivatEieResource tilskuddFredaHusPrivatEie) {
         CreateCaseParameter createCaseParameter = objectFactory.createCreateCaseParameter();
 
-        caseDefaultsService.applyDefaultsToCreateCase("tilskudd-fartoy", createCaseParameter);
+        caseDefaultsService.applyDefaultsToCreateCase("tilskudd-freda-hus-privat-eie", createCaseParameter);
 
-        createCaseParameter.setExternalId(P360Utils.getExternalIdParameter(tilskuddFartoy.getSoknadsnummer()));
+        createCaseParameter.setExternalId(P360Utils.getExternalIdParameter(tilskuddFredaHusPrivatEie.getSoknadsnummer()));
 
-        noarkFactory.applyCaseParameters(tilskuddFartoy, createCaseParameter);
+        noarkFactory.applyCaseParameters(tilskuddFredaHusPrivatEie, createCaseParameter);
 
         return createCaseParameter;
     }
