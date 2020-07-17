@@ -5,9 +5,12 @@ import no.fint.arkiv.p360.document.*;
 import no.fint.model.administrasjon.arkiv.*;
 import no.fint.model.administrasjon.organisasjon.Organisasjonselement;
 import no.fint.model.administrasjon.personal.Personalressurs;
+import no.fint.model.felles.kodeverk.iso.Landkode;
 import no.fint.model.felles.kompleksedatatyper.Identifikator;
+import no.fint.model.felles.kompleksedatatyper.Kontaktinformasjon;
 import no.fint.model.resource.Link;
 import no.fint.model.resource.administrasjon.arkiv.*;
+import no.fint.model.resource.felles.kompleksedatatyper.AdresseResource;
 import no.fint.p360.data.noark.dokument.DokumentbeskrivelseFactory;
 import no.fint.p360.data.utilities.FintUtils;
 import no.fint.p360.repository.KodeverkRepository;
@@ -87,8 +90,32 @@ public class JournalpostFactory {
                         .map(Collection::stream)
                         .orElse(Stream.empty())
                         .map(it -> {
-                            KorrespondanseResource result = new KorrespondanseResource();
-                            result.addKorrespondansepart(Link.with(Korrespondansepart.class, "systemid", it.getContactRecno().getValue()));
+                            KorrespondansepartResource result = new KorrespondansepartResource();
+                            //optionalValue(it.getContactRecno())
+                            //result.addKorrespondansepart(Link.with(Korrespondansepart.class, "systemid", it.getContactRecno().getValue()));
+                            optionalValue(it.getSearchName()).ifPresent(result::setKorrespondansepartNavn);
+                            AdresseResource adresse = new AdresseResource();
+                            optionalValue(it.getAddress()).map(Collections::singletonList).ifPresent(adresse::setAdresselinje);
+                            optionalValue(it.getZipCode()).ifPresent(adresse::setPostnummer);
+                            optionalValue(it.getZipPlace()).ifPresent(adresse::setPoststed);
+                            optionalValue(it.getCountry()).map(Link.apply(Landkode.class, "systemid")).ifPresent(adresse::addLand);
+                            result.setAdresse(adresse);
+                            optionalValue(it.getEmail()).map(e -> {
+                                Kontaktinformasjon k = new Kontaktinformasjon();
+                                k.setEpostadresse(e);
+                                return k;
+                            }).ifPresent(result::setKontaktinformasjon);
+                            optionalValue(it.getExternalId())
+                                    .ifPresent(id -> {
+                                        switch (StringUtils.length(id)) {
+                                            case 11:
+                                                result.setFodselsnummer(id);
+                                                break;
+                                            case 9:
+                                                result.setOrganisasjonsnummer(id);
+                                                break;
+                                        }
+                                    });
                             optionalValue(it.getRole())
                                     .flatMap(role ->
                                             kodeverkRepository
@@ -272,14 +299,14 @@ public class JournalpostFactory {
     }
 
 
-    private DocumentContactParameter createDocumentContact(KorrespondanseResource korrespondansepart) {
+    private DocumentContactParameter createDocumentContact(KorrespondansepartResource korrespondansepart) {
         DocumentContactParameter documentContactParameter = objectFactory.createDocumentContactParameter();
 
-        applyParameterFromLink(
-                korrespondansepart.getKorrespondansepart(),
-                objectFactory::createDocumentContactParameterReferenceNumber,
-                documentContactParameter::setReferenceNumber
-        );
+        Stream.of(korrespondansepart.getFodselsnummer(), korrespondansepart.getOrganisasjonsnummer())
+                .filter(StringUtils::isNotBlank)
+                .map(objectFactory::createDocumentContactParameterExternalId)
+                .findFirst()
+                .ifPresent(documentContactParameter::setExternalId);
 
         applyParameterFromLink(
                 korrespondansepart.getKorrespondanseparttype(),

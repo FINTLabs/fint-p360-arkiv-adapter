@@ -14,7 +14,6 @@ import no.fint.p360.data.exception.GetDocumentException;
 import no.fint.p360.data.exception.IllegalCaseNumberFormat;
 import no.fint.p360.data.noark.common.NoarkFactory;
 import no.fint.p360.data.noark.journalpost.JournalpostFactory;
-import no.fint.p360.data.noark.korrespondansepart.KorrespondansepartFactory;
 import no.fint.p360.data.utilities.NOARKUtils;
 import no.fint.p360.data.utilities.P360Utils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,9 +29,6 @@ public class TilskuddFartoyFactory {
 
     @Autowired
     private NoarkFactory noarkFactory;
-
-    @Autowired
-    private KorrespondansepartFactory korrespondansepartFactory;
 
     @Autowired
     private JournalpostFactory journalpostFactory;
