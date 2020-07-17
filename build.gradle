@@ -101,7 +101,7 @@ wsdl2java {
             ['-xjc-XtoString', '-client', '-p', 'no.fint.arkiv.p360.file', "$projectDir/src/main/resources/wsdl/FileService.wsdl"],
             ['-xjc-XtoString', '-client', '-p', 'no.fint.arkiv.p360.support', "$projectDir/src/main/resources/wsdl/SupportService.wsdl"],
             ['-xjc-XtoString', '-client', '-p', 'no.fint.arkiv.p360.contact', "$projectDir/src/main/resources/wsdl/ContactService.wsdl"],
-            ['-xjc-XtoString', '-client', '-b', "$projectDir/src/main/resources/wsdl/bindings-user.xjb", '-p', 'no.fint.arkiv.p360.user', "$projectDir/src/main/resources/wsdl/UserService.wsdl"],
+            ['-xjc-XtoString', '-client', '-p', 'no.fint.arkiv.p360.user', "$projectDir/src/main/resources/wsdl/UserService.wsdl"],
             ['-xjc-XtoString', '-client', '-p', 'no.fint.arkiv.p360.accessgroup', "$projectDir/src/main/resources/wsdl/AccessGroupService.wsdl"]
     ]
 }

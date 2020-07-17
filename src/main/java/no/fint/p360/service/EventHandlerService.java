@@ -1,5 +1,6 @@
 package no.fint.p360.service;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import no.fint.adapter.event.EventResponseService;
 import no.fint.adapter.event.EventStatusService;
@@ -40,6 +41,7 @@ public class EventHandlerService {
     @Autowired
     private Collection<Handler> handlers;
 
+    @Getter
     private Map<String, Handler> actionsHandlerMap;
 
     private Executor executor;

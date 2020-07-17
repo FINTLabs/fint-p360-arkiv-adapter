@@ -8,7 +8,6 @@ import no.fint.arkiv.p360.contact.PrivatePersonResult;
 import no.fint.model.felles.kompleksedatatyper.Identifikator;
 import no.fint.model.felles.kompleksedatatyper.Kontaktinformasjon;
 import no.fint.model.felles.kompleksedatatyper.Personnavn;
-import no.fint.model.resource.administrasjon.arkiv.VariantformatResource;
 import no.fint.model.resource.felles.kompleksedatatyper.AdresseResource;
 import org.apache.commons.lang3.StringUtils;
 
@@ -16,15 +15,22 @@ import javax.xml.bind.JAXBElement;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.regex.Pattern;
 
 @Slf4j
 public enum FintUtils {
     ;
 
+    public static Pattern URL_UNSAFE = Pattern.compile("[^-_.*A-Za-z0-9/]+");
+
     public static Identifikator createIdentifikator(String value) {
         Identifikator identifikator = new Identifikator();
-        identifikator.setIdentifikatorverdi(value);
+        identifikator.setIdentifikatorverdi(identifikatorverdi(value));
         return identifikator;
+    }
+
+    public static String identifikatorverdi(String value) {
+        return URL_UNSAFE.matcher(value).replaceAll("-");
     }
 
     public static boolean validIdentifikator(Identifikator input) {
