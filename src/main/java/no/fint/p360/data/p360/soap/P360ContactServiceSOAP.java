@@ -9,6 +9,7 @@ import no.fint.p360.data.exception.PrivatePersonNotFound;
 import no.fint.p360.data.p360.P360ContactService;
 import no.fint.p360.data.utilities.P360Utils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -21,6 +22,7 @@ import java.util.stream.Stream;
 
 @Slf4j
 @Service
+@ConditionalOnProperty(name = "fint.p360.api", havingValue = "SOAP")
 public class P360ContactServiceSOAP extends P360AbstractSOAPService implements P360ContactService {
 
     private static final QName SERVICE_NAME = new QName("http://software-innovation.com/SI.Data", "ContactService");

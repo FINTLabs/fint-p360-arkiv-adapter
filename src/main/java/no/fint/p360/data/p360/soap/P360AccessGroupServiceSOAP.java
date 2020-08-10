@@ -5,6 +5,7 @@ import no.fint.arkiv.p360.accessgroup.*;
 import no.fint.p360.data.p360.P360AccessGroupService;
 import no.fint.p360.data.utilities.P360Utils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -15,6 +16,7 @@ import java.net.URL;
 
 @Slf4j
 @Service
+@ConditionalOnProperty(name = "fint.p360.api", havingValue = "SOAP")
 public class P360AccessGroupServiceSOAP extends P360AbstractSOAPService implements P360AccessGroupService {
 
     private static final QName SERVICE_NAME = new QName("http://software-innovation.com/SI.Data", "AccessGroupService");

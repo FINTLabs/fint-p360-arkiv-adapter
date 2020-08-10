@@ -9,6 +9,7 @@ import no.fint.p360.data.p360.P360CaseService;
 import no.fint.p360.data.utilities.Constants;
 import no.fint.p360.data.utilities.P360Utils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -20,6 +21,7 @@ import java.util.Map;
 
 @Service
 @Slf4j
+@ConditionalOnProperty(name = "fint.p360.api", havingValue = "SOAP")
 public class P360CaseServiceSOAP extends P360AbstractSOAPService implements P360CaseService {
 
 

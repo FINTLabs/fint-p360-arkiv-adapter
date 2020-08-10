@@ -7,6 +7,7 @@ import no.fint.p360.data.exception.GetDocumentException;
 import no.fint.p360.data.p360.P360DocumentService;
 import no.fint.p360.data.utilities.P360Utils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -16,6 +17,7 @@ import java.net.URL;
 
 @Service
 @Slf4j
+@ConditionalOnProperty(name = "fint.p360.api", havingValue = "SOAP")
 public class P360DocumentServiceSOAP extends P360AbstractSOAPService implements P360DocumentService {
 
     private IDocumentService documentService;

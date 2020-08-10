@@ -7,6 +7,7 @@ import no.fint.p360.data.p360.P360SupportService;
 import no.fint.p360.data.utilities.FintUtils;
 import no.fint.p360.data.utilities.P360Utils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -19,6 +20,7 @@ import java.util.stream.Stream;
 
 @Slf4j
 @Service
+@ConditionalOnProperty(name = "fint.p360.api", havingValue = "SOAP")
 public class P360SupportServiceSOAP extends P360AbstractSOAPService implements P360SupportService {
 
     private static final QName SERVICE_NAME = new QName("http://software-innovation.com/SI.Data", "SupportService");
