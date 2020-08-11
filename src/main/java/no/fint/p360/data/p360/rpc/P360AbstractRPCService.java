@@ -1,14 +1,19 @@
 package no.fint.p360.data.p360.rpc;
 
+import com.fasterxml.jackson.databind.MapperFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import no.fint.p360.AdapterProps;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.web.HttpMessageConverters;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.PostConstruct;
@@ -24,10 +29,23 @@ public abstract class P360AbstractRPCService {
     @Autowired
     private AdapterProps adapterProps;
 
+    private ObjectMapper objectMapper() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES);
+        return objectMapper;
+    }
+
+    private HttpMessageConverter httpMessageConverter() {
+        MappingJackson2HttpMessageConverter messageConverter = new MappingJackson2HttpMessageConverter();
+        messageConverter.setObjectMapper(objectMapper());
+        return messageConverter;
+    }
+
     @PostConstruct
     protected void init() {
         p360Client = restTemplateBuilder
                 .rootUri(adapterProps.getEndpointBaseUrl())
+                .messageConverters(httpMessageConverter())
                 .build();
         log.trace("Init.");
     }
