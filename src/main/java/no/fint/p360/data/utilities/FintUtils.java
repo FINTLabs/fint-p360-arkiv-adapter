@@ -8,7 +8,6 @@ import no.fint.arkiv.p360.contact.PrivatePersonResult;
 import no.fint.model.felles.kompleksedatatyper.Identifikator;
 import no.fint.model.felles.kompleksedatatyper.Kontaktinformasjon;
 import no.fint.model.felles.kompleksedatatyper.Personnavn;
-import no.fint.model.resource.administrasjon.arkiv.VariantformatResource;
 import no.fint.model.resource.felles.kompleksedatatyper.AdresseResource;
 import org.apache.commons.lang3.StringUtils;
 

@@ -4,7 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import no.fint.event.model.Event;
 import no.fint.event.model.ResponseStatus;
 import no.fint.event.model.Status;
-import no.fint.model.administrasjon.arkiv.ArkivActions;
+import no.fint.model.arkiv.noark.ArkivActions;
+import no.fint.model.arkiv.kodeverk.ArkivActions;
 import no.fint.model.resource.FintLinks;
 import no.fint.p360.handler.Handler;
 import no.fint.p360.repository.KodeverkRepository;
@@ -19,7 +20,8 @@ import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import static no.fint.model.administrasjon.arkiv.ArkivActions.*;
+import static no.fint.model.arkiv.noark.ArkivActions.*;
+import static no.fint.model.arkiv.kodeverk.ArkivActions.*;
 
 @Service
 @Slf4j

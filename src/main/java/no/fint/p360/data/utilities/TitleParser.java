@@ -1,7 +1,7 @@
 package no.fint.p360.data.utilities;
 
-import no.fint.model.resource.kultur.kulturminnevern.DispensasjonAutomatiskFredaKulturminneResource;
-import no.fint.model.resource.kultur.kulturminnevern.TilskuddFartoyResource;
+import no.fint.model.resource.arkiv.kulturminnevern.DispensasjonAutomatiskFredaKulturminneResource;
+import no.fint.model.resource.arkiv.kulturminnevern.TilskuddFartoyResource;
 import no.fint.p360.data.exception.NoSuchTitleDimension;
 import no.fint.p360.data.exception.UnableToParseTitle;
 

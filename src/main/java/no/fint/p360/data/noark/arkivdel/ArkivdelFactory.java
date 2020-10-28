@@ -1,7 +1,7 @@
 package no.fint.p360.data.noark.arkivdel;
 
 import no.fint.arkiv.p360.support.CodeTableRowResult;
-import no.fint.model.resource.administrasjon.arkiv.ArkivdelResource;
+import no.fint.model.resource.arkiv.noark.ArkivdelResource;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 

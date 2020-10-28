@@ -1,7 +1,7 @@
 package no.fint.p360.data.noark.korrespondansepart;
 
 import lombok.extern.slf4j.Slf4j;
-import no.fint.model.resource.administrasjon.arkiv.KorrespondansepartResource;
+import no.fint.model.resource.arkiv.noark.KorrespondansepartResource;
 import no.fint.p360.data.exception.*;
 import no.fint.p360.data.p360.P360ContactService;
 import org.springframework.beans.factory.annotation.Autowired;

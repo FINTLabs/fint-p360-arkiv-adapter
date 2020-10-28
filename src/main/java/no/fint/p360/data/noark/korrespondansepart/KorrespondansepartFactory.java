@@ -3,7 +3,7 @@ package no.fint.p360.data.noark.korrespondansepart;
 import no.fint.arkiv.p360.contact.*;
 import no.fint.model.felles.kompleksedatatyper.Kontaktinformasjon;
 import no.fint.model.felles.kompleksedatatyper.Personnavn;
-import no.fint.model.resource.administrasjon.arkiv.KorrespondansepartResource;
+import no.fint.model.resource.arkiv.noark.KorrespondansepartResource;
 import no.fint.model.resource.felles.kompleksedatatyper.AdresseResource;
 import no.fint.p360.data.utilities.FintUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -11,9 +11,6 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import javax.xml.bind.JAXBElement;
-
-import java.util.List;
-import java.util.Optional;
 
 import static java.util.Optional.ofNullable;
 import static no.fint.p360.data.utilities.FintUtils.*;
