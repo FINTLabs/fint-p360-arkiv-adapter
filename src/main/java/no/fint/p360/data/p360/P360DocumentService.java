@@ -18,7 +18,7 @@ import java.net.URL;
 public class P360DocumentService extends P360AbstractService {
 
     private IDocumentService documentService;
-    private ObjectFactory objectFactory;
+
 
     @Value("${fint.p360.wsdl-location:./src/main/resources/wsdl}/DocumentService.wsdl")
     private String wsdlLocation;
@@ -34,7 +34,7 @@ public class P360DocumentService extends P360AbstractService {
         documentService = new DocumentService(wsdlLocationUrl, serviceName).getBasicHttpBindingIDocumentService();
         super.setup(documentService, "DocumentService");
 
-        objectFactory = new ObjectFactory();
+
     }
 
     public void createDocument(CreateDocumentParameter createDocumentParameter) throws CreateDocumentException {

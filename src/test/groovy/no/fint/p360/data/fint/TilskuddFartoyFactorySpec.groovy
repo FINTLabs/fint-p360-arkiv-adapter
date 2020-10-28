@@ -38,7 +38,7 @@ class TilskuddFartoyFactorySpec extends Specification {
         noarkFactory = new NoarkFactory(
                 documentService: documentService,
                 journalpostFactory: journalpostFactory,
-                partFactory:  partFactory,
+                partFactory: partFactory,
                 kodeverkRepository: kodeverkRepository,
                 titleService: titleService
         )

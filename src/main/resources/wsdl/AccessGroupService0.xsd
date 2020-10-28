@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<xs:schema elementFormDefault="qualified" targetNamespace="http://software-innovation.com/SI.Data" 
-    xmlns:xs="http://www.w3.org/2001/XMLSchema" 
-    xmlns:tns="http://software-innovation.com/SI.Data">
-    <xs:import schemaLocation="AccessGroupService2.xsd" namespace="http://schemas.datacontract.org/2004/07/SI.Data.Contracts.WS"/>
+<xs:schema elementFormDefault="qualified" targetNamespace="http://software-innovation.com/SI.Data"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:tns="http://software-innovation.com/SI.Data">
+    <xs:import schemaLocation="AccessGroupService2.xsd"
+               namespace="http://schemas.datacontract.org/2004/07/SI.Data.Contracts.WS"/>
     <xs:element name="Ping">
         <xs:complexType>
             <xs:sequence/>
@@ -27,15 +28,16 @@
             <xs:element minOccurs="0" name="MaxRows" nillable="true" type="xs:int"/>
             <xs:element minOccurs="0" name="Page" nillable="true" type="xs:int"/>
             <xs:element minOccurs="0" name="Recno" nillable="true" type="xs:int"/>
-            <xs:element minOccurs="0" name="SortingCriterion" nillable="true" type="q1:SortCriterion" 
-                xmlns:q1="http://schemas.datacontract.org/2004/07/SI.Data.Contracts.WS"/>
+            <xs:element minOccurs="0" name="SortingCriterion" nillable="true" type="q1:SortCriterion"
+                        xmlns:q1="http://schemas.datacontract.org/2004/07/SI.Data.Contracts.WS"/>
         </xs:sequence>
     </xs:complexType>
     <xs:element name="GetAccessGroupsQuery" nillable="true" type="tns:GetAccessGroupsQuery"/>
     <xs:element name="GetAccessGroupsResponse">
         <xs:complexType>
             <xs:sequence>
-                <xs:element minOccurs="0" name="GetAccessGroupsResult" nillable="true" type="tns:GetAccessGroupsResult"/>
+                <xs:element minOccurs="0" name="GetAccessGroupsResult" nillable="true"
+                            type="tns:GetAccessGroupsResult"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
@@ -59,7 +61,8 @@
     <xs:element name="WSOperationResult" nillable="true" type="tns:WSOperationResult"/>
     <xs:complexType name="ArrayOfAccessGroupResult">
         <xs:sequence>
-            <xs:element minOccurs="0" maxOccurs="unbounded" name="AccessGroupResult" nillable="true" type="tns:AccessGroupResult"/>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="AccessGroupResult" nillable="true"
+                        type="tns:AccessGroupResult"/>
         </xs:sequence>
     </xs:complexType>
     <xs:element name="ArrayOfAccessGroupResult" nillable="true" type="tns:ArrayOfAccessGroupResult"/>
@@ -74,7 +77,8 @@
     <xs:element name="AccessGroupResult" nillable="true" type="tns:AccessGroupResult"/>
     <xs:complexType name="ArrayOfAccessGroupUserResult">
         <xs:sequence>
-            <xs:element minOccurs="0" maxOccurs="unbounded" name="AccessGroupUserResult" nillable="true" type="tns:AccessGroupUserResult"/>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="AccessGroupUserResult" nillable="true"
+                        type="tns:AccessGroupUserResult"/>
         </xs:sequence>
     </xs:complexType>
     <xs:element name="ArrayOfAccessGroupUserResult" nillable="true" type="tns:ArrayOfAccessGroupUserResult"/>

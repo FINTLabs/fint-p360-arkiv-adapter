@@ -9,7 +9,7 @@ import java.util.stream.Stream;
 public abstract class AbstractSupportedActions {
 
     @Getter
-    private List<String> actions = new ArrayList<>();
+    private final List<String> actions = new ArrayList<>();
 
     public void add(Enum e) {
         actions.add(e.name());

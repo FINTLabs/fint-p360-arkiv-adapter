@@ -3,7 +3,6 @@ package no.fint.p360.data.noark.dokument;
 import lombok.extern.slf4j.Slf4j;
 import no.fint.arkiv.p360.document.CreateFileParameter;
 import no.fint.arkiv.p360.document.DocumentFileResult;
-import no.fint.arkiv.p360.document.ObjectFactory;
 import no.fint.model.arkiv.kodeverk.DokumentStatus;
 import no.fint.model.arkiv.kodeverk.DokumentType;
 import no.fint.model.arkiv.kodeverk.TilknyttetRegistreringSom;
@@ -43,11 +42,11 @@ public class DokumentbeskrivelseFactory {
     @Autowired
     private InternalRepository internalRepository;
 
-    private ObjectFactory objectFactory;
+
 
     @PostConstruct
     public void init() {
-        objectFactory = new ObjectFactory();
+
     }
 
     public DokumentbeskrivelseResource toFintResource(DocumentFileResult file) {
@@ -129,7 +128,7 @@ public class DokumentbeskrivelseFactory {
                 .map(Identifikator::getIdentifikatorverdi)
                 .min(Comparator.comparingInt(Integer::parseInt))
                 .map(s -> StringUtils.prependIfMissing(s, "recno:"))
-                .map(objectFactory::createCreateFileParameterFormat)
+
                 .ifPresent(createFileParameter::setFormat);
 
         //createFileParameter.setFormat(objectFactory.createCreateFileParameterFormat(dokumentobjekt.getFormat()));
@@ -181,7 +180,7 @@ public class DokumentbeskrivelseFactory {
                         .map(DokumentfilResource::getData)
                         .filter(StringUtils::isNotBlank)
                         .map(Base64.getDecoder()::decode)
-                        .map(objectFactory::createCreateFileParameterData)
+
                         .findAny()
                         .orElseThrow(() -> new FileNotFound("File not found for " + dokumentbeskrivelse.getTittel())));
 

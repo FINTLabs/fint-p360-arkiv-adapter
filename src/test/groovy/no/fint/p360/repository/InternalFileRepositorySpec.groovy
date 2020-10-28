@@ -26,6 +26,7 @@ class InternalFileRepositorySpec extends Specification {
 
         fileRepository = new InternalFileRepository(rootDirectory: path, objectMapper: new ObjectMapper())
     }
+
     def "Save file to local file system"() {
 
         when:

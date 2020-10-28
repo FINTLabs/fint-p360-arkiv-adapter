@@ -4,7 +4,7 @@
     <jaxb:globalBindings generateElementProperty="false"/>
     <jaxb:schemaBindings>
         <jaxb:nameXmlTransform>
-            <jaxb:elementName suffix="Element" />
+            <jaxb:elementName suffix="Element"/>
         </jaxb:nameXmlTransform>
     </jaxb:schemaBindings>
 </jaxb:bindings>

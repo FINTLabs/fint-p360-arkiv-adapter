@@ -23,7 +23,7 @@ public class P360SupportService extends P360AbstractService {
     private static final QName SERVICE_NAME = new QName("http://software-innovation.com/SI.Data", "SupportService");
 
     private ISupportService supportService;
-    private ObjectFactory objectFactory;
+
 
     @Value("${fint.p360.wsdl-location:./src/main/resources/wsdl}/SupportService.wsdl")
     private String wsdlLocation;
@@ -38,7 +38,7 @@ public class P360SupportService extends P360AbstractService {
         log.info("WSDL location: {}", wsdlLocationUrl);
         supportService = new SupportService(wsdlLocationUrl, SERVICE_NAME).getBasicHttpBindingISupportService();
         super.setup(supportService, "SupportService");
-        objectFactory = new ObjectFactory();
+
     }
 
     public GetCodeTableRowsResult getCodeTable(String table) throws CodeTableNotFound {

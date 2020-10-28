@@ -4,7 +4,6 @@ import no.fint.arkiv.p360.caze.*;
 import no.fint.p360.data.utilities.FintUtils;
 import no.fint.p360.data.utilities.P360Utils;
 
-import javax.xml.bind.JAXBElement;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import java.util.ArrayList;
@@ -13,11 +12,11 @@ import java.util.List;
 
 public class P360ObjectFactory {
 
-    private ObjectFactory objectFactory;
-    private DatatypeFactory datatypeFactory;
+    private final ObjectFactory objectFactory;
+    private final DatatypeFactory datatypeFactory;
 
     public P360ObjectFactory() throws DatatypeConfigurationException {
-        objectFactory = new ObjectFactory();
+
         datatypeFactory = DatatypeFactory.newInstance();
     }
 

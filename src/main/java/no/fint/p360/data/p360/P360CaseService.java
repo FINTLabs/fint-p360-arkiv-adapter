@@ -24,7 +24,7 @@ public class P360CaseService extends P360AbstractService {
 
     private ICaseService caseServicePort;
 
-    private ObjectFactory objectFactory;
+
 
     @Value("${fint.p360.wsdl-location:./src/main/resources/wsdl}/CaseService.wsdl")
     private String wsdlLocation;
@@ -40,7 +40,7 @@ public class P360CaseService extends P360AbstractService {
         caseServicePort = new CaseService(wsdlLocationUrl, serviceName).getBasicHttpBindingICaseService();
         super.setup(caseServicePort, "CaseService");
 
-        objectFactory = new ObjectFactory();
+
     }
 
     public boolean ping() {

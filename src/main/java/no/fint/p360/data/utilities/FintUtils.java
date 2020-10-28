@@ -11,7 +11,6 @@ import no.fint.model.felles.kompleksedatatyper.Personnavn;
 import no.fint.model.resource.felles.kompleksedatatyper.AdresseResource;
 import org.apache.commons.lang3.StringUtils;
 
-import javax.xml.bind.JAXBElement;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;

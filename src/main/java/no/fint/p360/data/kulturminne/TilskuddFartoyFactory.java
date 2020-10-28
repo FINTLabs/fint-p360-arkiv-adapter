@@ -3,7 +3,6 @@ package no.fint.p360.data.kulturminne;
 import lombok.extern.slf4j.Slf4j;
 import no.fint.arkiv.p360.caze.CaseResult;
 import no.fint.arkiv.p360.caze.CreateCaseParameter;
-import no.fint.arkiv.p360.caze.ObjectFactory;
 import no.fint.arkiv.p360.document.CreateDocumentParameter;
 import no.fint.model.arkiv.kulturminnevern.TilskuddFartoy;
 import no.fint.model.felles.kompleksedatatyper.Identifikator;
@@ -40,12 +39,12 @@ public class TilskuddFartoyFactory {
     @Autowired
     private TilskuddFartoyDefaults tilskuddFartoyDefaults;
 
-    private ObjectFactory objectFactory;
+
 
 
     @PostConstruct
     private void init() {
-        objectFactory = new ObjectFactory();
+
     }
 
     public TilskuddFartoyResource toFintResource(CaseResult caseResult) throws GetDocumentException, IllegalCaseNumberFormat {

@@ -13,7 +13,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -21,7 +20,7 @@ import java.util.regex.Pattern;
 @Slf4j
 public class TitleService {
 
-    private final Map<String,String> formats;
+    private final Map<String, String> formats;
 
     public TitleService(TitleFormats formats) {
         this.formats = formats.getFormat();
@@ -61,7 +60,7 @@ public class TitleService {
         if (titleMatcher.matches()) {
             for (int i = 1; i <= titleMatcher.groupCount(); ++i) {
                 try {
-                    BeanUtils.setProperty(object, nameList.get(i-1), titleMatcher.group(i));
+                    BeanUtils.setProperty(object, nameList.get(i - 1), titleMatcher.group(i));
                 } catch (IllegalAccessException | InvocationTargetException e) {
                     e.printStackTrace();
                 }

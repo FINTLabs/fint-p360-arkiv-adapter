@@ -2,9 +2,9 @@ package no.fint.p360.data.kulturminne;
 
 import lombok.extern.slf4j.Slf4j;
 import no.fint.arkiv.p360.caze.CreateCaseParameter;
-import no.fint.arkiv.p360.caze.ObjectFactory;
-import no.fint.model.arkiv.noark.*;
 import no.fint.model.arkiv.kodeverk.*;
+import no.fint.model.arkiv.noark.AdministrativEnhet;
+import no.fint.model.arkiv.noark.Arkivdel;
 import no.fint.model.resource.Link;
 import no.fint.model.resource.arkiv.kulturminnevern.TilskuddFartoyResource;
 import no.fint.p360.CaseDefaults;
@@ -24,13 +24,13 @@ public class TilskuddFartoyDefaults {
     private CaseDefaults caseDefaults;
 
     private CaseProperties properties;
-    private ObjectFactory objectFactory;
+
 
     @PostConstruct
     public void init() {
         log.info("Case Defaults: {}", caseDefaults);
         properties = caseDefaults.getCasetype().get("tilskudd-fartoy");
-        objectFactory = new ObjectFactory();
+
         log.info("Defaults for TilskuddFartoy: {}", properties);
     }
 

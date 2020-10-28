@@ -5,7 +5,6 @@ import no.fint.model.felles.kompleksedatatyper.Identifikator;
 import no.fint.model.resource.Link;
 import org.apache.commons.lang3.StringUtils;
 
-import javax.xml.bind.JAXBElement;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
@@ -16,7 +15,7 @@ public enum P360Utils {
     ;
 
     public static ArrayOfstring getKeywords(List<String> keywords) {
-        ObjectFactory objectFactory = new ObjectFactory();
+        ObjectFactory
 
         ArrayOfstring keywordArray = objectFactory.createArrayOfstring();
         keywords.forEach(keywordArray.getString()::add);
@@ -32,7 +31,7 @@ public enum P360Utils {
     }
 
     public static ExternalIdParameter getExternalIdParameter(Identifikator id) {
-        ObjectFactory objectFactory = new ObjectFactory();
+        ObjectFactory
 
         ExternalIdParameter externalIdParameter = objectFactory.createExternalIdParameter();
         externalIdParameter.setId(id.getIdentifikatorverdi());
@@ -42,7 +41,7 @@ public enum P360Utils {
     }
 
     public static ArrayOfClassCodeParameter getArchiveCodes(String type, String code) {
-        ObjectFactory objectFactory = new ObjectFactory();
+        ObjectFactory
 
         ArrayOfClassCodeParameter arrayOfClassCodeParameter = objectFactory.createArrayOfClassCodeParameter();
         ClassCodeParameter classCodeParameter = objectFactory.createClassCodeParameter();
@@ -63,6 +62,16 @@ public enum P360Utils {
                 .map(s -> StringUtils.substringAfterLast(s, "/"))
                 .map(s -> StringUtils.prependIfMissing(s, "recno:"))
                 .map(mapper)
+                .findFirst()
+                .ifPresent(consumer);
+    }
+
+    public static void applyParameterFromLink(List<Link> links, Consumer<String> consumer) {
+        links.stream()
+                .map(Link::getHref)
+                .filter(StringUtils::isNotBlank)
+                .map(s -> StringUtils.substringAfterLast(s, "/"))
+                .map(s -> StringUtils.prependIfMissing(s, "recno:"))
                 .findFirst()
                 .ifPresent(consumer);
     }

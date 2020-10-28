@@ -7,7 +7,6 @@ import no.fint.arkiv.p360.contact.PrivatePersonResult;
 import no.fint.model.felles.kompleksedatatyper.Identifikator;
 import no.fint.model.resource.Link;
 import no.fint.model.resource.arkiv.kodeverk.PartRolleResource;
-import no.fint.model.resource.arkiv.kodeverk.PartsinformasjonResource;
 import no.fint.model.resource.arkiv.noark.PartResource;
 import no.fint.p360.data.utilities.FintUtils;
 import no.fint.p360.repository.KodeverkRepository;
@@ -34,7 +33,7 @@ public class PartFactory {
         partResource.setAdresse(FintUtils.createAdresse(result));
         partResource.setKontaktinformasjon(FintUtils.createKontaktinformasjon(result));
         partResource.setPartNavn(FintUtils.getFullNameString(result));
-        partResource.setPartId(FintUtils.createIdentifikator(result.getRecno().toString()));
+        // TODO partResource.setPartId(FintUtils.createIdentifikator(result.getRecno().toString()));
 
         return partResource;
     }
@@ -49,7 +48,7 @@ public class PartFactory {
         partResource.setAdresse(FintUtils.createAdresse(result));
         partResource.setKontaktinformasjon(FintUtils.createKontaktinformasjon(result));
         partResource.setPartNavn(FintUtils.getFullNameString(result));
-        partResource.setPartId(FintUtils.createIdentifikator(result.getRecno().toString()));
+        // TODO partResource.setPartId(FintUtils.createIdentifikator(result.getRecno().toString()));
 
         return partResource;
     }
@@ -65,33 +64,33 @@ public class PartFactory {
         partResource.setKontaktinformasjon(FintUtils.createKontaktinformasjon(result));
         partResource.setPartNavn(result.getName());
         partResource.setKontaktperson(FintUtils.getKontaktpersonString(result));
-        partResource.setPartId(FintUtils.createIdentifikator(result.getRecno().toString()));
+        // TODO partResource.setPartId(FintUtils.createIdentifikator(result.getRecno().toString()));
 
         return partResource;
 
     }
 
-    public PartsinformasjonResource getPartsinformasjon(CaseContactResult caseContactResult) {
-        PartsinformasjonResource partsinformasjonResource = new PartsinformasjonResource();
+    public PartResource getPartsinformasjon(CaseContactResult caseContactResult) {
+        PartResource partResource = new PartResource();
 
         optionalValue(caseContactResult.getRecno())
                 .map(String::valueOf)
                 .map(Link.apply(PartResource.class, "partid"))
-                .ifPresent(partsinformasjonResource::addPart);
+                .ifPresent(partResource::addPart);
 
         optionalValue(caseContactResult.getRole())
                 .flatMap(role ->
-                    kodeverkRepository
-                            .getPartRolle()
-                            .stream()
-                            .filter(v -> StringUtils.equalsIgnoreCase(role, v.getKode()))
-                            .findAny())
+                        kodeverkRepository
+                                .getPartRolle()
+                                .stream()
+                                .filter(v -> StringUtils.equalsIgnoreCase(role, v.getKode()))
+                                .findAny())
                 .map(PartRolleResource::getSystemId)
                 .map(Identifikator::getIdentifikatorverdi)
                 .map(Link.apply(PartRolleResource.class, "systemid"))
-                .ifPresent(partsinformasjonResource::addPartRolle);
+                .ifPresent(partResource::addPartRolle);
 
-        return partsinformasjonResource;
+        return partResource;
     }
 
 

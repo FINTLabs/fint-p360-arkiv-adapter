@@ -23,7 +23,7 @@ public class P360FileService extends P360AbstractService {
     private static final QName SERVICE_NAME = new QName("http://software-innovation.com/SI.Data", "FileService");
 
     private IFileService fileServicePort;
-    private ObjectFactory objectFactory;
+
 
     @Autowired
     private AdapterProps props;
@@ -40,7 +40,7 @@ public class P360FileService extends P360AbstractService {
         URL wsdlLocationUrl = P360Utils.getURL(wsdlLocation);
         log.info("WSDL location: {}", wsdlLocationUrl);
         fileServicePort = new FileService(wsdlLocationUrl, SERVICE_NAME).getBasicHttpBindingIFileService();
-        objectFactory = new ObjectFactory();
+
 
     }
 

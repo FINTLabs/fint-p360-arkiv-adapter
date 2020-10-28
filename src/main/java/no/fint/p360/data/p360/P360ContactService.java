@@ -25,7 +25,7 @@ public class P360ContactService extends P360AbstractService {
     private static final QName SERVICE_NAME = new QName("http://software-innovation.com/SI.Data", "ContactService");
 
     private IContactService contactService;
-    private ObjectFactory objectFactory;
+
 
     @Value("${fint.p360.wsdl-location:./src/main/resources/wsdl}/ContactService.wsdl")
     private String wsdlLocation;
@@ -41,7 +41,7 @@ public class P360ContactService extends P360AbstractService {
         contactService = new ContactService(wsdlLocationUrl, SERVICE_NAME).getBasicHttpBindingIContactService();
         super.setup(contactService, "ContactService");
 
-        objectFactory = new ObjectFactory();
+
     }
 
     public PrivatePersonResult getPrivatePersonByRecno(int recNo) {

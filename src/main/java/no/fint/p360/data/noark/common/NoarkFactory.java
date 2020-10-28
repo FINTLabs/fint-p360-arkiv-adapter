@@ -6,14 +6,10 @@ import no.fint.model.administrasjon.organisasjon.Organisasjonselement;
 import no.fint.model.administrasjon.personal.Personalressurs;
 import no.fint.model.arkiv.kodeverk.PartRolle;
 import no.fint.model.arkiv.kodeverk.Saksstatus;
-import no.fint.model.arkiv.noark.Part;
 import no.fint.model.felles.kompleksedatatyper.Identifikator;
 import no.fint.model.resource.Link;
 import no.fint.model.resource.arkiv.kodeverk.SaksstatusResource;
-import no.fint.model.resource.arkiv.noark.JournalpostResource;
-import no.fint.model.resource.arkiv.noark.KlasseResource;
-import no.fint.model.resource.arkiv.noark.MerknadResource;
-import no.fint.model.resource.arkiv.noark.SaksmappeResource;
+import no.fint.model.resource.arkiv.noark.*;
 import no.fint.p360.data.exception.GetDocumentException;
 import no.fint.p360.data.exception.IllegalCaseNumberFormat;
 import no.fint.p360.data.noark.journalpost.JournalpostFactory;
@@ -55,11 +51,11 @@ public class NoarkFactory {
     @Autowired
     private TitleService titleService;
 
-    private ObjectFactory objectFactory;
+
 
     @PostConstruct
     private void init() {
-        objectFactory = new ObjectFactory();
+
     }
 
     public void getSaksmappe(CaseResult caseResult, SaksmappeResource saksmappeResource) throws GetDocumentException, IllegalCaseNumberFormat {
@@ -161,25 +157,21 @@ public class NoarkFactory {
 
         applyParameterFromLink(
                 saksmappeResource.getArkivdel(),
-                objectFactory::createCaseParameterBaseSubArchive,
                 createCaseParameter::setSubArchive
         );
 
         applyParameterFromLink(
                 saksmappeResource.getSaksstatus(),
-                objectFactory::createCaseParameterBaseStatus,
                 createCaseParameter::setStatus
         );
 
         if (saksmappeResource.getSkjerming() != null) {
             applyParameterFromLink(
                     saksmappeResource.getSkjerming().getTilgangsrestriksjon(),
-                    objectFactory::createCaseParameterBaseAccessCode,
                     createCaseParameter::setAccessCode);
 
             applyParameterFromLink(
                     saksmappeResource.getSkjerming().getSkjermingshjemmel(),
-                    objectFactory::createCaseParameterBaseParagraph,
                     createCaseParameter::setParagraph);
 
             // TODO createCaseParameter.setAccessGroup();
@@ -230,7 +222,7 @@ public class NoarkFactory {
                 .filter(StringUtils::isNotBlank)
                 .map(s -> StringUtils.substringAfterLast(s, "/"))
                 .map(s -> StringUtils.prependIfMissing(s, "recno:"))
-                .map(objectFactory::createRemarkRemarkType)
+
                 .findFirst()
                 .ifPresent(remark::setRemarkType);
 
@@ -238,41 +230,41 @@ public class NoarkFactory {
     }
 
 
-    public CaseContactParameter createCaseContactParameter(PartsinformasjonResource partsinformasjon) {
+    public CaseContactParameter createCaseContactParameter(PartResource partResource) {
         CaseContactParameter caseContactParameter = objectFactory.createCaseContactParameter();
 
-        partsinformasjon
-                .getPart()
+        /* TODO partResource.getPart()
                 .stream()
                 .map(Link::getHref)
                 .filter(StringUtils::isNotBlank)
                 .map(s -> StringUtils.substringAfterLast(s, "/"))
                 .map(s -> StringUtils.prependIfMissing(s, "recno:"))
-                .map(objectFactory::createCaseContactParameterReferenceNumber)
                 .findFirst()
                 .ifPresent(caseContactParameter::setReferenceNumber);
+         */
 
-        partsinformasjon
+        partResource
                 .getPartRolle()
                 .stream()
                 .map(Link::getHref)
                 .filter(StringUtils::isNotBlank)
                 .map(s -> StringUtils.substringAfterLast(s, "/"))
                 .map(s -> StringUtils.prependIfMissing(s, "recno:"))
-                .map(objectFactory::createCaseContactParameterRole)
+
                 .findFirst()
                 .ifPresent(caseContactParameter::setRole);
 
         return caseContactParameter;
     }
 
-    private PartsinformasjonResource createPartsinformasjon(CaseContactResult caseContactResult) {
-        PartsinformasjonResource partsinformasjon = new PartsinformasjonResource();
+    private PartResource createPartsinformasjon(CaseContactResult caseContactResult) {
+        PartResource partsinformasjon = new PartResource();
 
-        optionalValue(caseContactResult.getRecno())
+        /* TODO optionalValue(caseContactResult.getRecno())
                 .map(String::valueOf)
                 .map(Link.apply(Part.class, "partid"))
                 .ifPresent(partsinformasjon::addPart);
+         */
 
         optionalValue(caseContactResult.getRole())
                 .map(Link.apply(PartRolle.class, "systemid"))

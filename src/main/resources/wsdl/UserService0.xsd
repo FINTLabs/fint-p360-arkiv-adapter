@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<xs:schema elementFormDefault="unqualified" targetNamespace="http://software-innovation.com/SI.Data" 
-    xmlns:xs="http://www.w3.org/2001/XMLSchema" 
-    xmlns:tns="http://software-innovation.com/SI.Data">
-    <xs:import schemaLocation="UserService2.xsd" namespace="http://schemas.datacontract.org/2004/07/SI.Data.Contracts.WS"/>
+<xs:schema elementFormDefault="unqualified" targetNamespace="http://software-innovation.com/SI.Data"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:tns="http://software-innovation.com/SI.Data">
+    <xs:import schemaLocation="UserService2.xsd"
+               namespace="http://schemas.datacontract.org/2004/07/SI.Data.Contracts.WS"/>
     <xs:element name="Ping">
         <xs:complexType>
             <xs:sequence/>
@@ -42,7 +43,8 @@
     <xs:element name="UserBase" nillable="true" type="tns:UserBase"/>
     <xs:complexType name="ArrayOfAccessGroupMembership">
         <xs:sequence>
-            <xs:element minOccurs="0" maxOccurs="unbounded" name="AccessGroupMembership" nillable="true" type="tns:AccessGroupMembership"/>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="AccessGroupMembership" nillable="true"
+                        type="tns:AccessGroupMembership"/>
         </xs:sequence>
     </xs:complexType>
     <xs:element name="ArrayOfAccessGroupMembership" nillable="true" type="tns:ArrayOfAccessGroupMembership"/>
@@ -72,8 +74,8 @@
     <xs:element name="SynchronizeUserResponse">
         <xs:complexType>
             <xs:sequence>
-                <xs:element minOccurs="0" name="SynchronizeUserResult" nillable="true" type="q1:SynchronizeUserResult" 
-                    xmlns:q1="http://schemas.datacontract.org/2004/07/SI.Data.Contracts.WS"/>
+                <xs:element minOccurs="0" name="SynchronizeUserResult" nillable="true" type="q1:SynchronizeUserResult"
+                            xmlns:q1="http://schemas.datacontract.org/2004/07/SI.Data.Contracts.WS"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>

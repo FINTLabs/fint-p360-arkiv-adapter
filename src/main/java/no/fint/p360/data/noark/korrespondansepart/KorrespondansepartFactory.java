@@ -10,7 +10,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import javax.xml.bind.JAXBElement;
 
 import static java.util.Optional.ofNullable;
 import static no.fint.p360.data.utilities.FintUtils.*;
@@ -19,12 +18,12 @@ import static no.fint.p360.data.utilities.FintUtils.*;
 @Service
 public class KorrespondansepartFactory {
 
-    private ObjectFactory objectFactory;
+
 
 
     @PostConstruct
     public void init() {
-        objectFactory = new ObjectFactory();
+
     }
 
 
@@ -92,12 +91,12 @@ public class KorrespondansepartFactory {
 
         ofNullable(korrespondansepartResource.getKontaktinformasjon())
                 .map(Kontaktinformasjon::getEpostadresse)
-                .map(objectFactory::createPrivatePersonBaseEmail)
+
                 .ifPresent(privatePersonParameter::setEmail);
 
         ofNullable(korrespondansepartResource.getKontaktinformasjon())
                 .map(Kontaktinformasjon::getMobiltelefonnummer)
-                .map(objectFactory::createPrivatePersonBaseMobilePhone)
+
                 .ifPresent(privatePersonParameter::setMobilePhone);
 
         privatePersonParameter.setPrivateAddress(createAddress(korrespondansepartResource.getAdresse()));
@@ -113,22 +112,22 @@ public class KorrespondansepartFactory {
 
         ofNullable(korrespondansepartResource.getKontaktinformasjon())
                 .map(Kontaktinformasjon::getEpostadresse)
-                .map(objectFactory::createEnterpriseBaseEmail)
+
                 .ifPresent(parameter::setEmail);
 
         ofNullable(korrespondansepartResource.getKontaktinformasjon())
                 .map(Kontaktinformasjon::getMobiltelefonnummer)
-                .map(objectFactory::createEnterpriseBaseMobilePhone)
+
                 .ifPresent(parameter::setMobilePhone);
 
         ofNullable(korrespondansepartResource.getKontaktinformasjon())
                 .map(Kontaktinformasjon::getTelefonnummer)
-                .map(objectFactory::createEnterpriseBasePhoneNumber)
+
                 .ifPresent(parameter::setPhoneNumber);
 
         ofNullable(korrespondansepartResource.getKontaktinformasjon())
                 .map(Kontaktinformasjon::getNettsted)
-                .map(objectFactory::createEnterpriseBaseWeb)
+
                 .ifPresent(parameter::setWeb);
 
         parameter.setPostAddress(createAddress(korrespondansepartResource.getAdresse()));
@@ -141,7 +140,7 @@ public class KorrespondansepartFactory {
         address.setCountry("NOR");
         ofNullable(adresse.getAdresselinje())
                 .map(l -> l.get(0))
-                .map(objectFactory::createAddressStreetAddress)
+
                 .ifPresent(address::setStreetAddress);
         address.setZipCode(adresse.getPostnummer());
         address.setZipPlace(adresse.getPoststed());
