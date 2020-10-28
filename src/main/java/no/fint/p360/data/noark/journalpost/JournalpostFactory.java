@@ -1,6 +1,7 @@
 package no.fint.p360.data.noark.journalpost;
 
 import lombok.extern.slf4j.Slf4j;
+import no.fint.arkiv.p360.caze.ArrayOfUnregisteredCaseContactParameter;
 import no.fint.arkiv.p360.document.*;
 import no.fint.model.administrasjon.organisasjon.Organisasjonselement;
 import no.fint.model.administrasjon.personal.Personalressurs;
@@ -9,6 +10,7 @@ import no.fint.model.arkiv.kodeverk.JournalpostType;
 import no.fint.model.arkiv.kodeverk.KorrespondansepartType;
 import no.fint.model.arkiv.kodeverk.Merknadstype;
 import no.fint.model.felles.kompleksedatatyper.Identifikator;
+import no.fint.model.felles.kompleksedatatyper.Kontaktinformasjon;
 import no.fint.model.resource.Link;
 import no.fint.model.resource.arkiv.kodeverk.JournalStatusResource;
 import no.fint.model.resource.arkiv.kodeverk.KorrespondansepartTypeResource;
@@ -17,6 +19,7 @@ import no.fint.model.resource.arkiv.noark.DokumentbeskrivelseResource;
 import no.fint.model.resource.arkiv.noark.JournalpostResource;
 import no.fint.model.resource.arkiv.noark.KorrespondansepartResource;
 import no.fint.model.resource.arkiv.noark.MerknadResource;
+import no.fint.model.resource.felles.kompleksedatatyper.AdresseResource;
 import no.fint.p360.data.noark.dokument.DokumentbeskrivelseFactory;
 import no.fint.p360.data.utilities.FintUtils;
 import no.fint.p360.repository.KodeverkRepository;
@@ -43,13 +46,6 @@ public class JournalpostFactory {
 
     @Autowired
     private DokumentbeskrivelseFactory dokumentbeskrivelseFactory;
-
-
-
-    @PostConstruct
-    public void init() {
-
-    }
 
 
     public JournalpostResource toFintResource(DocumentResult documentResult) {
@@ -97,6 +93,8 @@ public class JournalpostFactory {
                         .orElse(Stream.empty())
                         .map(it -> {
                             KorrespondansepartResource result = new KorrespondansepartResource();
+                            // TODO result.setAdresse();
+                            // TODO result.setKontaktinformasjon();
                             // TODO result.addKorrespondansepart(Link.with(Korrespondansepart.class, "systemid", it.getContactRecno()));
                             optionalValue(it.getRole())
                                     .flatMap(role ->
@@ -228,12 +226,12 @@ public class JournalpostFactory {
                 createDocumentParameter::setStatus);
 
         ofNullable(journalpostResource.getKorrespondansepart()).ifPresent(korrespondanseResources -> {
-            ArrayOfDocumentContactParameter arrayOfDocumentContactParameter = new ArrayOfDocumentContactParameter();
+            ArrayOfUnregisteredContactParameter arrayOfDocumentContactParameter = new ArrayOfUnregisteredContactParameter();
             korrespondanseResources
                     .stream()
                     .map(this::createDocumentContact)
-                    .forEach(arrayOfDocumentContactParameter.getDocumentContactParameter()::add);
-            createDocumentParameter.setContacts(arrayOfDocumentContactParameter);
+                    .forEach(arrayOfDocumentContactParameter.getUnregisteredContactParameter()::add);
+            createDocumentParameter.setUnregisteredContacts(arrayOfDocumentContactParameter);
         });
 
         ofNullable(journalpostResource.getDokumentbeskrivelse()).ifPresent(dokumentbeskrivelseResources -> {
@@ -277,20 +275,29 @@ public class JournalpostFactory {
     }
 
 
-    private DocumentContactParameter createDocumentContact(KorrespondansepartResource korrespondansepart) {
-        DocumentContactParameter documentContactParameter = new DocumentContactParameter();
+    private UnregisteredContactParameter createDocumentContact(KorrespondansepartResource korrespondansepart) {
+        UnregisteredContactParameter contactParameter = new UnregisteredContactParameter();
 
-        /* TODO applyParameterFromLink(
-                korrespondansepart.getKorrespondansepart(),
-                documentContactParameter::setReferenceNumber
-        );
-         */
+        if (StringUtils.isNotBlank(korrespondansepart.getKontaktperson())) {
+            contactParameter.setContactName(korrespondansepart.getKontaktperson());
+            contactParameter.setContactCompanyName(korrespondansepart.getKorrespondansepartNavn());
+        } else {
+            contactParameter.setContactName(korrespondansepart.getKorrespondansepartNavn());
+        }
+
+        optionalValue(korrespondansepart.getKontaktinformasjon()).map(Kontaktinformasjon::getEpostadresse).ifPresent(contactParameter::setEmail);
+        optionalValue(korrespondansepart.getKontaktinformasjon()).map(Kontaktinformasjon::getMobiltelefonnummer).ifPresent(contactParameter::setMobilePhone);
+        optionalValue(korrespondansepart.getKontaktinformasjon()).map(Kontaktinformasjon::getTelefonnummer).ifPresent(contactParameter::setPhone);
+
+        optionalValue(korrespondansepart.getAdresse()).map(AdresseResource::getAdresselinje).map(List::stream).map(s -> s.collect(Collectors.joining("\n"))).ifPresent(contactParameter::setAddress);
+        optionalValue(korrespondansepart.getAdresse()).map(AdresseResource::getPostnummer).ifPresent(contactParameter::setZipCode);
+        optionalValue(korrespondansepart.getAdresse()).map(AdresseResource::getPoststed).ifPresent(contactParameter::setZipPlace);
 
         applyParameterFromLink(
                 korrespondansepart.getKorrespondanseparttype(),
-                documentContactParameter::setRole);
+                contactParameter::setRole);
 
-        return documentContactParameter;
+        return contactParameter;
     }
 
     private Stream<CreateFileParameter> createFiles(DokumentbeskrivelseResource dokumentbeskrivelse) {
