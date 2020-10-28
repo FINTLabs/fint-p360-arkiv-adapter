@@ -16,8 +16,8 @@ public class KlasseFactory {
 
         klasseResource.setSystemId(FintUtils.createIdentifikator(codeTableRow.getRecno().toString()));
         klasseResource.setKlasseId(FintUtils.createIdentifikator(codeTableRow.getRecno().toString()));
-        klasseResource.setTittel(codeTableRow.getCode().getValue());
-        klasseResource.setBeskrivelse(codeTableRow.getDescription().getValue());
+        klasseResource.setTittel(codeTableRow.getCode());
+        klasseResource.setBeskrivelse(codeTableRow.getDescription());
 
         return klasseResource;
 

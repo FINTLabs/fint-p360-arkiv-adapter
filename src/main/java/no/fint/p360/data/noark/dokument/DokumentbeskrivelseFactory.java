@@ -72,7 +72,7 @@ public class DokumentbeskrivelseFactory {
         optionalValue(file.getModifiedBy())
                 .map(Collections::singletonList)
                 .ifPresent(dokumentbeskrivelseResource::setForfatter);
-        dokumentbeskrivelseResource.setBeskrivelse(String.format("%s - %s - %s - %s", file.getStatusDescription().getValue(), file.getRelationTypeDescription().getValue(), file.getAccessCodeDescription().getValue(), file.getVersionFormatDescription().getValue()));
+        dokumentbeskrivelseResource.setBeskrivelse(String.format("%s - %s - %s - %s", file.getStatusDescription(), file.getRelationTypeDescription(), file.getAccessCodeDescription(), file.getVersionFormatDescription()));
 
         optionalValue(file.getNote())
                 .filter(StringUtils::isNotBlank)
@@ -119,7 +119,7 @@ public class DokumentbeskrivelseFactory {
     public CreateFileParameter toP360(DokumentbeskrivelseResource dokumentbeskrivelse, DokumentobjektResource dokumentobjekt) {
         CreateFileParameter createFileParameter = objectFactory.createCreateFileParameter();
 
-        createFileParameter.setTitle(objectFactory.createCreateFileParameterTitle(dokumentbeskrivelse.getTittel()));
+        createFileParameter.setTitle(dokumentbeskrivelse.getTittel());
 
         kodeverkRepository
                 .getFilformat()

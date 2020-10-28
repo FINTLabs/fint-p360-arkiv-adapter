@@ -63,7 +63,7 @@ public class NoarkFactory {
     }
 
     public void getSaksmappe(CaseResult caseResult, SaksmappeResource saksmappeResource) throws GetDocumentException, IllegalCaseNumberFormat {
-        String caseNumber = caseResult.getCaseNumber().getValue();
+        String caseNumber = caseResult.getCaseNumber();
         String caseYear = NOARKUtils.getCaseYear(caseNumber);
         String sequenceNumber = NOARKUtils.getCaseSequenceNumber(caseNumber);
 
@@ -75,15 +75,15 @@ public class NoarkFactory {
         saksmappeResource.setSakssekvensnummer(sequenceNumber);
         saksmappeResource.setSaksaar(caseYear);
         saksmappeResource.setSaksdato(caseResult.getDate().toGregorianCalendar().getTime());
-        saksmappeResource.setOpprettetDato(caseResult.getCreatedDate().getValue().toGregorianCalendar().getTime());
-        saksmappeResource.setTittel(caseResult.getUnofficialTitle().getValue());
-        saksmappeResource.setOffentligTittel(caseResult.getTitle().getValue());
+        saksmappeResource.setOpprettetDato(caseResult.getCreatedDate().toGregorianCalendar().getTime());
+        saksmappeResource.setTittel(caseResult.getUnofficialTitle());
+        saksmappeResource.setOffentligTittel(caseResult.getTitle());
         saksmappeResource.setNoekkelord(caseResult
                 .getArchiveCodes()
-                .getValue()
+
                 .getArchiveCodeResult()
                 .stream()
-                .flatMap(it -> Stream.of(it.getArchiveType().getValue(), it.getArchiveCode().getValue()))
+                .flatMap(it -> Stream.of(it.getArchiveType(), it.getArchiveCode()))
                 .collect(Collectors.toList()));
 
         saksmappeResource.setPart(
@@ -134,7 +134,7 @@ public class NoarkFactory {
 
         caseResult
                 .getArchiveCodes()
-                .getValue()
+
                 .getArchiveCodeResult()
                 .stream()
                 .map(ArchiveCodeResult::getArchiveCode)
@@ -152,10 +152,10 @@ public class NoarkFactory {
     }
 
     public void applyCaseParameters(SaksmappeResource saksmappeResource, CreateCaseParameter createCaseParameter) {
-        createCaseParameter.setTitle(objectFactory.createCaseParameterBaseTitle(titleService.getTitle(saksmappeResource)));
+        createCaseParameter.setTitle(titleService.getTitle(saksmappeResource));
         applyParameterFromLink(
                 saksmappeResource.getAdministrativEnhet(),
-                s -> objectFactory.createCaseParameterBaseResponsibleEnterpriseRecno(Integer.valueOf(s)),
+                s -> Integer.valueOf(s),
                 createCaseParameter::setResponsibleEnterpriseRecno
         );
 
@@ -197,7 +197,7 @@ public class NoarkFactory {
                 .stream()
                 .map(this::createCaseContactParameter)
                 .forEach(arrayOfCaseContactParameter.getCaseContactParameter()::add);
-        createCaseParameter.setContacts(objectFactory.createCaseParameterBaseContacts(arrayOfCaseContactParameter));
+        createCaseParameter.setContacts(arrayOfCaseContactParameter);
 
         ArrayOfRemark arrayOfRemark = objectFactory.createArrayOfRemark();
         if (saksmappeResource.getMerknad() != null) {
@@ -207,7 +207,7 @@ public class NoarkFactory {
                     .map(this::createCaseRemarkParameter)
                     .forEach(arrayOfRemark.getRemark()::add);
         }
-        createCaseParameter.setRemarks(objectFactory.createCaseParameterBaseRemarks(arrayOfRemark));
+        createCaseParameter.setRemarks(arrayOfRemark);
 
         // TODO Responsible person
         /*
@@ -221,7 +221,7 @@ public class NoarkFactory {
 
     private Remark createCaseRemarkParameter(MerknadResource merknadResource) {
         Remark remark = objectFactory.createRemark();
-        remark.setContent(objectFactory.createRemarkContent(merknadResource.getMerknadstekst()));
+        remark.setContent(merknadResource.getMerknadstekst());
 
         merknadResource
                 .getMerknadstype()

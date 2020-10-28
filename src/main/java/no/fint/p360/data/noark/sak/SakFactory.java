@@ -25,14 +25,14 @@ public class SakFactory {
     public SakResource toFintResource(CaseResult caseResult) throws GetDocumentException, IllegalCaseNumberFormat {
 
         SakResource sakResource = new SakResource();
-        String caseNumber = caseResult.getCaseNumber().getValue();
+        String caseNumber = caseResult.getCaseNumber();
 
         String caseYear = NOARKUtils.getCaseYear(caseNumber);
         String sequenceNumber = NOARKUtils.getCaseSequenceNumber(caseNumber);
 
         noarkFactory.getSaksmappe(caseResult, sakResource);
 
-        sakResource.addSaksstatus(Link.with(Saksstatus.class, "systemid", caseResult.getStatus().getValue()));
+        sakResource.addSaksstatus(Link.with(Saksstatus.class, "systemid", caseResult.getStatus()));
         sakResource.addSelf(Link.with(TilskuddFartoy.class, "mappeid", caseYear, sequenceNumber));
         sakResource.addSelf(Link.with(TilskuddFartoy.class, "systemid", caseResult.getRecno().toString()));
 

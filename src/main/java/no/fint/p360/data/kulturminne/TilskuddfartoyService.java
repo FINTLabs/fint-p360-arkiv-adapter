@@ -96,7 +96,7 @@ public class TilskuddfartoyService {
     private boolean isTilskuddFartoy(CaseResult caseResult) {
 
         if (FintUtils.optionalValue(caseResult.getExternalId()).isPresent() && FintUtils.optionalValue(caseResult.getArchiveCodes()).isPresent()) {
-            return caseResult.getExternalId().getValue().getType().getValue().equals(Constants.EXTERNAL_ID_TYPE);
+            return caseResult.getExternalId().getType().equals(Constants.EXTERNAL_ID_TYPE);
         }
 
         return false;

@@ -11,8 +11,8 @@ public class BegrepMapper {
         return value -> {
             T result = constructor.get();
             result.setSystemId(FintUtils.createIdentifikator(value.getRecno().toString()));
-            result.setKode(value.getCode().getValue());
-            result.setNavn(value.getDescription().getValue());
+            result.setKode(value.getCode());
+            result.setNavn(value.getDescription());
             return result;
         };
     }

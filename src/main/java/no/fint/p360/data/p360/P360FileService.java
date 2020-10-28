@@ -47,18 +47,18 @@ public class P360FileService extends P360AbstractService {
     public FileResult getFileByRecNo(String recNo) {
         log.info("Retrieving {} ...", recNo);
         GetFileWithMetadataQuery getFileWithMetadataQuery = objectFactory.createGetFileWithMetadataQuery();
-        getFileWithMetadataQuery.setRecno(objectFactory.createGetFileWithMetadataQueryRecno(Integer.parseInt(recNo)));
-        getFileWithMetadataQuery.setIncludeFileData(objectFactory.createGetFileWithMetadataQueryIncludeFileData(true));
-        getFileWithMetadataQuery.setADContextUser(objectFactory.createFileParameterBaseADContextUser(props.getP360User()));
+        getFileWithMetadataQuery.setRecno(Integer.parseInt(recNo));
+        getFileWithMetadataQuery.setIncludeFileData(true);
+        getFileWithMetadataQuery.setADContextUser(props.getP360User());
         GetFileWithMetadataResult fileWithMetadata = fileServicePort.getFileWithMetadata((getFileWithMetadataQuery));
 
         if (fileWithMetadata.isSuccessful()) {
             log.info("Retrieving {} successfully", recNo);
-            return fileWithMetadata.getFile().getValue();
+            return fileWithMetadata.getFile();
         }
 
-        log.info("Retrieving {} failed: {}", recNo, fileWithMetadata.getErrorDetails().getValue());
-        throw new FileNotFound(fileWithMetadata.getErrorMessage().getValue());
+        log.info("Retrieving {} failed: {}", recNo, fileWithMetadata.getErrorDetails());
+        throw new FileNotFound(fileWithMetadata.getErrorMessage());
     }
 
 

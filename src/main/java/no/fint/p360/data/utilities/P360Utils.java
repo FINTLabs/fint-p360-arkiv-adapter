@@ -15,13 +15,13 @@ import java.util.function.Function;
 public enum P360Utils {
     ;
 
-    public static JAXBElement<ArrayOfstring> getKeywords(List<String> keywords) {
+    public static ArrayOfstring getKeywords(List<String> keywords) {
         ObjectFactory objectFactory = new ObjectFactory();
 
         ArrayOfstring keywordArray = objectFactory.createArrayOfstring();
         keywords.forEach(keywordArray.getString()::add);
 
-        return objectFactory.createCaseParameterBaseKeywords(keywordArray);
+        return keywordArray;
     }
 
     public static URL getURL(String location) throws MalformedURLException {
@@ -31,17 +31,17 @@ public enum P360Utils {
         return new URL("file:" + location);
     }
 
-    public static JAXBElement<ExternalIdParameter> getExternalIdParameter(Identifikator id) {
+    public static ExternalIdParameter getExternalIdParameter(Identifikator id) {
         ObjectFactory objectFactory = new ObjectFactory();
 
         ExternalIdParameter externalIdParameter = objectFactory.createExternalIdParameter();
-        externalIdParameter.setId(objectFactory.createExternalIdParameterId(id.getIdentifikatorverdi()));
-        externalIdParameter.setType(objectFactory.createExternalIdParameterType(Constants.EXTERNAL_ID_TYPE));
+        externalIdParameter.setId(id.getIdentifikatorverdi());
+        externalIdParameter.setType(Constants.EXTERNAL_ID_TYPE);
 
-        return objectFactory.createCaseParameterBaseExternalId(externalIdParameter);
+        return externalIdParameter;
     }
 
-    public static JAXBElement<ArrayOfClassCodeParameter> getArchiveCodes(String type, String code) {
+    public static ArrayOfClassCodeParameter getArchiveCodes(String type, String code) {
         ObjectFactory objectFactory = new ObjectFactory();
 
         ArrayOfClassCodeParameter arrayOfClassCodeParameter = objectFactory.createArrayOfClassCodeParameter();
@@ -49,11 +49,11 @@ public enum P360Utils {
 
         classCodeParameter.setSort(1);
         classCodeParameter.setIsManualText(Boolean.FALSE);
-        classCodeParameter.setArchiveCode(objectFactory.createClassCodeParameterArchiveCode(code));
-        classCodeParameter.setArchiveType(objectFactory.createClassCodeParameterArchiveType(type));
+        classCodeParameter.setArchiveCode(code);
+        classCodeParameter.setArchiveType(type);
         arrayOfClassCodeParameter.getClassCodeParameter().add(classCodeParameter);
 
-        return objectFactory.createCaseParameterBaseArchiveCodes(arrayOfClassCodeParameter);
+        return arrayOfClassCodeParameter;
     }
 
     public static <T> void applyParameterFromLink(List<Link> links, Function<String, T> mapper, Consumer<T> consumer) {

@@ -102,7 +102,7 @@ public class CachedFileService extends CacheLoader<String, Path> implements Remo
     @Override
     public void onRemoval(RemovalNotification<String, Path> removal) {
         if (removal.wasEvicted()) {
-            Path path = removal.getValue();
+            Path path = removal;
             try {
                 Files.delete(path);
             } catch (IOException e) {
@@ -118,9 +118,9 @@ public class CachedFileService extends CacheLoader<String, Path> implements Remo
 
         DokumentfilResource dokumentfilResource = new DokumentfilResource();
         dokumentfilResource.setSystemId(FintUtils.createIdentifikator(recNo));
-        dokumentfilResource.setData(fileResult.getBase64Data().getValue());
-        dokumentfilResource.setFormat(getContentType(fileResult.getFormat().getValue()));
-        dokumentfilResource.setFilnavn(String.format("%s.%s", fileResult.getTitle().getValue(), fileResult.getFormat().getValue()));
+        dokumentfilResource.setData(fileResult.getBase64Data());
+        dokumentfilResource.setFormat(getContentType(fileResult.getFormat()));
+        dokumentfilResource.setFilnavn(String.format("%s.%s", fileResult.getTitle(), fileResult.getFormat()));
 
         return saveFile(dokumentfilResource);
     }

@@ -71,7 +71,7 @@ public class KorrespondansepartFactory {
         KorrespondansepartResource korrespondansepartResource = new KorrespondansepartResource();
         korrespondansepartResource.setAdresse(FintUtils.createAdresse(result));
         korrespondansepartResource.setKontaktinformasjon(FintUtils.createKontaktinformasjon(result));
-        korrespondansepartResource.setKorrespondansepartNavn(result.getName().getValue());
+        korrespondansepartResource.setKorrespondansepartNavn(result.getName());
         korrespondansepartResource.setKontaktperson(FintUtils.getKontaktpersonString(result));
         korrespondansepartResource.setSystemId(createIdentifikator(result.getRecno().toString()));
         optionalValue(result.getEnterpriseNumber())
@@ -85,11 +85,10 @@ public class KorrespondansepartFactory {
     public SynchronizePrivatePersonParameter toPrivatePerson(KorrespondansepartResource korrespondansepartResource) {
         SynchronizePrivatePersonParameter privatePersonParameter = objectFactory.createSynchronizePrivatePersonParameter();
         Personnavn personnavn = parsePersonnavn(korrespondansepartResource.getKorrespondansepartNavn());
-        privatePersonParameter.setFirstName(objectFactory.createPrivatePersonBaseFirstName(personnavn.getFornavn()));
-        privatePersonParameter.setLastName(objectFactory.createPrivatePersonBaseLastName(personnavn.getEtternavn()));
+        privatePersonParameter.setFirstName(personnavn.getFornavn());
+        privatePersonParameter.setLastName(personnavn.getEtternavn());
         privatePersonParameter.setPersonalIdNumber(
-                objectFactory.createPrivatePersonBasePersonalIdNumber(
-                        korrespondansepartResource.getFodselsnummer().getIdentifikatorverdi()));
+                korrespondansepartResource.getFodselsnummer().getIdentifikatorverdi());
 
         ofNullable(korrespondansepartResource.getKontaktinformasjon())
                 .map(Kontaktinformasjon::getEpostadresse)
@@ -109,10 +108,8 @@ public class KorrespondansepartFactory {
     public SynchronizeEnterpriseParameter toEnterprise(KorrespondansepartResource korrespondansepartResource) {
         SynchronizeEnterpriseParameter parameter = objectFactory.createSynchronizeEnterpriseParameter();
 
-        parameter.setName(objectFactory.createEnterpriseBaseName(
-                korrespondansepartResource.getKorrespondansepartNavn()));
-        parameter.setEnterpriseNumber(objectFactory.createEnterpriseBaseEnterpriseNumber(
-                korrespondansepartResource.getOrganisasjonsnummer().getIdentifikatorverdi()));
+        parameter.setName(korrespondansepartResource.getKorrespondansepartNavn());
+        parameter.setEnterpriseNumber(korrespondansepartResource.getOrganisasjonsnummer().getIdentifikatorverdi());
 
         ofNullable(korrespondansepartResource.getKontaktinformasjon())
                 .map(Kontaktinformasjon::getEpostadresse)
@@ -139,16 +136,16 @@ public class KorrespondansepartFactory {
         return parameter;
     }
 
-    private JAXBElement<Address> createAddress(AdresseResource adresse) {
+    private Address createAddress(AdresseResource adresse) {
         Address address = objectFactory.createAddress();
-        address.setCountry(objectFactory.createAddressCountry("NOR"));
+        address.setCountry("NOR");
         ofNullable(adresse.getAdresselinje())
                 .map(l -> l.get(0))
                 .map(objectFactory::createAddressStreetAddress)
                 .ifPresent(address::setStreetAddress);
-        address.setZipCode(objectFactory.createAddressZipCode(adresse.getPostnummer()));
-        address.setZipPlace(objectFactory.createAddressZipPlace(adresse.getPoststed()));
+        address.setZipCode(adresse.getPostnummer());
+        address.setZipPlace(adresse.getPoststed());
 
-        return objectFactory.createAddress(address);
+        return address;
     }
 }

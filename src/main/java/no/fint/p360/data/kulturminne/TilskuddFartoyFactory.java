@@ -54,7 +54,7 @@ public class TilskuddFartoyFactory {
         tilskuddFartoy.setSoknadsnummer(new Identifikator());
         tilskuddFartoy.setMappeId(new Identifikator());
         tilskuddFartoy.setSystemId(new Identifikator());
-        String caseNumber = caseResult.getCaseNumber().getValue();
+        String caseNumber = caseResult.getCaseNumber();
 
         String caseYear = NOARKUtils.getCaseYear(caseNumber);
         String sequenceNumber = NOARKUtils.getCaseSequenceNumber(caseNumber);
@@ -63,7 +63,7 @@ public class TilskuddFartoyFactory {
 
         tilskuddFartoy.addSelf(Link.with(TilskuddFartoy.class, "mappeid", caseYear, sequenceNumber));
         tilskuddFartoy.addSelf(Link.with(TilskuddFartoy.class, "systemid", caseResult.getRecno().toString()));
-        tilskuddFartoy.addSelf(Link.with(TilskuddFartoy.class, "soknadsnummer", caseResult.getExternalId().getValue().getId().getValue()));
+        tilskuddFartoy.addSelf(Link.with(TilskuddFartoy.class, "soknadsnummer", caseResult.getExternalId().getId()));
 
         return tilskuddFartoy;
     }

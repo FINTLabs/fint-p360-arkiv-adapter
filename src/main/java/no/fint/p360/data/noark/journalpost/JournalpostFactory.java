@@ -85,10 +85,10 @@ public class JournalpostFactory {
         journalpost.setReferanseArkivDel(Collections.emptyList());
 
         // FIXME: 2019-05-08 Figure out which is already rep and if some of them should be code lists (noark) + skjerming
-        journalpost.setBeskrivelse(String.format("%s - %s - %s", documentResult.getType().getValue().getDescription().getValue(), documentResult.getStatusDescription().getValue(), documentResult.getAccessCodeDescription().getValue()));
+        journalpost.setBeskrivelse(String.format("%s - %s - %s", documentResult.getType().getDescription(), documentResult.getStatusDescription(), documentResult.getAccessCodeDescription()));
 
         // TODO: 2019-05-08 Check noark if this is correct
-        journalpost.setForfatter(Collections.singletonList(documentResult.getResponsiblePersonName().getValue()));
+        journalpost.setForfatter(Collections.singletonList(documentResult.getResponsiblePersonName()));
 
         journalpost.setKorrespondansepart(
                 optionalValue(documentResult.getContacts())
@@ -97,7 +97,7 @@ public class JournalpostFactory {
                         .orElse(Stream.empty())
                         .map(it -> {
                             KorrespondanseResource result = new KorrespondanseResource();
-                            result.addKorrespondansepart(Link.with(Korrespondansepart.class, "systemid", it.getContactRecno().getValue()));
+                            result.addKorrespondansepart(Link.with(Korrespondansepart.class, "systemid", it.getContactRecno()));
                             optionalValue(it.getRole())
                                     .flatMap(role ->
                                             kodeverkRepository
@@ -153,7 +153,7 @@ public class JournalpostFactory {
                         .map(this::createMerknad)
                         .collect(Collectors.toList()));
 
-        List<DocumentFileResult> documentFileResult = documentResult.getFiles().getValue().getDocumentFileResult();
+        List<DocumentFileResult> documentFileResult = documentResult.getFiles().getDocumentFileResult();
 
         journalpost.setDokumentbeskrivelse(documentFileResult
                 .stream()
@@ -200,9 +200,9 @@ public class JournalpostFactory {
 
 //        createDocumentParameter.setADContextUser(objectFactory.createDocumentParameterBaseADContextUser(adapterProps.getP360User()));
 
-        createDocumentParameter.setTitle(objectFactory.createDocumentParameterBaseTitle(journalpostResource.getOffentligTittel()));
-        createDocumentParameter.setUnofficialTitle(objectFactory.createDocumentParameterBaseUnofficialTitle(journalpostResource.getTittel()));
-        createDocumentParameter.setCaseNumber(objectFactory.createCreateDocumentParameterCaseNumber(caseNumber));
+        createDocumentParameter.setTitle(journalpostResource.getOffentligTittel());
+        createDocumentParameter.setUnofficialTitle(journalpostResource.getTittel());
+        createDocumentParameter.setCaseNumber(caseNumber);
 
         if (journalpostResource.getSkjerming() != null) {
             applyParameterFromLink(
@@ -237,7 +237,7 @@ public class JournalpostFactory {
                     .stream()
                     .map(this::createDocumentContact)
                     .forEach(arrayOfDocumentContactParameter.getDocumentContactParameter()::add);
-            createDocumentParameter.setContacts(objectFactory.createDocumentParameterBaseContacts(arrayOfDocumentContactParameter));
+            createDocumentParameter.setContacts(arrayOfDocumentContactParameter);
         });
 
         ofNullable(journalpostResource.getDokumentbeskrivelse()).ifPresent(dokumentbeskrivelseResources -> {
@@ -247,7 +247,7 @@ public class JournalpostFactory {
                     .peek(r -> log.info("Handling Dokumentbeskrivelse: {}", r))
                     .flatMap(this::createFiles)
                     .forEach(arrayOfCreateFileParameter.getCreateFileParameter()::add);
-            createDocumentParameter.setFiles(objectFactory.createDocumentParameterBaseFiles(arrayOfCreateFileParameter));
+            createDocumentParameter.setFiles(arrayOfCreateFileParameter);
         });
 
         ofNullable(journalpostResource.getMerknad()).ifPresent(merknadResources -> {
@@ -256,7 +256,7 @@ public class JournalpostFactory {
                     .stream()
                     .map(this::createDocumentRemarkParameter)
                     .forEach(arrayOfRemark.getRemark()::add);
-            createDocumentParameter.setRemarks(objectFactory.createDocumentParameterBaseRemarks(arrayOfRemark));
+            createDocumentParameter.setRemarks(arrayOfRemark);
         });
 
         return createDocumentParameter;
@@ -264,7 +264,7 @@ public class JournalpostFactory {
 
     private Remark createDocumentRemarkParameter(MerknadResource merknadResource) {
         Remark remark = objectFactory.createRemark();
-        remark.setContent(objectFactory.createRemarkContent(merknadResource.getMerknadstekst()));
+        remark.setContent(merknadResource.getMerknadstekst());
 
         merknadResource
                 .getMerknadstype()

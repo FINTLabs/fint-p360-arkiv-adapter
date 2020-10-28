@@ -66,9 +66,9 @@ public enum FintUtils {
         AdresseResource adresseResource = new AdresseResource();
 
 
-        adresseResource.setAdresselinje(Collections.singletonList(address.getStreetAddress().getValue()));
-        adresseResource.setPostnummer(address.getZipCode().getValue());
-        adresseResource.setPoststed(address.getZipPlace().getValue());
+        adresseResource.setAdresselinje(Collections.singletonList(address.getStreetAddress()));
+        adresseResource.setPostnummer(address.getZipCode());
+        adresseResource.setPoststed(address.getZipPlace());
 
         return adresseResource;
     }
@@ -92,30 +92,27 @@ public enum FintUtils {
     }
 
     public static String getFullNameString(PrivatePersonResult result) {
-        return String.format("%s %s", result.getFirstName().getValue(), result.getLastName().getValue());
+        return String.format("%s %s", result.getFirstName(), result.getLastName());
     }
 
     public static String getFullNameString(ContactPersonResult result) {
-        return String.format("%s %s", result.getFirstName().getValue(), result.getLastName().getValue());
+        return String.format("%s %s", result.getFirstName(), result.getLastName());
     }
 
     public static String getKontaktpersonString(EnterpriseResult result) {
 
-        if (!result.getContactRelations().getValue().getEnterpriseContactResult().isEmpty()) {
-            return result.getContactRelations().getValue().getEnterpriseContactResult().get(0).getName().getValue();
+        if (!result.getContactRelations().getEnterpriseContactResult().isEmpty()) {
+            return result.getContactRelations().getEnterpriseContactResult().get(0).getName();
         }
         return "";
     }
 
-    public static <T> Optional<T> optionalValue(JAXBElement<T> element) {
-        if (!element.isNil()) {
-            return Optional.of(element.getValue());
-        }
-        return Optional.empty();
+    public static <T> Optional<T> optionalValue(T value) {
+        return Optional.ofNullable(value);
     }
 
     // FIXME: 2019-05-08 Must handle if all three elements is empty. Then we should return null
-    private static Kontaktinformasjon getKontaktinformasjon(JAXBElement<String> email, JAXBElement<String> mobilePhone, JAXBElement<String> phoneNumber) {
+    private static Kontaktinformasjon getKontaktinformasjon(String email, String mobilePhone, String phoneNumber) {
         Kontaktinformasjon kontaktinformasjon = new Kontaktinformasjon();
         optionalValue(email).ifPresent(kontaktinformasjon::setEpostadresse);
         optionalValue(mobilePhone).ifPresent(kontaktinformasjon::setMobiltelefonnummer);
