@@ -52,7 +52,6 @@ public class NoarkFactory {
     private TitleService titleService;
 
 
-
     @PostConstruct
     private void init() {
 
@@ -128,21 +127,13 @@ public class NoarkFactory {
                 .map(Link.apply(Personalressurs.class, "ansattnummer"))
                 .ifPresent(saksmappeResource::addSaksansvarlig);
 
-        caseResult
-                .getArchiveCodes()
-
-                .getArchiveCodeResult()
-                .stream()
-                .map(ArchiveCodeResult::getArchiveCode)
-                .map(JAXBElement::getValue)
-                .flatMap(code -> kodeverkRepository
-                        .getKlasse()
+        saksmappeResource.setKlasse(
+                caseResult
+                        .getArchiveCodes()
+                        .getArchiveCodeResult()
                         .stream()
-                        .filter(it -> StringUtils.equals(code, it.getTittel())))
-                .map(KlasseResource::getSystemId)
-                .map(Identifikator::getIdentifikatorverdi)
-                .map(Link.apply(KlasseResource.class, "systemid"))
-                .forEach(saksmappeResource::addKlasse);
+                        .map(/*TODO*/)
+                        .collect(Collectors.toList())))
 
         titleService.parseTitle(saksmappeResource, saksmappeResource.getTittel());
     }
@@ -183,7 +174,7 @@ public class NoarkFactory {
         //createCaseParameter.setStartDate();
         //createCaseParameter.setUnofficialTitle();
 
-        ArrayOfCaseContactParameter arrayOfCaseContactParameter = objectFactory.createArrayOfCaseContactParameter();
+        ArrayOfCaseContactParameter arrayOfCaseContactParameter = new ArrayOfCaseContactParameter();
         saksmappeResource
                 .getPart()
                 .stream()
@@ -191,7 +182,7 @@ public class NoarkFactory {
                 .forEach(arrayOfCaseContactParameter.getCaseContactParameter()::add);
         createCaseParameter.setContacts(arrayOfCaseContactParameter);
 
-        ArrayOfRemark arrayOfRemark = objectFactory.createArrayOfRemark();
+        ArrayOfRemark arrayOfRemark = new ArrayOfRemark();
         if (saksmappeResource.getMerknad() != null) {
             saksmappeResource
                     .getMerknad()
@@ -212,7 +203,7 @@ public class NoarkFactory {
     }
 
     private Remark createCaseRemarkParameter(MerknadResource merknadResource) {
-        Remark remark = objectFactory.createRemark();
+        Remark remark = new Remark();
         remark.setContent(merknadResource.getMerknadstekst());
 
         merknadResource
@@ -231,7 +222,7 @@ public class NoarkFactory {
 
 
     public CaseContactParameter createCaseContactParameter(PartResource partResource) {
-        CaseContactParameter caseContactParameter = objectFactory.createCaseContactParameter();
+        CaseContactParameter caseContactParameter = new CaseContactParameter();
 
         /* TODO partResource.getPart()
                 .stream()

@@ -59,7 +59,7 @@ public class P360ContactService extends P360AbstractService {
     }
 
     public PrivatePersonResult getPrivatePersonByPersonalIdNumber(String personalIdNumber) throws PrivatePersonNotFound {
-        GetPrivatePersonsParameter getPrivatePersonsParameter = objectFactory.createGetPrivatePersonsParameter();
+        GetPrivatePersonsParameter getPrivatePersonsParameter = new GetPrivatePersonsParameter();
         getPrivatePersonsParameter.setIncludeCustomFields(Boolean.TRUE);
 
         getPrivatePersonsParameter.setPersonalIdNumber(
@@ -108,7 +108,7 @@ public class P360ContactService extends P360AbstractService {
     }
 
     public EnterpriseResult getEnterpriseByEnterpriseNumber(String enterpriseNumber) throws EnterpriseNotFound {
-        GetEnterprisesParameter getEnterprisesParameter = objectFactory.createGetEnterprisesParameter();
+        GetEnterprisesParameter getEnterprisesParameter = new GetEnterprisesParameter();
         getEnterprisesParameter.setIncludeCustomFields(Boolean.TRUE);
         getEnterprisesParameter.setEnterpriseNumber(enterpriseNumber);
 
@@ -135,7 +135,7 @@ public class P360ContactService extends P360AbstractService {
     }
 
     public Stream<EnterpriseResult> searchEnterprise(Map<String, String> queryParams) {
-        GetEnterprisesParameter getEnterprisesParameter = objectFactory.createGetEnterprisesParameter();
+        GetEnterprisesParameter getEnterprisesParameter = new GetEnterprisesParameter();
         if (queryParams.containsKey("navn")) {
             getEnterprisesParameter.setName(queryParams.get("navn"));
         }
@@ -158,7 +158,7 @@ public class P360ContactService extends P360AbstractService {
     }
 
     public Stream<PrivatePersonResult> searchPrivatePerson(Map<String, String> queryParams) {
-        GetPrivatePersonsParameter getPrivatePersonsParameter = objectFactory.createGetPrivatePersonsParameter();
+        GetPrivatePersonsParameter getPrivatePersonsParameter = new GetPrivatePersonsParameter();
         if (queryParams.containsKey("navn")) {
             getPrivatePersonsParameter.setName(queryParams.get("navn"));
         }
@@ -178,7 +178,7 @@ public class P360ContactService extends P360AbstractService {
     }
 
     public Stream<ContactPersonResult> searchContactPerson(Map<String, String> queryParams) {
-        GetContactPersonsParameter getContactPersonsParameter = objectFactory.createGetContactPersonsParameter();
+        GetContactPersonsParameter getContactPersonsParameter = new GetContactPersonsParameter();
 
         if (queryParams.containsKey("navn")) {
             getContactPersonsParameter.setName(queryParams.get("navn"));

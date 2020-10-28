@@ -196,7 +196,7 @@ public class JournalpostFactory {
 
     public CreateDocumentParameter toP360(JournalpostResource journalpostResource, String caseNumber) {
 
-        CreateDocumentParameter createDocumentParameter = objectFactory.createCreateDocumentParameter();
+        CreateDocumentParameter createDocumentParameter = new CreateDocumentParameter();
 
 //        createDocumentParameter.setADContextUser(objectFactory.createDocumentParameterBaseADContextUser(adapterProps.getP360User()));
 

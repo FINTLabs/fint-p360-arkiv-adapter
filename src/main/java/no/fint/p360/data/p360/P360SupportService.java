@@ -42,7 +42,7 @@ public class P360SupportService extends P360AbstractService {
     }
 
     public GetCodeTableRowsResult getCodeTable(String table) throws CodeTableNotFound {
-        GetCodeTableRowsQuery codeTableRowsQuery = objectFactory.createGetCodeTableRowsQuery();
+        GetCodeTableRowsQuery codeTableRowsQuery = new GetCodeTableRowsQuery();
         codeTableRowsQuery.setCodeTableName(table);
         GetCodeTableRowsResult codeTableRows = supportService.getCodeTableRows(codeTableRowsQuery);
         if (codeTableRows.isSuccessful()) {

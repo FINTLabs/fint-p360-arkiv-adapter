@@ -20,7 +20,6 @@ public class CaseCategoryService {
     public Stream<String> getCaseCategoryTable() {
         return supportService
                 .getCodeTableRowResultStream(documentStatusTable)
-                .map(CodeTableResult::getDescription)
-                .map(JAXBElement::getValue);
+                .map(CodeTableResult::getDescription);
     }
 }

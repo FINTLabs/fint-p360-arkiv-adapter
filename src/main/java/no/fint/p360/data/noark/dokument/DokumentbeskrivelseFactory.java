@@ -116,7 +116,7 @@ public class DokumentbeskrivelseFactory {
     }
 
     public CreateFileParameter toP360(DokumentbeskrivelseResource dokumentbeskrivelse, DokumentobjektResource dokumentobjekt) {
-        CreateFileParameter createFileParameter = objectFactory.createCreateFileParameter();
+        CreateFileParameter createFileParameter = new CreateFileParameter();
 
         createFileParameter.setTitle(dokumentbeskrivelse.getTittel());
 
@@ -135,22 +135,18 @@ public class DokumentbeskrivelseFactory {
 
         applyParameterFromLink(
                 dokumentbeskrivelse.getTilknyttetRegistreringSom(),
-                objectFactory::createCreateFileParameterRelationType,
                 createFileParameter::setRelationType);
 
         applyParameterFromLink(
                 dokumentbeskrivelse.getDokumentType(),
-                objectFactory::createCreateFileParameterCategory,
                 createFileParameter::setCategory);
 
         applyParameterFromLink(
                 dokumentbeskrivelse.getDokumentstatus(),
-                objectFactory::createCreateFileParameterStatus,
                 createFileParameter::setStatus);
 
         applyParameterFromLink(
                 dokumentobjekt.getVariantFormat(),
-                objectFactory::createCreateFileParameterVersionFormat,
                 createFileParameter::setVersionFormat);
 
         // TODO Map from incoming fields
@@ -159,7 +155,6 @@ public class DokumentbeskrivelseFactory {
         if (dokumentbeskrivelse.getSkjerming() != null) {
             applyParameterFromLink(
                     dokumentbeskrivelse.getSkjerming().getTilgangsrestriksjon(),
-                    objectFactory::createCreateFileParameterAccessCode,
                     createFileParameter::setAccessCode);
 
             // TODO createDocumentParameter.setAccessGroup();

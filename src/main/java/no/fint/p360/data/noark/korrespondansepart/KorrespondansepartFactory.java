@@ -37,7 +37,7 @@ public class KorrespondansepartFactory {
         korrespondansepartResource.setAdresse(FintUtils.createAdresse(result));
         korrespondansepartResource.setKontaktinformasjon(FintUtils.createKontaktinformasjon(result));
         korrespondansepartResource.setKorrespondansepartNavn(FintUtils.getFullNameString(result));
-        korrespondansepartResource.setSystemId(createIdentifikator(result.getRecno().toString()));
+        // TODO korrespondansepartResource.setSystemId(createIdentifikator(result.getRecno().toString()));
         optionalValue(result.getPersonalIdNumber())
                 .filter(StringUtils::isNotBlank)
                 .map(FintUtils::createIdentifikator)
@@ -56,7 +56,7 @@ public class KorrespondansepartFactory {
         korrespondansepartResource.setAdresse(FintUtils.createAdresse(result));
         korrespondansepartResource.setKontaktinformasjon(FintUtils.createKontaktinformasjon(result));
         korrespondansepartResource.setKorrespondansepartNavn(FintUtils.getFullNameString(result));
-        korrespondansepartResource.setSystemId(createIdentifikator(result.getRecno().toString()));
+        // TODO korrespondansepartResource.setSystemId(createIdentifikator(result.getRecno().toString()));
 
         return korrespondansepartResource;
     }
@@ -72,7 +72,7 @@ public class KorrespondansepartFactory {
         korrespondansepartResource.setKontaktinformasjon(FintUtils.createKontaktinformasjon(result));
         korrespondansepartResource.setKorrespondansepartNavn(result.getName());
         korrespondansepartResource.setKontaktperson(FintUtils.getKontaktpersonString(result));
-        korrespondansepartResource.setSystemId(createIdentifikator(result.getRecno().toString()));
+        // TODO korrespondansepartResource.setSystemId(createIdentifikator(result.getRecno().toString()));
         optionalValue(result.getEnterpriseNumber())
                 .filter(StringUtils::isNotBlank)
                 .map(FintUtils::createIdentifikator)
@@ -82,7 +82,7 @@ public class KorrespondansepartFactory {
     }
 
     public SynchronizePrivatePersonParameter toPrivatePerson(KorrespondansepartResource korrespondansepartResource) {
-        SynchronizePrivatePersonParameter privatePersonParameter = objectFactory.createSynchronizePrivatePersonParameter();
+        SynchronizePrivatePersonParameter privatePersonParameter = new SynchronizePrivatePersonParameter();
         Personnavn personnavn = parsePersonnavn(korrespondansepartResource.getKorrespondansepartNavn());
         privatePersonParameter.setFirstName(personnavn.getFornavn());
         privatePersonParameter.setLastName(personnavn.getEtternavn());
@@ -105,7 +105,7 @@ public class KorrespondansepartFactory {
     }
 
     public SynchronizeEnterpriseParameter toEnterprise(KorrespondansepartResource korrespondansepartResource) {
-        SynchronizeEnterpriseParameter parameter = objectFactory.createSynchronizeEnterpriseParameter();
+        SynchronizeEnterpriseParameter parameter = new SynchronizeEnterpriseParameter();
 
         parameter.setName(korrespondansepartResource.getKorrespondansepartNavn());
         parameter.setEnterpriseNumber(korrespondansepartResource.getOrganisasjonsnummer().getIdentifikatorverdi());
@@ -136,7 +136,7 @@ public class KorrespondansepartFactory {
     }
 
     private Address createAddress(AdresseResource adresse) {
-        Address address = objectFactory.createAddress();
+        Address address = new Address();
         address.setCountry("NOR");
         ofNullable(adresse.getAdresselinje())
                 .map(l -> l.get(0))

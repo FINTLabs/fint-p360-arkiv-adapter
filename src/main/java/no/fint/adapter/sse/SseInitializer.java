@@ -72,7 +72,7 @@ public class SseInitializer {
                     .collect(Collectors.toMap(FintSse::getSseUrl, FintSse::getAge, Math::max))
                     .entrySet()
                     .stream()
-                    .filter(e -> e > props.getExpiration())
+                    .filter(e -> e.getValue() > props.getExpiration())
                     .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
             if (!expired.isEmpty()) {
                 log.warn("Stale connections detected: {}", expired);

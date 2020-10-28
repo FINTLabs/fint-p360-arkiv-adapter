@@ -46,7 +46,7 @@ public class P360FileService extends P360AbstractService {
 
     public FileResult getFileByRecNo(String recNo) {
         log.info("Retrieving {} ...", recNo);
-        GetFileWithMetadataQuery getFileWithMetadataQuery = objectFactory.createGetFileWithMetadataQuery();
+        GetFileWithMetadataQuery getFileWithMetadataQuery = new GetFileWithMetadataQuery();
         getFileWithMetadataQuery.setRecno(Integer.parseInt(recNo));
         getFileWithMetadataQuery.setIncludeFileData(true);
         getFileWithMetadataQuery.setADContextUser(props.getP360User());

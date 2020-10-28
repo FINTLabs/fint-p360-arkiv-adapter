@@ -77,7 +77,7 @@ public class TilskuddFartoyFactory {
     }
 
     public CreateCaseParameter convertToCreateCase(TilskuddFartoyResource tilskuddFartoy) {
-        CreateCaseParameter createCaseParameter = objectFactory.createCreateCaseParameter();
+        CreateCaseParameter createCaseParameter = new CreateCaseParameter();
 
         tilskuddFartoyDefaults.applyDefaultsToCreateCase(tilskuddFartoy, createCaseParameter);
 

@@ -78,8 +78,8 @@ public class P360CaseService extends P360AbstractService {
     }
 
     public CaseResult getSakByExternalId(String externalId) throws GetTilskuddFartoyNotFoundException, GetTilskuddFartoyException {
-        GetCasesQuery getCasesQuery = objectFactory.createGetCasesQuery();
-        ExternalIdParameter externalIdParameter = objectFactory.createExternalIdParameter();
+        GetCasesQuery getCasesQuery = new GetCasesQuery();
+        ExternalIdParameter externalIdParameter = new ExternalIdParameter();
         externalIdParameter.setType(Constants.EXTERNAL_ID_TYPE);
         externalIdParameter.setId(externalId);
         getCasesQuery.setExternalId(externalIdParameter);

@@ -18,6 +18,6 @@ public enum QueryUtils {
                 .entrySet()
                 .stream()
                 .collect(Collectors.toMap(Map.Entry::getKey,
-                        Unchecked.function(e -> URLDecoder.decode(e, "UTF-8"))));
+                        Unchecked.function(e -> URLDecoder.decode(e.getValue(), "UTF-8"))));
     }
 }

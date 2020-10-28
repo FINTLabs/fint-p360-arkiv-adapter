@@ -101,7 +101,7 @@ public class CachedFileService extends CacheLoader<String, Path> implements Remo
     @Override
     public void onRemoval(RemovalNotification<String, Path> removal) {
         if (removal.wasEvicted()) {
-            Path path = removal;
+            Path path = removal.getValue();
             try {
                 Files.delete(path);
             } catch (IOException e) {

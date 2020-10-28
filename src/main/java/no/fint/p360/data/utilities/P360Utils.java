@@ -15,9 +15,7 @@ public enum P360Utils {
     ;
 
     public static ArrayOfstring getKeywords(List<String> keywords) {
-        ObjectFactory
-
-        ArrayOfstring keywordArray = objectFactory.createArrayOfstring();
+        ArrayOfstring keywordArray = new ArrayOfstring();
         keywords.forEach(keywordArray.getString()::add);
 
         return keywordArray;
@@ -31,9 +29,8 @@ public enum P360Utils {
     }
 
     public static ExternalIdParameter getExternalIdParameter(Identifikator id) {
-        ObjectFactory
 
-        ExternalIdParameter externalIdParameter = objectFactory.createExternalIdParameter();
+        ExternalIdParameter externalIdParameter = new ExternalIdParameter();
         externalIdParameter.setId(id.getIdentifikatorverdi());
         externalIdParameter.setType(Constants.EXTERNAL_ID_TYPE);
 
@@ -41,10 +38,8 @@ public enum P360Utils {
     }
 
     public static ArrayOfClassCodeParameter getArchiveCodes(String type, String code) {
-        ObjectFactory
-
-        ArrayOfClassCodeParameter arrayOfClassCodeParameter = objectFactory.createArrayOfClassCodeParameter();
-        ClassCodeParameter classCodeParameter = objectFactory.createClassCodeParameter();
+        ArrayOfClassCodeParameter arrayOfClassCodeParameter = new ArrayOfClassCodeParameter();
+        ClassCodeParameter classCodeParameter = new ClassCodeParameter();
 
         classCodeParameter.setSort(1);
         classCodeParameter.setIsManualText(Boolean.FALSE);
