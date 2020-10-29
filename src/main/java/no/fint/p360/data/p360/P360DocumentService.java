@@ -18,7 +18,7 @@ import java.net.URL;
 public class P360DocumentService extends P360AbstractService {
 
     private IDocumentService documentService;
-    private ObjectFactory objectFactory;
+
 
     @Value("${fint.p360.wsdl-location:./src/main/resources/wsdl}/DocumentService.wsdl")
     private String wsdlLocation;
@@ -34,7 +34,7 @@ public class P360DocumentService extends P360AbstractService {
         documentService = new DocumentService(wsdlLocationUrl, serviceName).getBasicHttpBindingIDocumentService();
         super.setup(documentService, "DocumentService");
 
-        objectFactory = new ObjectFactory();
+
     }
 
     public void createDocument(CreateDocumentParameter createDocumentParameter) throws CreateDocumentException {
@@ -45,12 +45,12 @@ public class P360DocumentService extends P360AbstractService {
             log.info("Documents successfully created");
             return;
         }
-        throw new CreateDocumentException(documentOperationResult.getErrorMessage().getValue());
+        throw new CreateDocumentException(documentOperationResult.getErrorMessage());
     }
 
     public DocumentResult getDocumentBySystemId(String systemId) throws GetDocumentException {
         GetDocumentsQuery documentsQuery = new GetDocumentsQuery();
-        documentsQuery.setRecno(objectFactory.createGetDocumentsQueryRecno(Integer.valueOf(systemId)));
+        documentsQuery.setRecno(Integer.valueOf(systemId));
         documentsQuery.setIncludeRemarks(Boolean.TRUE);
         documentsQuery.setIncludeCustomFields(Boolean.TRUE);
 
@@ -58,13 +58,13 @@ public class P360DocumentService extends P360AbstractService {
 
         log.info("DocumentsResult: {}", documentsResult);
 
-        if (documentsResult.isSuccessful() && documentsResult.getTotalPageCount().getValue() == 1) {
-            return documentsResult.getDocuments().getValue().getDocumentResult().get(0);
+        if (documentsResult.isSuccessful() && documentsResult.getTotalPageCount() == 1) {
+            return documentsResult.getDocuments().getDocumentResult().get(0);
         }
-        if (documentsResult.getTotalPageCount().getValue() != 1) {
+        if (documentsResult.getTotalPageCount() != 1) {
             throw new GetDocumentException("Document could not be found");
         }
-        throw new GetDocumentException(documentsResult.getErrorDetails().getValue());
+        throw new GetDocumentException(documentsResult.getErrorDetails());
     }
 
     public boolean ping() {

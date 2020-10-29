@@ -3,7 +3,7 @@ package no.fint.p360.repository
 import com.fasterxml.jackson.databind.ObjectMapper
 import no.fint.event.model.Event
 import no.fint.model.resource.FintLinks
-import no.fint.model.resource.administrasjon.arkiv.DokumentfilResource
+import no.fint.model.resource.arkiv.noark.DokumentfilResource
 import no.fint.p360.data.utilities.FintUtils
 import spock.lang.Specification
 
@@ -26,6 +26,7 @@ class InternalFileRepositorySpec extends Specification {
 
         fileRepository = new InternalFileRepository(rootDirectory: path, objectMapper: new ObjectMapper())
     }
+
     def "Save file to local file system"() {
 
         when:

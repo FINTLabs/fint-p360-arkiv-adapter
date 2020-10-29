@@ -2,10 +2,10 @@ package no.fint.p360.data.noark.sak;
 
 
 import no.fint.arkiv.p360.caze.CaseResult;
-import no.fint.model.administrasjon.arkiv.Saksstatus;
-import no.fint.model.kultur.kulturminnevern.TilskuddFartoy;
+import no.fint.model.arkiv.kodeverk.Saksstatus;
+import no.fint.model.arkiv.kulturminnevern.TilskuddFartoy;
 import no.fint.model.resource.Link;
-import no.fint.model.resource.administrasjon.arkiv.SakResource;
+import no.fint.model.resource.arkiv.noark.SakResource;
 import no.fint.p360.data.exception.GetDocumentException;
 import no.fint.p360.data.exception.IllegalCaseNumberFormat;
 import no.fint.p360.data.noark.common.NoarkFactory;
@@ -25,14 +25,14 @@ public class SakFactory {
     public SakResource toFintResource(CaseResult caseResult) throws GetDocumentException, IllegalCaseNumberFormat {
 
         SakResource sakResource = new SakResource();
-        String caseNumber = caseResult.getCaseNumber().getValue();
+        String caseNumber = caseResult.getCaseNumber();
 
         String caseYear = NOARKUtils.getCaseYear(caseNumber);
         String sequenceNumber = NOARKUtils.getCaseSequenceNumber(caseNumber);
 
         noarkFactory.getSaksmappe(caseResult, sakResource);
 
-        sakResource.addSaksstatus(Link.with(Saksstatus.class, "systemid", caseResult.getStatus().getValue()));
+        sakResource.addSaksstatus(Link.with(Saksstatus.class, "systemid", caseResult.getStatus()));
         sakResource.addSelf(Link.with(TilskuddFartoy.class, "mappeid", caseYear, sequenceNumber));
         sakResource.addSelf(Link.with(TilskuddFartoy.class, "systemid", caseResult.getRecno().toString()));
 

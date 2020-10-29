@@ -4,7 +4,6 @@ import no.fint.arkiv.p360.caze.*;
 import no.fint.p360.data.utilities.FintUtils;
 import no.fint.p360.data.utilities.P360Utils;
 
-import javax.xml.bind.JAXBElement;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import java.util.ArrayList;
@@ -13,46 +12,60 @@ import java.util.List;
 
 public class P360ObjectFactory {
 
-    private ObjectFactory objectFactory;
-    private DatatypeFactory datatypeFactory;
+    private final DatatypeFactory datatypeFactory;
 
     public P360ObjectFactory() throws DatatypeConfigurationException {
-        objectFactory = new ObjectFactory();
+
         datatypeFactory = DatatypeFactory.newInstance();
     }
 
     public CaseResult newP360Case() {
-        CaseResult caseResult = objectFactory.createCaseResult();
-        caseResult.setCaseNumber(objectFactory.createString("19/12345"));
+        CaseResult caseResult = new CaseResult();
+        caseResult.setCaseNumber("19/12345");
         caseResult.setRecno(12345);
         caseResult.setDate(datatypeFactory.newXMLGregorianCalendar(new GregorianCalendar()));
-        caseResult.setCreatedDate(objectFactory.createCaseResultCreatedDate(datatypeFactory.newXMLGregorianCalendar(new GregorianCalendar())));
-        caseResult.setTitle(objectFactory.createCaseResultTitle("Tilskudd - AWQR - Ternen - 232291-0 - 35 - FINT Test #1"));
-        caseResult.setUnofficialTitle(objectFactory.createCaseResultUnofficialTitle("Tilskudd - AWQR - Ternen - 232291-0 - 35 - FINT Test #1"));
-        caseResult.setNotes(objectFactory.createCaseResultNotes("notes"));
-        caseResult.setArchiveCodes(objectFactory.createArrayOfArchiveCodeResult(objectFactory.createArrayOfArchiveCodeResult()));
+        caseResult.setCreatedDate(datatypeFactory.newXMLGregorianCalendar(new GregorianCalendar()));
+        caseResult.setTitle("Tilskudd - AWQR - Ternen - 232291-0 - 35 - FINT Test #1");
+        caseResult.setUnofficialTitle("Tilskudd - AWQR - Ternen - 232291-0 - 35 - FINT Test #1");
+        caseResult.setNotes("notes");
+        caseResult.setArchiveCodes(newArchiveCodes());
         caseResult.setExternalId(P360Utils.getExternalIdParameter(FintUtils.createIdentifikator("35")));
-        caseResult.setDocuments(objectFactory.createArrayOfCaseDocumentResult(newP360ArrayOfCaseDocument()));
-        caseResult.setStatus(objectFactory.createString("S"));
-        caseResult.setContacts(objectFactory.createArrayOfCaseContactResult(objectFactory.createArrayOfCaseContactResult()));
+        caseResult.setDocuments(newP360ArrayOfCaseDocument());
+        caseResult.setStatus("S");
+        caseResult.setContacts(new ArrayOfCaseContactResult());
         caseResult.setResponsibleEnterprise(newResponsibleEnterprise());
         caseResult.setResponsiblePerson(newResponsiblePerson());
 
         return caseResult;
     }
 
-    private JAXBElement<ResponsiblePerson> newResponsiblePerson() {
-        ResponsiblePerson responsiblePerson = objectFactory.createResponsiblePerson();
-        responsiblePerson.setRecno(23456);
-        responsiblePerson.setName(objectFactory.createContactInfoName("Arkivaren"));
-        return objectFactory.createResponsiblePerson(responsiblePerson);
+    public ArrayOfArchiveCodeResult newArchiveCodes() {
+        final ArrayOfArchiveCodeResult result = new ArrayOfArchiveCodeResult();
+        result.getArchiveCodeResult().add(newArhiveCode("EMNE", "C99"));
+        return result;
     }
 
-    private JAXBElement<ResponsibleEnterprise> newResponsibleEnterprise() {
-        ResponsibleEnterprise responsibleEnterprise = objectFactory.createResponsibleEnterprise();
+    private ArchiveCodeResult newArhiveCode(String type, String code) {
+        ArchiveCodeResult result = new ArchiveCodeResult();
+
+        result.setArchiveType(type);
+        result.setArchiveCode(code);
+
+        return result;
+    }
+
+    private ResponsiblePerson newResponsiblePerson() {
+        ResponsiblePerson responsiblePerson = new ResponsiblePerson();
+        responsiblePerson.setRecno(23456);
+        responsiblePerson.setName("Arkivaren");
+        return responsiblePerson;
+    }
+
+    private ResponsibleEnterprise newResponsibleEnterprise() {
+        ResponsibleEnterprise responsibleEnterprise = new ResponsibleEnterprise();
         responsibleEnterprise.setRecno(123456);
-        responsibleEnterprise.setName(objectFactory.createContactInfoName("Arkivet"));
-        return objectFactory.createResponsibleEnterprise(responsibleEnterprise);
+        responsibleEnterprise.setName("Arkivet");
+        return responsibleEnterprise;
     }
 
     public List<CaseResult> newP360CaseList() {
@@ -71,7 +84,7 @@ public class P360ObjectFactory {
     }
 
     public ArrayOfCaseDocumentResult newP360ArrayOfCaseDocument() {
-        ArrayOfCaseDocumentResult arrayOfCaseDocumentResult = objectFactory.createArrayOfCaseDocumentResult();
+        ArrayOfCaseDocumentResult arrayOfCaseDocumentResult = new ArrayOfCaseDocumentResult();
 
         arrayOfCaseDocumentResult.getCaseDocumentResult().add(newP360CaseDocument());
 

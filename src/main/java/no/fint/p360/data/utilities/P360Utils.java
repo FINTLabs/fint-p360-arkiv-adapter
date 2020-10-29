@@ -5,7 +5,6 @@ import no.fint.model.felles.kompleksedatatyper.Identifikator;
 import no.fint.model.resource.Link;
 import org.apache.commons.lang3.StringUtils;
 
-import javax.xml.bind.JAXBElement;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
@@ -15,13 +14,11 @@ import java.util.function.Function;
 public enum P360Utils {
     ;
 
-    public static JAXBElement<ArrayOfstring> getKeywords(List<String> keywords) {
-        ObjectFactory objectFactory = new ObjectFactory();
-
-        ArrayOfstring keywordArray = objectFactory.createArrayOfstring();
+    public static ArrayOfstring getKeywords(List<String> keywords) {
+        ArrayOfstring keywordArray = new ArrayOfstring();
         keywords.forEach(keywordArray.getString()::add);
 
-        return objectFactory.createCaseParameterBaseKeywords(keywordArray);
+        return keywordArray;
     }
 
     public static URL getURL(String location) throws MalformedURLException {
@@ -31,29 +28,26 @@ public enum P360Utils {
         return new URL("file:" + location);
     }
 
-    public static JAXBElement<ExternalIdParameter> getExternalIdParameter(Identifikator id) {
-        ObjectFactory objectFactory = new ObjectFactory();
+    public static ExternalIdParameter getExternalIdParameter(Identifikator id) {
 
-        ExternalIdParameter externalIdParameter = objectFactory.createExternalIdParameter();
-        externalIdParameter.setId(objectFactory.createExternalIdParameterId(id.getIdentifikatorverdi()));
-        externalIdParameter.setType(objectFactory.createExternalIdParameterType(Constants.EXTERNAL_ID_TYPE));
+        ExternalIdParameter externalIdParameter = new ExternalIdParameter();
+        externalIdParameter.setId(id.getIdentifikatorverdi());
+        externalIdParameter.setType(Constants.EXTERNAL_ID_TYPE);
 
-        return objectFactory.createCaseParameterBaseExternalId(externalIdParameter);
+        return externalIdParameter;
     }
 
-    public static JAXBElement<ArrayOfClassCodeParameter> getArchiveCodes(String type, String code) {
-        ObjectFactory objectFactory = new ObjectFactory();
-
-        ArrayOfClassCodeParameter arrayOfClassCodeParameter = objectFactory.createArrayOfClassCodeParameter();
-        ClassCodeParameter classCodeParameter = objectFactory.createClassCodeParameter();
+    public static ArrayOfClassCodeParameter getArchiveCodes(String type, String code) {
+        ArrayOfClassCodeParameter arrayOfClassCodeParameter = new ArrayOfClassCodeParameter();
+        ClassCodeParameter classCodeParameter = new ClassCodeParameter();
 
         classCodeParameter.setSort(1);
         classCodeParameter.setIsManualText(Boolean.FALSE);
-        classCodeParameter.setArchiveCode(objectFactory.createClassCodeParameterArchiveCode(code));
-        classCodeParameter.setArchiveType(objectFactory.createClassCodeParameterArchiveType(type));
+        classCodeParameter.setArchiveCode(code);
+        classCodeParameter.setArchiveType(type);
         arrayOfClassCodeParameter.getClassCodeParameter().add(classCodeParameter);
 
-        return objectFactory.createCaseParameterBaseArchiveCodes(arrayOfClassCodeParameter);
+        return arrayOfClassCodeParameter;
     }
 
     public static <T> void applyParameterFromLink(List<Link> links, Function<String, T> mapper, Consumer<T> consumer) {
@@ -63,6 +57,16 @@ public enum P360Utils {
                 .map(s -> StringUtils.substringAfterLast(s, "/"))
                 .map(s -> StringUtils.prependIfMissing(s, "recno:"))
                 .map(mapper)
+                .findFirst()
+                .ifPresent(consumer);
+    }
+
+    public static void applyParameterFromLink(List<Link> links, Consumer<String> consumer) {
+        links.stream()
+                .map(Link::getHref)
+                .filter(StringUtils::isNotBlank)
+                .map(s -> StringUtils.substringAfterLast(s, "/"))
+                .map(s -> StringUtils.prependIfMissing(s, "recno:"))
                 .findFirst()
                 .ifPresent(consumer);
     }

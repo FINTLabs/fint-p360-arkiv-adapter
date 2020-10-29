@@ -1,17 +1,16 @@
 package no.fint.p360.data.fint
 
+import no.fint.arkiv.TitleService
 import no.fint.arkiv.p360.caze.ObjectFactory
 import no.fint.arkiv.p360.document.DocumentResult
-import no.fint.model.resource.administrasjon.arkiv.JournalpostResource
-import no.fint.p360.TitleFormats
+import no.fint.model.resource.arkiv.noark.JournalpostResource
 import no.fint.p360.data.kulturminne.TilskuddFartoyFactory
+import no.fint.p360.data.noark.codes.klasse.KlasseFactory
 import no.fint.p360.data.noark.common.NoarkFactory
 import no.fint.p360.data.noark.journalpost.JournalpostFactory
-import no.fint.p360.data.noark.part.PartFactory
 import no.fint.p360.data.p360.P360DocumentService
 import no.fint.p360.data.testutils.P360ObjectFactory
 import no.fint.p360.repository.KodeverkRepository
-import no.fint.p360.service.TitleService
 import spock.lang.Specification
 
 class TilskuddFartoyFactorySpec extends Specification {
@@ -23,23 +22,21 @@ class TilskuddFartoyFactorySpec extends Specification {
     private P360ObjectFactory p360ObjectFactory
     private NoarkFactory noarkFactory
     private KodeverkRepository kodeverkRepository
-    private PartFactory partFactory
+    private KlasseFactory klasseFactory
     private TitleService titleService
 
     void setup() {
-        titleService = new TitleService(new TitleFormats(format: [
-                'tilskuddfartoy': '${kallesignal} - ${fartoyNavn} - Tilskudd - ${kulturminneId} - ${soknadsnummer.identifikatorverdi}'
-        ]))
+        titleService = Mock()
         objectFactory = new ObjectFactory()
         documentService = Mock()
         kodeverkRepository = Mock()
         journalpostFactory = Mock()
-        partFactory = Mock()
+        klasseFactory = Mock()
         noarkFactory = new NoarkFactory(
                 documentService: documentService,
                 journalpostFactory: journalpostFactory,
-                partFactory:  partFactory,
                 kodeverkRepository: kodeverkRepository,
+                klasseFactory: klasseFactory,
                 titleService: titleService
         )
         tilskuddFartoyFactory = new TilskuddFartoyFactory(

@@ -3,8 +3,8 @@ package no.fint.p360.data.kulturminne;
 import lombok.extern.slf4j.Slf4j;
 import no.fint.arkiv.p360.caze.CaseResult;
 import no.fint.arkiv.p360.document.CreateDocumentParameter;
-import no.fint.model.resource.administrasjon.arkiv.JournalpostResource;
-import no.fint.model.resource.kultur.kulturminnevern.TilskuddFartoyResource;
+import no.fint.model.resource.arkiv.kulturminnevern.TilskuddFartoyResource;
+import no.fint.model.resource.arkiv.noark.JournalpostResource;
 import no.fint.p360.data.exception.*;
 import no.fint.p360.data.p360.P360CaseService;
 import no.fint.p360.data.p360.P360DocumentService;
@@ -96,7 +96,7 @@ public class TilskuddfartoyService {
     private boolean isTilskuddFartoy(CaseResult caseResult) {
 
         if (FintUtils.optionalValue(caseResult.getExternalId()).isPresent() && FintUtils.optionalValue(caseResult.getArchiveCodes()).isPresent()) {
-            return caseResult.getExternalId().getValue().getType().getValue().equals(Constants.EXTERNAL_ID_TYPE);
+            return caseResult.getExternalId().getType().equals(Constants.EXTERNAL_ID_TYPE);
         }
 
         return false;

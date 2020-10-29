@@ -17,7 +17,7 @@ public class TestController {
 
     @Autowired
     private P360SupportService supportService;
-    
+
     @Autowired
     private P360AccessGroupService accessGroupService;
 
@@ -25,7 +25,7 @@ public class TestController {
     public String getCodelist(@RequestParam String id) throws JsonProcessingException {
         return new ObjectMapper().writeValueAsString(supportService.getCodeTable(id));
     }
-    
+
     @GetMapping(value = "accessgroup", produces = MediaType.APPLICATION_JSON_VALUE)
     public String getAccessGroup() throws JsonProcessingException {
         final ObjectFactory factory = new ObjectFactory();

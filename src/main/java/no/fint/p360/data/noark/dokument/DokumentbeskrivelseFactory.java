@@ -3,11 +3,20 @@ package no.fint.p360.data.noark.dokument;
 import lombok.extern.slf4j.Slf4j;
 import no.fint.arkiv.p360.document.CreateFileParameter;
 import no.fint.arkiv.p360.document.DocumentFileResult;
-import no.fint.arkiv.p360.document.ObjectFactory;
-import no.fint.model.administrasjon.arkiv.*;
+import no.fint.model.arkiv.kodeverk.DokumentStatus;
+import no.fint.model.arkiv.kodeverk.DokumentType;
+import no.fint.model.arkiv.kodeverk.TilknyttetRegistreringSom;
+import no.fint.model.arkiv.kodeverk.Variantformat;
+import no.fint.model.arkiv.noark.Dokumentfil;
 import no.fint.model.felles.kompleksedatatyper.Identifikator;
 import no.fint.model.resource.Link;
-import no.fint.model.resource.administrasjon.arkiv.*;
+import no.fint.model.resource.arkiv.kodeverk.DokumentStatusResource;
+import no.fint.model.resource.arkiv.kodeverk.DokumentTypeResource;
+import no.fint.model.resource.arkiv.kodeverk.TilknyttetRegistreringSomResource;
+import no.fint.model.resource.arkiv.kodeverk.VariantformatResource;
+import no.fint.model.resource.arkiv.noark.DokumentbeskrivelseResource;
+import no.fint.model.resource.arkiv.noark.DokumentfilResource;
+import no.fint.model.resource.arkiv.noark.DokumentobjektResource;
 import no.fint.p360.data.exception.FileNotFound;
 import no.fint.p360.data.noark.codes.filformat.FilformatResource;
 import no.fint.p360.repository.InternalRepository;
@@ -33,11 +42,11 @@ public class DokumentbeskrivelseFactory {
     @Autowired
     private InternalRepository internalRepository;
 
-    private ObjectFactory objectFactory;
+
 
     @PostConstruct
     public void init() {
-        objectFactory = new ObjectFactory();
+
     }
 
     public DokumentbeskrivelseResource toFintResource(DocumentFileResult file) {
@@ -62,7 +71,7 @@ public class DokumentbeskrivelseFactory {
         optionalValue(file.getModifiedBy())
                 .map(Collections::singletonList)
                 .ifPresent(dokumentbeskrivelseResource::setForfatter);
-        dokumentbeskrivelseResource.setBeskrivelse(String.format("%s - %s - %s - %s", file.getStatusDescription().getValue(), file.getRelationTypeDescription().getValue(), file.getAccessCodeDescription().getValue(), file.getVersionFormatDescription().getValue()));
+        dokumentbeskrivelseResource.setBeskrivelse(String.format("%s - %s - %s - %s", file.getStatusDescription(), file.getRelationTypeDescription(), file.getAccessCodeDescription(), file.getVersionFormatDescription()));
 
         optionalValue(file.getNote())
                 .filter(StringUtils::isNotBlank)
@@ -107,9 +116,9 @@ public class DokumentbeskrivelseFactory {
     }
 
     public CreateFileParameter toP360(DokumentbeskrivelseResource dokumentbeskrivelse, DokumentobjektResource dokumentobjekt) {
-        CreateFileParameter createFileParameter = objectFactory.createCreateFileParameter();
+        CreateFileParameter createFileParameter = new CreateFileParameter();
 
-        createFileParameter.setTitle(objectFactory.createCreateFileParameterTitle(dokumentbeskrivelse.getTittel()));
+        createFileParameter.setTitle(dokumentbeskrivelse.getTittel());
 
         kodeverkRepository
                 .getFilformat()
@@ -119,29 +128,25 @@ public class DokumentbeskrivelseFactory {
                 .map(Identifikator::getIdentifikatorverdi)
                 .min(Comparator.comparingInt(Integer::parseInt))
                 .map(s -> StringUtils.prependIfMissing(s, "recno:"))
-                .map(objectFactory::createCreateFileParameterFormat)
+
                 .ifPresent(createFileParameter::setFormat);
 
         //createFileParameter.setFormat(objectFactory.createCreateFileParameterFormat(dokumentobjekt.getFormat()));
 
         applyParameterFromLink(
                 dokumentbeskrivelse.getTilknyttetRegistreringSom(),
-                objectFactory::createCreateFileParameterRelationType,
                 createFileParameter::setRelationType);
 
         applyParameterFromLink(
                 dokumentbeskrivelse.getDokumentType(),
-                objectFactory::createCreateFileParameterCategory,
                 createFileParameter::setCategory);
 
         applyParameterFromLink(
                 dokumentbeskrivelse.getDokumentstatus(),
-                objectFactory::createCreateFileParameterStatus,
                 createFileParameter::setStatus);
 
         applyParameterFromLink(
                 dokumentobjekt.getVariantFormat(),
-                objectFactory::createCreateFileParameterVersionFormat,
                 createFileParameter::setVersionFormat);
 
         // TODO Map from incoming fields
@@ -150,7 +155,6 @@ public class DokumentbeskrivelseFactory {
         if (dokumentbeskrivelse.getSkjerming() != null) {
             applyParameterFromLink(
                     dokumentbeskrivelse.getSkjerming().getTilgangsrestriksjon(),
-                    objectFactory::createCreateFileParameterAccessCode,
                     createFileParameter::setAccessCode);
 
             // TODO createDocumentParameter.setAccessGroup();
@@ -171,7 +175,7 @@ public class DokumentbeskrivelseFactory {
                         .map(DokumentfilResource::getData)
                         .filter(StringUtils::isNotBlank)
                         .map(Base64.getDecoder()::decode)
-                        .map(objectFactory::createCreateFileParameterData)
+
                         .findAny()
                         .orElseThrow(() -> new FileNotFound("File not found for " + dokumentbeskrivelse.getTittel())));
 

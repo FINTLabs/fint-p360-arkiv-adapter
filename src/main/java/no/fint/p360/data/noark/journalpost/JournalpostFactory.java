@@ -1,13 +1,25 @@
 package no.fint.p360.data.noark.journalpost;
 
 import lombok.extern.slf4j.Slf4j;
+import no.fint.arkiv.p360.caze.ArrayOfUnregisteredCaseContactParameter;
 import no.fint.arkiv.p360.document.*;
-import no.fint.model.administrasjon.arkiv.*;
 import no.fint.model.administrasjon.organisasjon.Organisasjonselement;
 import no.fint.model.administrasjon.personal.Personalressurs;
+import no.fint.model.arkiv.kodeverk.JournalStatus;
+import no.fint.model.arkiv.kodeverk.JournalpostType;
+import no.fint.model.arkiv.kodeverk.KorrespondansepartType;
+import no.fint.model.arkiv.kodeverk.Merknadstype;
 import no.fint.model.felles.kompleksedatatyper.Identifikator;
+import no.fint.model.felles.kompleksedatatyper.Kontaktinformasjon;
 import no.fint.model.resource.Link;
-import no.fint.model.resource.administrasjon.arkiv.*;
+import no.fint.model.resource.arkiv.kodeverk.JournalStatusResource;
+import no.fint.model.resource.arkiv.kodeverk.KorrespondansepartTypeResource;
+import no.fint.model.resource.arkiv.kodeverk.MerknadstypeResource;
+import no.fint.model.resource.arkiv.noark.DokumentbeskrivelseResource;
+import no.fint.model.resource.arkiv.noark.JournalpostResource;
+import no.fint.model.resource.arkiv.noark.KorrespondansepartResource;
+import no.fint.model.resource.arkiv.noark.MerknadResource;
+import no.fint.model.resource.felles.kompleksedatatyper.AdresseResource;
 import no.fint.p360.data.noark.dokument.DokumentbeskrivelseFactory;
 import no.fint.p360.data.utilities.FintUtils;
 import no.fint.p360.repository.KodeverkRepository;
@@ -34,13 +46,6 @@ public class JournalpostFactory {
 
     @Autowired
     private DokumentbeskrivelseFactory dokumentbeskrivelseFactory;
-
-    private ObjectFactory objectFactory;
-
-    @PostConstruct
-    public void init() {
-        objectFactory = new ObjectFactory();
-    }
 
 
     public JournalpostResource toFintResource(DocumentResult documentResult) {
@@ -76,10 +81,10 @@ public class JournalpostFactory {
         journalpost.setReferanseArkivDel(Collections.emptyList());
 
         // FIXME: 2019-05-08 Figure out which is already rep and if some of them should be code lists (noark) + skjerming
-        journalpost.setBeskrivelse(String.format("%s - %s - %s", documentResult.getType().getValue().getDescription().getValue(), documentResult.getStatusDescription().getValue(), documentResult.getAccessCodeDescription().getValue()));
+        journalpost.setBeskrivelse(String.format("%s - %s - %s", documentResult.getType().getDescription(), documentResult.getStatusDescription(), documentResult.getAccessCodeDescription()));
 
         // TODO: 2019-05-08 Check noark if this is correct
-        journalpost.setForfatter(Collections.singletonList(documentResult.getResponsiblePersonName().getValue()));
+        journalpost.setForfatter(Collections.singletonList(documentResult.getResponsiblePersonName()));
 
         journalpost.setKorrespondansepart(
                 optionalValue(documentResult.getContacts())
@@ -87,8 +92,10 @@ public class JournalpostFactory {
                         .map(Collection::stream)
                         .orElse(Stream.empty())
                         .map(it -> {
-                            KorrespondanseResource result = new KorrespondanseResource();
-                            result.addKorrespondansepart(Link.with(Korrespondansepart.class, "systemid", it.getContactRecno().getValue()));
+                            KorrespondansepartResource result = new KorrespondansepartResource();
+                            // TODO result.setAdresse();
+                            // TODO result.setKontaktinformasjon();
+                            // TODO result.addKorrespondansepart(Link.with(Korrespondansepart.class, "systemid", it.getContactRecno()));
                             optionalValue(it.getRole())
                                     .flatMap(role ->
                                             kodeverkRepository
@@ -144,7 +151,7 @@ public class JournalpostFactory {
                         .map(this::createMerknad)
                         .collect(Collectors.toList()));
 
-        List<DocumentFileResult> documentFileResult = documentResult.getFiles().getValue().getDocumentFileResult();
+        List<DocumentFileResult> documentFileResult = documentResult.getFiles().getDocumentFileResult();
 
         journalpost.setDokumentbeskrivelse(documentFileResult
                 .stream()
@@ -187,23 +194,21 @@ public class JournalpostFactory {
 
     public CreateDocumentParameter toP360(JournalpostResource journalpostResource, String caseNumber) {
 
-        CreateDocumentParameter createDocumentParameter = objectFactory.createCreateDocumentParameter();
+        CreateDocumentParameter createDocumentParameter = new CreateDocumentParameter();
 
 //        createDocumentParameter.setADContextUser(objectFactory.createDocumentParameterBaseADContextUser(adapterProps.getP360User()));
 
-        createDocumentParameter.setTitle(objectFactory.createDocumentParameterBaseTitle(journalpostResource.getOffentligTittel()));
-        createDocumentParameter.setUnofficialTitle(objectFactory.createDocumentParameterBaseUnofficialTitle(journalpostResource.getTittel()));
-        createDocumentParameter.setCaseNumber(objectFactory.createCreateDocumentParameterCaseNumber(caseNumber));
+        createDocumentParameter.setTitle(journalpostResource.getOffentligTittel());
+        createDocumentParameter.setUnofficialTitle(journalpostResource.getTittel());
+        createDocumentParameter.setCaseNumber(caseNumber);
 
         if (journalpostResource.getSkjerming() != null) {
             applyParameterFromLink(
                     journalpostResource.getSkjerming().getTilgangsrestriksjon(),
-                    objectFactory::createDocumentParameterBaseAccessCode,
                     createDocumentParameter::setAccessCode);
 
             applyParameterFromLink(
                     journalpostResource.getSkjerming().getSkjermingshjemmel(),
-                    objectFactory::createDocumentParameterBaseParagraph,
                     createDocumentParameter::setParagraph);
 
             // TODO createDocumentParameter.setAccessGroup();
@@ -214,48 +219,46 @@ public class JournalpostFactory {
 
         applyParameterFromLink(
                 journalpostResource.getJournalposttype(),
-                objectFactory::createDocumentParameterBaseCategory,
                 createDocumentParameter::setCategory);
 
         applyParameterFromLink(
                 journalpostResource.getJournalstatus(),
-                objectFactory::createDocumentParameterBaseStatus,
                 createDocumentParameter::setStatus);
 
         ofNullable(journalpostResource.getKorrespondansepart()).ifPresent(korrespondanseResources -> {
-            ArrayOfDocumentContactParameter arrayOfDocumentContactParameter = objectFactory.createArrayOfDocumentContactParameter();
+            ArrayOfUnregisteredContactParameter arrayOfDocumentContactParameter = new ArrayOfUnregisteredContactParameter();
             korrespondanseResources
                     .stream()
                     .map(this::createDocumentContact)
-                    .forEach(arrayOfDocumentContactParameter.getDocumentContactParameter()::add);
-            createDocumentParameter.setContacts(objectFactory.createDocumentParameterBaseContacts(arrayOfDocumentContactParameter));
+                    .forEach(arrayOfDocumentContactParameter.getUnregisteredContactParameter()::add);
+            createDocumentParameter.setUnregisteredContacts(arrayOfDocumentContactParameter);
         });
 
         ofNullable(journalpostResource.getDokumentbeskrivelse()).ifPresent(dokumentbeskrivelseResources -> {
-            ArrayOfCreateFileParameter arrayOfCreateFileParameter = objectFactory.createArrayOfCreateFileParameter();
+            ArrayOfCreateFileParameter arrayOfCreateFileParameter = new ArrayOfCreateFileParameter();
             dokumentbeskrivelseResources
                     .stream()
                     .peek(r -> log.info("Handling Dokumentbeskrivelse: {}", r))
                     .flatMap(this::createFiles)
                     .forEach(arrayOfCreateFileParameter.getCreateFileParameter()::add);
-            createDocumentParameter.setFiles(objectFactory.createDocumentParameterBaseFiles(arrayOfCreateFileParameter));
+            createDocumentParameter.setFiles(arrayOfCreateFileParameter);
         });
 
         ofNullable(journalpostResource.getMerknad()).ifPresent(merknadResources -> {
-            ArrayOfRemark arrayOfRemark = objectFactory.createArrayOfRemark();
+            ArrayOfRemark arrayOfRemark = new ArrayOfRemark();
             merknadResources
                     .stream()
                     .map(this::createDocumentRemarkParameter)
                     .forEach(arrayOfRemark.getRemark()::add);
-            createDocumentParameter.setRemarks(objectFactory.createDocumentParameterBaseRemarks(arrayOfRemark));
+            createDocumentParameter.setRemarks(arrayOfRemark);
         });
 
         return createDocumentParameter;
     }
 
     private Remark createDocumentRemarkParameter(MerknadResource merknadResource) {
-        Remark remark = objectFactory.createRemark();
-        remark.setContent(objectFactory.createRemarkContent(merknadResource.getMerknadstekst()));
+        Remark remark = new Remark();
+        remark.setContent(merknadResource.getMerknadstekst());
 
         merknadResource
                 .getMerknadstype()
@@ -264,7 +267,7 @@ public class JournalpostFactory {
                 .filter(StringUtils::isNotBlank)
                 .map(s -> StringUtils.substringAfterLast(s, "/"))
                 .map(s -> StringUtils.prependIfMissing(s, "recno:"))
-                .map(objectFactory::createRemarkRemarkType)
+
                 .findFirst()
                 .ifPresent(remark::setRemarkType);
 
@@ -272,21 +275,29 @@ public class JournalpostFactory {
     }
 
 
-    private DocumentContactParameter createDocumentContact(KorrespondanseResource korrespondansepart) {
-        DocumentContactParameter documentContactParameter = objectFactory.createDocumentContactParameter();
+    private UnregisteredContactParameter createDocumentContact(KorrespondansepartResource korrespondansepart) {
+        UnregisteredContactParameter contactParameter = new UnregisteredContactParameter();
 
-        applyParameterFromLink(
-                korrespondansepart.getKorrespondansepart(),
-                objectFactory::createDocumentContactParameterReferenceNumber,
-                documentContactParameter::setReferenceNumber
-        );
+        if (StringUtils.isNotBlank(korrespondansepart.getKontaktperson())) {
+            contactParameter.setContactName(korrespondansepart.getKontaktperson());
+            contactParameter.setContactCompanyName(korrespondansepart.getKorrespondansepartNavn());
+        } else {
+            contactParameter.setContactName(korrespondansepart.getKorrespondansepartNavn());
+        }
+
+        optionalValue(korrespondansepart.getKontaktinformasjon()).map(Kontaktinformasjon::getEpostadresse).ifPresent(contactParameter::setEmail);
+        optionalValue(korrespondansepart.getKontaktinformasjon()).map(Kontaktinformasjon::getMobiltelefonnummer).ifPresent(contactParameter::setMobilePhone);
+        optionalValue(korrespondansepart.getKontaktinformasjon()).map(Kontaktinformasjon::getTelefonnummer).ifPresent(contactParameter::setPhone);
+
+        optionalValue(korrespondansepart.getAdresse()).map(AdresseResource::getAdresselinje).map(List::stream).map(s -> s.collect(Collectors.joining("\n"))).ifPresent(contactParameter::setAddress);
+        optionalValue(korrespondansepart.getAdresse()).map(AdresseResource::getPostnummer).ifPresent(contactParameter::setZipCode);
+        optionalValue(korrespondansepart.getAdresse()).map(AdresseResource::getPoststed).ifPresent(contactParameter::setZipPlace);
 
         applyParameterFromLink(
                 korrespondansepart.getKorrespondanseparttype(),
-                objectFactory::createDocumentContactParameterRole,
-                documentContactParameter::setRole);
+                contactParameter::setRole);
 
-        return documentContactParameter;
+        return contactParameter;
     }
 
     private Stream<CreateFileParameter> createFiles(DokumentbeskrivelseResource dokumentbeskrivelse) {

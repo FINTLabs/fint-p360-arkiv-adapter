@@ -987,7 +987,8 @@
                     </xs:extension>
                 </xs:complexContent>
             </xs:complexType>
-            <xs:element name="UpdatePrivatePersonParameterElement" nillable="true" type="tns:UpdatePrivatePersonParameter"/>
+            <xs:element name="UpdatePrivatePersonParameterElement" nillable="true"
+                        type="tns:UpdatePrivatePersonParameter"/>
             <xs:element name="UpdatePrivatePersonResponse">
                 <xs:complexType>
                     <xs:sequence>

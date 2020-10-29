@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.cache.*;
 import lombok.extern.slf4j.Slf4j;
 import no.fint.arkiv.p360.file.FileResult;
-import no.fint.model.resource.administrasjon.arkiv.DokumentfilResource;
+import no.fint.model.resource.arkiv.noark.DokumentfilResource;
 import no.fint.p360.AdapterProps;
 import no.fint.p360.data.exception.FileNotFound;
 import no.fint.p360.data.p360.P360FileService;
@@ -117,9 +117,9 @@ public class CachedFileService extends CacheLoader<String, Path> implements Remo
 
         DokumentfilResource dokumentfilResource = new DokumentfilResource();
         dokumentfilResource.setSystemId(FintUtils.createIdentifikator(recNo));
-        dokumentfilResource.setData(fileResult.getBase64Data().getValue());
-        dokumentfilResource.setFormat(getContentType(fileResult.getFormat().getValue()));
-        dokumentfilResource.setFilnavn(String.format("%s.%s", fileResult.getTitle().getValue(), fileResult.getFormat().getValue()));
+        dokumentfilResource.setData(fileResult.getBase64Data());
+        dokumentfilResource.setFormat(getContentType(fileResult.getFormat()));
+        dokumentfilResource.setFilnavn(String.format("%s.%s", fileResult.getTitle(), fileResult.getFormat()));
 
         return saveFile(dokumentfilResource);
     }

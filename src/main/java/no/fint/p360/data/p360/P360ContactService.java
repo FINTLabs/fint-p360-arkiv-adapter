@@ -25,7 +25,7 @@ public class P360ContactService extends P360AbstractService {
     private static final QName SERVICE_NAME = new QName("http://software-innovation.com/SI.Data", "ContactService");
 
     private IContactService contactService;
-    private ObjectFactory objectFactory;
+
 
     @Value("${fint.p360.wsdl-location:./src/main/resources/wsdl}/ContactService.wsdl")
     private String wsdlLocation;
@@ -41,52 +41,52 @@ public class P360ContactService extends P360AbstractService {
         contactService = new ContactService(wsdlLocationUrl, SERVICE_NAME).getBasicHttpBindingIContactService();
         super.setup(contactService, "ContactService");
 
-        objectFactory = new ObjectFactory();
+
     }
 
     public PrivatePersonResult getPrivatePersonByRecno(int recNo) {
         GetPrivatePersonsParameter getPrivatePersonsParameter = new GetPrivatePersonsParameter();
         getPrivatePersonsParameter.setIncludeCustomFields(Boolean.TRUE);
-        getPrivatePersonsParameter.setRecno(objectFactory.createGetPrivatePersonsParameterRecno(recNo));
+        getPrivatePersonsParameter.setRecno(recNo);
         GetPrivatePersonsResult privatePersons = contactService.getPrivatePersons(getPrivatePersonsParameter);
 
         log.info("PrivatePersonsResult: {}", privatePersons);
 
-        if (privatePersons.isSuccessful() && privatePersons.getTotalPageCount().getValue() == 1) {
-            return privatePersons.getPrivatePersons().getValue().getPrivatePersonResult().get(0);
+        if (privatePersons.isSuccessful() && privatePersons.getTotalPageCount() == 1) {
+            return privatePersons.getPrivatePersons().getPrivatePersonResult().get(0);
         }
         return null;
     }
 
     public PrivatePersonResult getPrivatePersonByPersonalIdNumber(String personalIdNumber) throws PrivatePersonNotFound {
-        GetPrivatePersonsParameter getPrivatePersonsParameter = objectFactory.createGetPrivatePersonsParameter();
+        GetPrivatePersonsParameter getPrivatePersonsParameter = new GetPrivatePersonsParameter();
         getPrivatePersonsParameter.setIncludeCustomFields(Boolean.TRUE);
 
         getPrivatePersonsParameter.setPersonalIdNumber(
-                objectFactory.createGetPrivatePersonsParameterPersonalIdNumber(personalIdNumber));
+                personalIdNumber);
 
         GetPrivatePersonsResult privatePersons = contactService.getPrivatePersons(getPrivatePersonsParameter);
 
         log.info("PrivatePersonsResult: {}", privatePersons);
 
-        if (privatePersons.isSuccessful() && privatePersons.getTotalPageCount().getValue() == 1) {
-            return privatePersons.getPrivatePersons().getValue().getPrivatePersonResult().get(0);
+        if (privatePersons.isSuccessful() && privatePersons.getTotalPageCount() == 1) {
+            return privatePersons.getPrivatePersons().getPrivatePersonResult().get(0);
         }
 
-        throw new PrivatePersonNotFound(privatePersons.getErrorMessage().getValue());
+        throw new PrivatePersonNotFound(privatePersons.getErrorMessage());
     }
 
     public ContactPersonResult getContactPersonByRecno(int recNo) {
 
         GetContactPersonsParameter getContactPersonsParameter = new GetContactPersonsParameter();
         getContactPersonsParameter.setIncludeCustomFields(Boolean.TRUE);
-        getContactPersonsParameter.setRecno(objectFactory.createGetContactPersonsParameterRecno(recNo));
+        getContactPersonsParameter.setRecno(recNo);
         GetContactPersonsResult contactPersons = contactService.getContactPersons(getContactPersonsParameter);
 
         log.info("ContactPersonsResult: {}", contactPersons);
 
-        if (contactPersons.isSuccessful() && contactPersons.getTotalPageCount().getValue() == 1) {
-            return contactPersons.getContactPersons().getValue().getContactPersonResult().get(0);
+        if (contactPersons.isSuccessful() && contactPersons.getTotalPageCount() == 1) {
+            return contactPersons.getContactPersons().getContactPersonResult().get(0);
         }
         return null;
     }
@@ -95,32 +95,32 @@ public class P360ContactService extends P360AbstractService {
 
         GetEnterprisesParameter getEnterpriseParameter = new GetEnterprisesParameter();
         getEnterpriseParameter.setIncludeCustomFields(Boolean.TRUE);
-        getEnterpriseParameter.setRecno(objectFactory.createGetEnterprisesParameterRecno(recNo));
+        getEnterpriseParameter.setRecno(recNo);
         GetEnterprisesResult enterprises = contactService.getEnterprises(getEnterpriseParameter);
 
         log.info("EnterpriseResult: {}", enterprises);
 
-        if (enterprises.isSuccessful() && enterprises.getTotalPageCount().getValue() == 1) {
-            return enterprises.getEnterprises().getValue().getEnterpriseResult().get(0);
+        if (enterprises.isSuccessful() && enterprises.getTotalPageCount() == 1) {
+            return enterprises.getEnterprises().getEnterpriseResult().get(0);
         }
 
         return null;
     }
 
     public EnterpriseResult getEnterpriseByEnterpriseNumber(String enterpriseNumber) throws EnterpriseNotFound {
-        GetEnterprisesParameter getEnterprisesParameter = objectFactory.createGetEnterprisesParameter();
+        GetEnterprisesParameter getEnterprisesParameter = new GetEnterprisesParameter();
         getEnterprisesParameter.setIncludeCustomFields(Boolean.TRUE);
-        getEnterprisesParameter.setEnterpriseNumber(objectFactory.createGetEnterprisesParameterEnterpriseNumber(enterpriseNumber));
+        getEnterprisesParameter.setEnterpriseNumber(enterpriseNumber);
 
         GetEnterprisesResult enterprises = contactService.getEnterprises(getEnterprisesParameter);
 
         log.info("EnterpriseResult: {}", enterprises);
 
-        if (enterprises.isSuccessful() && enterprises.getTotalPageCount().getValue() == 1) {
-            return enterprises.getEnterprises().getValue().getEnterpriseResult().get(0);
+        if (enterprises.isSuccessful() && enterprises.getTotalPageCount() == 1) {
+            return enterprises.getEnterprises().getEnterpriseResult().get(0);
         }
 
-        throw new EnterpriseNotFound(enterprises.getErrorMessage().getValue());
+        throw new EnterpriseNotFound(enterprises.getErrorMessage());
     }
 
     public boolean ping() {
@@ -135,15 +135,15 @@ public class P360ContactService extends P360AbstractService {
     }
 
     public Stream<EnterpriseResult> searchEnterprise(Map<String, String> queryParams) {
-        GetEnterprisesParameter getEnterprisesParameter = objectFactory.createGetEnterprisesParameter();
+        GetEnterprisesParameter getEnterprisesParameter = new GetEnterprisesParameter();
         if (queryParams.containsKey("navn")) {
-            getEnterprisesParameter.setName(objectFactory.createGetEnterprisesParameterName(queryParams.get("navn")));
+            getEnterprisesParameter.setName(queryParams.get("navn"));
         }
         if (queryParams.containsKey("organisasjonsnummer")) {
-            getEnterprisesParameter.setEnterpriseNumber(objectFactory.createGetEnterprisesParameterEnterpriseNumber(queryParams.get("organisasjonsnummer")));
+            getEnterprisesParameter.setEnterpriseNumber(queryParams.get("organisasjonsnummer"));
         }
         if (queryParams.containsKey("maxResults")) {
-            getEnterprisesParameter.setMaxRows(objectFactory.createGetEnterprisesParameterMaxRows(Integer.valueOf(queryParams.get("maxResults"))));
+            getEnterprisesParameter.setMaxRows(Integer.valueOf(queryParams.get("maxResults")));
         }
 
         log.info("GetEnterprises query: {}", getEnterprisesParameter);
@@ -154,16 +154,16 @@ public class P360ContactService extends P360AbstractService {
             return Stream.empty();
         }
 
-        return result.getEnterprises().getValue().getEnterpriseResult().stream();
+        return result.getEnterprises().getEnterpriseResult().stream();
     }
 
     public Stream<PrivatePersonResult> searchPrivatePerson(Map<String, String> queryParams) {
-        GetPrivatePersonsParameter getPrivatePersonsParameter = objectFactory.createGetPrivatePersonsParameter();
+        GetPrivatePersonsParameter getPrivatePersonsParameter = new GetPrivatePersonsParameter();
         if (queryParams.containsKey("navn")) {
-            getPrivatePersonsParameter.setName(objectFactory.createGetPrivatePersonsParameterName(queryParams.get("navn")));
+            getPrivatePersonsParameter.setName(queryParams.get("navn"));
         }
         if (queryParams.containsKey("maxResults")) {
-            getPrivatePersonsParameter.setMaxRows(objectFactory.createGetPrivatePersonsParameterMaxRows(Integer.valueOf(queryParams.get("maxResults"))));
+            getPrivatePersonsParameter.setMaxRows(Integer.valueOf(queryParams.get("maxResults")));
         }
 
         log.info("GetPrivatePersons query: {}", getPrivatePersonsParameter);
@@ -174,17 +174,17 @@ public class P360ContactService extends P360AbstractService {
             return Stream.empty();
         }
 
-        return result.getPrivatePersons().getValue().getPrivatePersonResult().stream();
+        return result.getPrivatePersons().getPrivatePersonResult().stream();
     }
 
     public Stream<ContactPersonResult> searchContactPerson(Map<String, String> queryParams) {
-        GetContactPersonsParameter getContactPersonsParameter = objectFactory.createGetContactPersonsParameter();
+        GetContactPersonsParameter getContactPersonsParameter = new GetContactPersonsParameter();
 
         if (queryParams.containsKey("navn")) {
-            getContactPersonsParameter.setName(objectFactory.createGetPrivatePersonsParameterName(queryParams.get("navn")));
+            getContactPersonsParameter.setName(queryParams.get("navn"));
         }
         if (queryParams.containsKey("maxResults")) {
-            getContactPersonsParameter.setMaxRows(objectFactory.createGetPrivatePersonsParameterMaxRows(Integer.valueOf(queryParams.get("maxResults"))));
+            getContactPersonsParameter.setMaxRows(Integer.valueOf(queryParams.get("maxResults")));
         }
 
         log.info("GetContactPersons query: {}", getContactPersonsParameter);
@@ -195,7 +195,7 @@ public class P360ContactService extends P360AbstractService {
             return Stream.empty();
         }
 
-        return result.getContactPersons().getValue().getContactPersonResult().stream();
+        return result.getContactPersons().getContactPersonResult().stream();
     }
 
     public Integer createPrivatePerson(SynchronizePrivatePersonParameter privatePerson) throws CreateContactException {
@@ -205,7 +205,7 @@ public class P360ContactService extends P360AbstractService {
         if (privatePersonResult.isSuccessful()) {
             return privatePersonResult.getRecno();
         }
-        throw new CreateContactException(privatePersonResult.getErrorMessage().getValue());
+        throw new CreateContactException(privatePersonResult.getErrorMessage());
     }
 
     public Integer createEnterprise(SynchronizeEnterpriseParameter enterprise) throws CreateEnterpriseException {
@@ -215,7 +215,7 @@ public class P360ContactService extends P360AbstractService {
         if (result.isSuccessful()) {
             return result.getRecno();
         }
-        throw new CreateEnterpriseException(result.getErrorMessage().getValue());
+        throw new CreateEnterpriseException(result.getErrorMessage());
     }
 
 }

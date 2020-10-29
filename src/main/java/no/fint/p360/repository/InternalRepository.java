@@ -2,7 +2,7 @@ package no.fint.p360.repository;
 
 import no.fint.event.model.Event;
 import no.fint.model.resource.FintLinks;
-import no.fint.model.resource.administrasjon.arkiv.DokumentfilResource;
+import no.fint.model.resource.arkiv.noark.DokumentfilResource;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -10,7 +10,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.concurrent.atomic.AtomicLong;
 
 public abstract class InternalRepository {
-    private AtomicLong identifier =
+    private final AtomicLong identifier =
             new AtomicLong(Long
                     .parseLong(DateTimeFormatter
                             .ofPattern("yyyyDDDHHmm'000'")

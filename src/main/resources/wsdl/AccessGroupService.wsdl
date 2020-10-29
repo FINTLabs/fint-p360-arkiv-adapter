@@ -1,20 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<wsdl:definitions name="AccessGroupService" targetNamespace="http://software-innovation.com/SI.Data" 
-    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" 
-    xmlns:wsx="http://schemas.xmlsoap.org/ws/2004/09/mex" 
-    xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" 
-    xmlns:wsa10="http://www.w3.org/2005/08/addressing" 
-    xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" 
-    xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy" 
-    xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract" 
-    xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" 
-    xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" 
-    xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" 
-    xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
-    xmlns:tns="http://software-innovation.com/SI.Data" 
-    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" 
-    xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" 
-    xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">
+<wsdl:definitions name="AccessGroupService" targetNamespace="http://software-innovation.com/SI.Data"
+                  xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+                  xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"
+                  xmlns:wsa10="http://www.w3.org/2005/08/addressing"
+                  xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy"
+                  xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/"
+                  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                  xmlns:tns="http://software-innovation.com/SI.Data"
+                  xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+                  xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl"
+>
     <wsp:Policy wsu:Id="BasicHttpBinding_IAccessGroupService_policy">
         <wsp:ExactlyOne>
             <wsp:All>
@@ -32,7 +27,8 @@
     <wsp:Policy wsu:Id="BasicHttpBinding_IAccessGroupService2_policy">
         <wsp:ExactlyOne>
             <wsp:All>
-                <wsoma:OptimizedMimeSerialization xmlns:wsoma="http://schemas.xmlsoap.org/ws/2004/09/policy/optimizedmimeserialization"/>
+                <wsoma:OptimizedMimeSerialization
+                        xmlns:wsoma="http://schemas.xmlsoap.org/ws/2004/09/policy/optimizedmimeserialization"/>
                 <http:BasicAuthentication xmlns:http="http://schemas.microsoft.com/ws/06/2004/policy/http"/>
             </wsp:All>
         </wsp:ExactlyOne>
@@ -40,7 +36,8 @@
     <wsp:Policy wsu:Id="BasicHttpBinding_IAccessGroupService3_policy">
         <wsp:ExactlyOne>
             <wsp:All>
-                <wsoma:OptimizedMimeSerialization xmlns:wsoma="http://schemas.xmlsoap.org/ws/2004/09/policy/optimizedmimeserialization"/>
+                <wsoma:OptimizedMimeSerialization
+                        xmlns:wsoma="http://schemas.xmlsoap.org/ws/2004/09/policy/optimizedmimeserialization"/>
                 <http:NtlmAuthentication xmlns:http="http://schemas.microsoft.com/ws/06/2004/policy/http"/>
             </wsp:All>
         </wsp:ExactlyOne>
@@ -52,20 +49,28 @@
                     <wsp:Policy>
                         <sp:ProtectionToken>
                             <wsp:Policy>
-                                <sp:SecureConversationToken sp:IncludeToken="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy/IncludeToken/AlwaysToRecipient">
+                                <sp:SecureConversationToken
+                                        sp:IncludeToken="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy/IncludeToken/AlwaysToRecipient">
                                     <wsp:Policy>
                                         <sp:RequireDerivedKeys/>
                                         <sp:BootstrapPolicy>
                                             <wsp:Policy>
                                                 <sp:SignedParts>
                                                     <sp:Body/>
-                                                    <sp:Header Name="To" Namespace="http://www.w3.org/2005/08/addressing"/>
-                                                    <sp:Header Name="From" Namespace="http://www.w3.org/2005/08/addressing"/>
-                                                    <sp:Header Name="FaultTo" Namespace="http://www.w3.org/2005/08/addressing"/>
-                                                    <sp:Header Name="ReplyTo" Namespace="http://www.w3.org/2005/08/addressing"/>
-                                                    <sp:Header Name="MessageID" Namespace="http://www.w3.org/2005/08/addressing"/>
-                                                    <sp:Header Name="RelatesTo" Namespace="http://www.w3.org/2005/08/addressing"/>
-                                                    <sp:Header Name="Action" Namespace="http://www.w3.org/2005/08/addressing"/>
+                                                    <sp:Header Name="To"
+                                                               Namespace="http://www.w3.org/2005/08/addressing"/>
+                                                    <sp:Header Name="From"
+                                                               Namespace="http://www.w3.org/2005/08/addressing"/>
+                                                    <sp:Header Name="FaultTo"
+                                                               Namespace="http://www.w3.org/2005/08/addressing"/>
+                                                    <sp:Header Name="ReplyTo"
+                                                               Namespace="http://www.w3.org/2005/08/addressing"/>
+                                                    <sp:Header Name="MessageID"
+                                                               Namespace="http://www.w3.org/2005/08/addressing"/>
+                                                    <sp:Header Name="RelatesTo"
+                                                               Namespace="http://www.w3.org/2005/08/addressing"/>
+                                                    <sp:Header Name="Action"
+                                                               Namespace="http://www.w3.org/2005/08/addressing"/>
                                                 </sp:SignedParts>
                                                 <sp:EncryptedParts>
                                                     <sp:Body/>
@@ -74,7 +79,8 @@
                                                     <wsp:Policy>
                                                         <sp:ProtectionToken>
                                                             <wsp:Policy>
-                                                                <sp:SpnegoContextToken sp:IncludeToken="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy/IncludeToken/AlwaysToRecipient">
+                                                                <sp:SpnegoContextToken
+                                                                        sp:IncludeToken="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy/IncludeToken/AlwaysToRecipient">
                                                                     <wsp:Policy>
                                                                         <sp:RequireDerivedKeys/>
                                                                     </wsp:Policy>
@@ -220,8 +226,10 @@
     <wsdl:types>
         <xsd:schema targetNamespace="http://software-innovation.com/SI.Data/Imports">
             <xsd:import schemaLocation="AccessGroupService0.xsd" namespace="http://software-innovation.com/SI.Data"/>
-            <xsd:import schemaLocation="AccessGroupService1.xsd" namespace="http://schemas.microsoft.com/2003/10/Serialization/"/>
-            <xsd:import schemaLocation="AccessGroupService2.xsd" namespace="http://schemas.datacontract.org/2004/07/SI.Data.Contracts.WS"/>
+            <xsd:import schemaLocation="AccessGroupService1.xsd"
+                        namespace="http://schemas.microsoft.com/2003/10/Serialization/"/>
+            <xsd:import schemaLocation="AccessGroupService2.xsd"
+                        namespace="http://schemas.datacontract.org/2004/07/SI.Data.Contracts.WS"/>
         </xsd:schema>
     </wsdl:types>
     <wsdl:message name="IAccessGroupService_Ping_InputMessage">
@@ -238,19 +246,25 @@
     </wsdl:message>
     <wsdl:portType name="IAccessGroupService">
         <wsdl:operation name="Ping">
-            <wsdl:input wsaw:Action="http://software-innovation.com/SI.Data/IAccessGroupService/Ping" message="tns:IAccessGroupService_Ping_InputMessage"/>
-            <wsdl:output wsaw:Action="http://software-innovation.com/SI.Data/IAccessGroupService/PingResponse" message="tns:IAccessGroupService_Ping_OutputMessage"/>
+            <wsdl:input wsaw:Action="http://software-innovation.com/SI.Data/IAccessGroupService/Ping"
+                        message="tns:IAccessGroupService_Ping_InputMessage"/>
+            <wsdl:output wsaw:Action="http://software-innovation.com/SI.Data/IAccessGroupService/PingResponse"
+                         message="tns:IAccessGroupService_Ping_OutputMessage"/>
         </wsdl:operation>
         <wsdl:operation name="GetAccessGroups">
-            <wsdl:input wsaw:Action="http://software-innovation.com/SI.Data/IAccessGroupService/GetAccessGroups" message="tns:IAccessGroupService_GetAccessGroups_InputMessage"/>
-            <wsdl:output wsaw:Action="http://software-innovation.com/SI.Data/IAccessGroupService/GetAccessGroupsResponse" message="tns:IAccessGroupService_GetAccessGroups_OutputMessage"/>
+            <wsdl:input wsaw:Action="http://software-innovation.com/SI.Data/IAccessGroupService/GetAccessGroups"
+                        message="tns:IAccessGroupService_GetAccessGroups_InputMessage"/>
+            <wsdl:output
+                    wsaw:Action="http://software-innovation.com/SI.Data/IAccessGroupService/GetAccessGroupsResponse"
+                    message="tns:IAccessGroupService_GetAccessGroups_OutputMessage"/>
         </wsdl:operation>
     </wsdl:portType>
     <wsdl:binding name="BasicHttpBinding_IAccessGroupService" type="tns:IAccessGroupService">
         <wsp:PolicyReference URI="#BasicHttpBinding_IAccessGroupService_policy"/>
         <soap:binding transport="http://schemas.xmlsoap.org/soap/http"/>
         <wsdl:operation name="Ping">
-            <soap:operation soapAction="http://software-innovation.com/SI.Data/IAccessGroupService/Ping" style="document"/>
+            <soap:operation soapAction="http://software-innovation.com/SI.Data/IAccessGroupService/Ping"
+                            style="document"/>
             <wsdl:input>
                 <soap:body use="literal"/>
             </wsdl:input>
@@ -259,7 +273,8 @@
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="GetAccessGroups">
-            <soap:operation soapAction="http://software-innovation.com/SI.Data/IAccessGroupService/GetAccessGroups" style="document"/>
+            <soap:operation soapAction="http://software-innovation.com/SI.Data/IAccessGroupService/GetAccessGroups"
+                            style="document"/>
             <wsdl:input>
                 <soap:body use="literal"/>
             </wsdl:input>
@@ -272,7 +287,8 @@
         <wsp:PolicyReference URI="#BasicHttpBinding_IAccessGroupService1_policy"/>
         <soap:binding transport="http://schemas.xmlsoap.org/soap/http"/>
         <wsdl:operation name="Ping">
-            <soap:operation soapAction="http://software-innovation.com/SI.Data/IAccessGroupService/Ping" style="document"/>
+            <soap:operation soapAction="http://software-innovation.com/SI.Data/IAccessGroupService/Ping"
+                            style="document"/>
             <wsdl:input>
                 <soap:body use="literal"/>
             </wsdl:input>
@@ -281,7 +297,8 @@
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="GetAccessGroups">
-            <soap:operation soapAction="http://software-innovation.com/SI.Data/IAccessGroupService/GetAccessGroups" style="document"/>
+            <soap:operation soapAction="http://software-innovation.com/SI.Data/IAccessGroupService/GetAccessGroups"
+                            style="document"/>
             <wsdl:input>
                 <soap:body use="literal"/>
             </wsdl:input>
@@ -294,7 +311,8 @@
         <wsp:PolicyReference URI="#BasicHttpBinding_IAccessGroupService2_policy"/>
         <soap:binding transport="http://schemas.xmlsoap.org/soap/http"/>
         <wsdl:operation name="Ping">
-            <soap:operation soapAction="http://software-innovation.com/SI.Data/IAccessGroupService/Ping" style="document"/>
+            <soap:operation soapAction="http://software-innovation.com/SI.Data/IAccessGroupService/Ping"
+                            style="document"/>
             <wsdl:input>
                 <soap:body use="literal"/>
             </wsdl:input>
@@ -303,7 +321,8 @@
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="GetAccessGroups">
-            <soap:operation soapAction="http://software-innovation.com/SI.Data/IAccessGroupService/GetAccessGroups" style="document"/>
+            <soap:operation soapAction="http://software-innovation.com/SI.Data/IAccessGroupService/GetAccessGroups"
+                            style="document"/>
             <wsdl:input>
                 <soap:body use="literal"/>
             </wsdl:input>
@@ -316,7 +335,8 @@
         <wsp:PolicyReference URI="#BasicHttpBinding_IAccessGroupService3_policy"/>
         <soap:binding transport="http://schemas.xmlsoap.org/soap/http"/>
         <wsdl:operation name="Ping">
-            <soap:operation soapAction="http://software-innovation.com/SI.Data/IAccessGroupService/Ping" style="document"/>
+            <soap:operation soapAction="http://software-innovation.com/SI.Data/IAccessGroupService/Ping"
+                            style="document"/>
             <wsdl:input>
                 <soap:body use="literal"/>
             </wsdl:input>
@@ -325,7 +345,8 @@
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="GetAccessGroups">
-            <soap:operation soapAction="http://software-innovation.com/SI.Data/IAccessGroupService/GetAccessGroups" style="document"/>
+            <soap:operation soapAction="http://software-innovation.com/SI.Data/IAccessGroupService/GetAccessGroups"
+                            style="document"/>
             <wsdl:input>
                 <soap:body use="literal"/>
             </wsdl:input>
@@ -338,7 +359,8 @@
         <wsp:PolicyReference URI="#WSHttpBinding_IAccessGroupService_policy"/>
         <soap12:binding transport="http://schemas.xmlsoap.org/soap/http"/>
         <wsdl:operation name="Ping">
-            <soap12:operation soapAction="http://software-innovation.com/SI.Data/IAccessGroupService/Ping" style="document"/>
+            <soap12:operation soapAction="http://software-innovation.com/SI.Data/IAccessGroupService/Ping"
+                              style="document"/>
             <wsdl:input>
                 <wsp:PolicyReference URI="#WSHttpBinding_IAccessGroupService_Ping_Input_policy"/>
                 <soap12:body use="literal"/>
@@ -349,7 +371,8 @@
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="GetAccessGroups">
-            <soap12:operation soapAction="http://software-innovation.com/SI.Data/IAccessGroupService/GetAccessGroups" style="document"/>
+            <soap12:operation soapAction="http://software-innovation.com/SI.Data/IAccessGroupService/GetAccessGroups"
+                              style="document"/>
             <wsdl:input>
                 <wsp:PolicyReference URI="#WSHttpBinding_IAccessGroupService_GetAccessGroups_Input_policy"/>
                 <soap12:body use="literal"/>

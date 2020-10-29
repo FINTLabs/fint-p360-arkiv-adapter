@@ -1,26 +1,25 @@
 package no.fint.p360.data.kulturminne;
 
 import lombok.extern.slf4j.Slf4j;
+import no.fint.arkiv.CaseDefaults;
 import no.fint.arkiv.p360.caze.CaseResult;
 import no.fint.arkiv.p360.caze.CreateCaseParameter;
-import no.fint.arkiv.p360.caze.ObjectFactory;
 import no.fint.arkiv.p360.document.CreateDocumentParameter;
+import no.fint.model.arkiv.kulturminnevern.TilskuddFartoy;
 import no.fint.model.felles.kompleksedatatyper.Identifikator;
-import no.fint.model.kultur.kulturminnevern.TilskuddFartoy;
 import no.fint.model.resource.Link;
-import no.fint.model.resource.administrasjon.arkiv.JournalpostResource;
-import no.fint.model.resource.kultur.kulturminnevern.TilskuddFartoyResource;
+import no.fint.model.resource.arkiv.kulturminnevern.TilskuddFartoyResource;
+import no.fint.model.resource.arkiv.noark.JournalpostResource;
 import no.fint.p360.data.exception.GetDocumentException;
 import no.fint.p360.data.exception.IllegalCaseNumberFormat;
 import no.fint.p360.data.noark.common.NoarkFactory;
 import no.fint.p360.data.noark.journalpost.JournalpostFactory;
-import no.fint.p360.data.noark.korrespondansepart.KorrespondansepartFactory;
 import no.fint.p360.data.utilities.NOARKUtils;
 import no.fint.p360.data.utilities.P360Utils;
+import no.fint.p360.service.P360CaseDefaultsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,21 +31,13 @@ public class TilskuddFartoyFactory {
     private NoarkFactory noarkFactory;
 
     @Autowired
-    private KorrespondansepartFactory korrespondansepartFactory;
-
-    @Autowired
     private JournalpostFactory journalpostFactory;
 
     @Autowired
-    private TilskuddFartoyDefaults tilskuddFartoyDefaults;
+    private P360CaseDefaultsService caseDefaultsService;
 
-    private ObjectFactory objectFactory;
-
-
-    @PostConstruct
-    private void init() {
-        objectFactory = new ObjectFactory();
-    }
+    @Autowired
+    private CaseDefaults caseDefaults;
 
     public TilskuddFartoyResource toFintResource(CaseResult caseResult) throws GetDocumentException, IllegalCaseNumberFormat {
 
@@ -54,7 +45,7 @@ public class TilskuddFartoyFactory {
         tilskuddFartoy.setSoknadsnummer(new Identifikator());
         tilskuddFartoy.setMappeId(new Identifikator());
         tilskuddFartoy.setSystemId(new Identifikator());
-        String caseNumber = caseResult.getCaseNumber().getValue();
+        String caseNumber = caseResult.getCaseNumber();
 
         String caseYear = NOARKUtils.getCaseYear(caseNumber);
         String sequenceNumber = NOARKUtils.getCaseSequenceNumber(caseNumber);
@@ -63,7 +54,7 @@ public class TilskuddFartoyFactory {
 
         tilskuddFartoy.addSelf(Link.with(TilskuddFartoy.class, "mappeid", caseYear, sequenceNumber));
         tilskuddFartoy.addSelf(Link.with(TilskuddFartoy.class, "systemid", caseResult.getRecno().toString()));
-        tilskuddFartoy.addSelf(Link.with(TilskuddFartoy.class, "soknadsnummer", caseResult.getExternalId().getValue().getId().getValue()));
+        tilskuddFartoy.addSelf(Link.with(TilskuddFartoy.class, "soknadsnummer", caseResult.getExternalId().getId()));
 
         return tilskuddFartoy;
     }
@@ -78,9 +69,9 @@ public class TilskuddFartoyFactory {
     }
 
     public CreateCaseParameter convertToCreateCase(TilskuddFartoyResource tilskuddFartoy) {
-        CreateCaseParameter createCaseParameter = objectFactory.createCreateCaseParameter();
+        CreateCaseParameter createCaseParameter = new CreateCaseParameter();
 
-        tilskuddFartoyDefaults.applyDefaultsToCreateCase(tilskuddFartoy, createCaseParameter);
+        caseDefaultsService.applyDefaultsToCreateCaseParameter(caseDefaults.getTilskuddfartoy(), tilskuddFartoy, createCaseParameter);
 
         createCaseParameter.setExternalId(P360Utils.getExternalIdParameter(tilskuddFartoy.getSoknadsnummer()));
 
