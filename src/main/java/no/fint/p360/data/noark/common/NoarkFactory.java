@@ -1,5 +1,6 @@
 package no.fint.p360.data.noark.common;
 
+import no.fint.arkiv.TitleService;
 import no.fint.arkiv.p360.caze.*;
 import no.fint.arkiv.p360.document.DocumentResult;
 import no.fint.model.administrasjon.organisasjon.Organisasjonselement;
@@ -23,7 +24,6 @@ import no.fint.p360.data.p360.P360DocumentService;
 import no.fint.p360.data.utilities.FintUtils;
 import no.fint.p360.data.utilities.NOARKUtils;
 import no.fint.p360.repository.KodeverkRepository;
-import no.fint.p360.service.TitleService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -140,7 +140,7 @@ public class NoarkFactory {
         createCaseParameter.setTitle(titleService.getTitle(saksmappeResource));
         applyParameterFromLink(
                 saksmappeResource.getAdministrativEnhet(),
-                s -> Integer.valueOf(s),
+                Integer::valueOf,
                 createCaseParameter::setResponsibleEnterpriseRecno
         );
 
